@@ -1,4 +1,4 @@
-package com.dmdev.natalliavasilyeva.persistence.jpa;
+package com.dmdev.natalliavasilyeva.domain.jpa;
 
 import java.io.Serializable;
 import java.time.Instant;

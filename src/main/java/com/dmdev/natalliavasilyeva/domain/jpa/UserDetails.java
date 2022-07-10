@@ -1,4 +1,4 @@
-package com.dmdev.natalliavasilyeva.persistence.jpa;
+package com.dmdev.natalliavasilyeva.domain.jpa;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -89,7 +89,7 @@ public class UserDetails implements Entity, Serializable {
         private String address;
         private String phone;
         private Instant birthday;
-        private final Instant registrationDate;
+        private Instant registrationDate;
 
         public Builder() {
             this.registrationDate = Instant.now();
@@ -130,6 +130,11 @@ public class UserDetails implements Entity, Serializable {
             return this;
         }
 
+        public Builder registrationDate(Instant registrationDate) {
+            this.registrationDate = registrationDate;
+            return this;
+        }
+
 
         public UserDetails build() {
             UserDetails userDetails = new UserDetails();
@@ -140,6 +145,7 @@ public class UserDetails implements Entity, Serializable {
             userDetails.address = this.address;
             userDetails.phone = this.phone;
             userDetails.birthday = this.birthday;
+            userDetails.registrationDate = this.registrationDate;
 
             return userDetails;
         }

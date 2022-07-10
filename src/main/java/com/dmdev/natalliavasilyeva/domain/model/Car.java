@@ -15,7 +15,6 @@ public class Car implements Identifiable {
     private String image;
     private List<Accident> accidents;
 
-    private List<Order> orders;
 
     public Car() {
         // empty default
@@ -30,8 +29,7 @@ public class Car implements Identifiable {
             String vin,
             boolean isRepaired,
             String image,
-            List<Accident> accidents,
-            List<Order> orders) {
+            List<Accident> accidents) {
         this.id = id;
         this.model = model;
         this.color = color;
@@ -41,7 +39,6 @@ public class Car implements Identifiable {
         this.isRepaired = false;
         this.image = image;
         this.accidents = accidents;
-        this.orders = orders;
     }
 
     public Long getId() {
@@ -80,21 +77,17 @@ public class Car implements Identifiable {
         return accidents;
     }
 
-    public List<Order> getOrders() {
-        return orders;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Car car = (Car) o;
-        return isRepaired == car.isRepaired && Objects.equals(id, car.id) && Objects.equals(model, car.model) && color == car.color && Objects.equals(yearOfProduction, car.yearOfProduction) && Objects.equals(number, car.number) && Objects.equals(vin, car.vin) && Objects.equals(image, car.image) && Objects.equals(accidents, car.accidents) && Objects.equals(orders, car.orders);
+        return isRepaired == car.isRepaired && Objects.equals(id, car.id) && Objects.equals(model, car.model) && color == car.color && Objects.equals(yearOfProduction, car.yearOfProduction) && Objects.equals(number, car.number) && Objects.equals(vin, car.vin) && Objects.equals(image, car.image) && Objects.equals(accidents, car.accidents);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, model, color, yearOfProduction, number, vin, isRepaired, image, accidents, orders);
+        return Objects.hash(id, model, color, yearOfProduction, number, vin, isRepaired, image, accidents);
     }
 
     @Override
@@ -109,7 +102,6 @@ public class Car implements Identifiable {
                 ", isRepaired=" + isRepaired +
                 ", image='" + image + '\'' +
                 ", accidents=" + accidents +
-                ", orders=" + orders +
                 '}';
     }
 
@@ -126,11 +118,8 @@ public class Car implements Identifiable {
 
         private List<Accident> accidents;
 
-        private List<Order> orders;
-
         public Builder() {
             this.accidents = Collections.emptyList();
-            this.orders = Collections.emptyList();
             this.isRepaired = false;
         }
 
@@ -179,11 +168,6 @@ public class Car implements Identifiable {
             return this;
         }
 
-        public Builder orders(List<Order> orders) {
-            this.orders = orders;
-            return this;
-        }
-
         public Car build() {
             Car car = new Car();
             car.id = this.id;
@@ -195,7 +179,6 @@ public class Car implements Identifiable {
             car.isRepaired = this.isRepaired;
             car.image = this.image;
             car.accidents = this.accidents;
-            car.orders = this.orders;
             return car;
         }
     }

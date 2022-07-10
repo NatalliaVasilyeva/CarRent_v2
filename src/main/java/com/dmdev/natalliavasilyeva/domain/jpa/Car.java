@@ -1,4 +1,4 @@
-package com.dmdev.natalliavasilyeva.persistence.jpa;
+package com.dmdev.natalliavasilyeva.domain.jpa;
 
 import com.dmdev.natalliavasilyeva.domain.model.Color;
 
@@ -84,6 +84,20 @@ public class Car implements Entity, Serializable {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        return "Car{" +
+                "id=" + id +
+                ", modelId=" + modelId +
+                ", color=" + color +
+                ", yearOfProduction='" + yearOfProduction + '\'' +
+                ", number='" + number + '\'' +
+                ", vin='" + vin + '\'' +
+                ", isRepaired=" + isRepaired +
+                ", image='" + image + '\'' +
+                '}';
     }
 
     public static final class Builder {

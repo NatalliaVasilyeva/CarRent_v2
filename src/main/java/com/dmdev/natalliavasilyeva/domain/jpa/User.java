@@ -1,4 +1,4 @@
-package com.dmdev.natalliavasilyeva.persistence.jpa;
+package com.dmdev.natalliavasilyeva.domain.jpa;
 
 
 import com.dmdev.natalliavasilyeva.domain.model.Role;
@@ -11,12 +11,12 @@ public class User implements Entity, Serializable {
     private String login;
     private String email;
     private String password;
-    private Role role;
+    private String role;
 
     public User() {
     }
 
-    private User(long id, String login, String email, String password, Role role) {
+    private User(long id, String login, String email, String password, String role) {
         this.id = id;
         this.login = login;
         this.email = email;
@@ -44,23 +44,22 @@ public class User implements Entity, Serializable {
         this.password = password;
     }
 
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
 
     public static final class Builder {
 
-        private final Role DEFAULT_USER_ROLE = Role.CLIENT;
+        private final String DEFAULT_USER_ROLE = Role.CLIENT.name();
         private long id;
-
         private String login;
         private String email;
         private String password;
-        private Role role;
+        private String role;
 
         public Builder() {
             this.role = DEFAULT_USER_ROLE;
@@ -86,7 +85,7 @@ public class User implements Entity, Serializable {
             return this;
         }
 
-        public Builder role(Role role) {
+        public Builder role(String role) {
             this.role = role;
             return this;
         }

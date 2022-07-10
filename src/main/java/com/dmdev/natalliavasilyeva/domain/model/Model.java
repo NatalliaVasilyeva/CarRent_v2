@@ -3,7 +3,6 @@ package com.dmdev.natalliavasilyeva.domain.model;
 import java.util.Objects;
 
 public class Model implements Identifiable {
-
     private Long id;
     private String name;
     private Brand brand;
@@ -65,7 +64,7 @@ public class Model implements Identifiable {
         return "Model{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", brand='" + brand + '\'' +
+                ", brand=" + brand +
                 ", transmission=" + transmission +
                 ", engineType=" + engineType +
                 ", category=" + category +

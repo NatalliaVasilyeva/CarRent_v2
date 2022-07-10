@@ -4,9 +4,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 public class DriverLicense implements Identifiable {
-
     private Long id;
-
     private Long userDetailsId;
     private String number;
     private Instant issueDate;
