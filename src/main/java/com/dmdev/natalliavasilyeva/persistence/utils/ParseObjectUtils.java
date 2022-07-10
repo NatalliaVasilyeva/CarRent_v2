@@ -1,4 +1,4 @@
-package com.dmdev.natalliavasilyeva.persistence.repository;
+package com.dmdev.natalliavasilyeva.persistence.utils;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
