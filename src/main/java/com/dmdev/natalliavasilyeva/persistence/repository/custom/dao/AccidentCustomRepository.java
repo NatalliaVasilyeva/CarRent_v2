@@ -5,7 +5,7 @@ import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
 import com.dmdev.natalliavasilyeva.domain.model.Accident;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
-import com.dmdev.natalliavasilyeva.persistence.repository.custom.AccidentRepository;
+import com.dmdev.natalliavasilyeva.persistence.repository.custom.GenericCustomRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.custom.rowmapper.AccidentResultExtractor;
 
 import java.math.BigDecimal;
@@ -15,10 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class AccidentCustomRepository implements AccidentRepository<Accident> {
+public class AccidentCustomRepository implements GenericCustomRepository<Accident, Long> {
     ConnectionPool connectionPool;
     AccidentResultExtractor extractor;
-
 
     public AccidentCustomRepository(ConnectionPool connectionPool) {
         this.connectionPool = ConnectionPool.getInstance();
@@ -36,7 +35,6 @@ public class AccidentCustomRepository implements AccidentRepository<Accident> {
                     "LEFT JOIN car ON car.id = o.car_id\n" +
                     "LEFT JOIN model md ON md.id = car.model_id\n" +
                     "LEFT JOIN brand br ON br.id = md.brand_id\n";
-
 
     @Override
     public Optional<Accident> findById(Long id) throws SQLException, ConnectionPoolException {
@@ -71,7 +69,6 @@ public class AccidentCustomRepository implements AccidentRepository<Accident> {
         return accidents;
     }
 
-    @Override
     public List<Accident> findByDate(Instant date) throws SQLException, ConnectionPoolException {
         List<Accident> accidents = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();
@@ -88,13 +85,12 @@ public class AccidentCustomRepository implements AccidentRepository<Accident> {
         return accidents;
     }
 
-    @Override
     public List<Accident> findByDates(Instant startDate, Instant endDate) throws SQLException, ConnectionPoolException {
         List<Accident> accidents = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND)
-                .appendWithMultipleArgs("WHERE ac.accident_date BETWEEN ? AND ?", (Object[]) List.of(startDate, endDate).toArray(new Instant[0]));
+                .appendWithMultipleArgs("WHERE ac.accident_date BETWEEN ? AND ?", startDate, endDate);
 
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
@@ -105,7 +101,6 @@ public class AccidentCustomRepository implements AccidentRepository<Accident> {
         return accidents;
     }
 
-    @Override
     public List<Accident> findByOrderId(Long orderId) throws SQLException, ConnectionPoolException {
         List<Accident> accidents = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();
@@ -122,13 +117,12 @@ public class AccidentCustomRepository implements AccidentRepository<Accident> {
         return accidents;
     }
 
-    @Override
     public List<Accident> findByUsernameAndSurname(String username, String surname) throws SQLException, ConnectionPoolException {
         List<Accident> accidents = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND)
-                .appendWithMultipleArgs("WHERE ud.name LIKE ? AND ud.surname LIKE ?", (Object[]) List.of(username, surname).toArray(new String[0]));
+                .appendWithMultipleArgs("WHERE ud.name LIKE ? AND ud.surname LIKE ?", username, surname);
 
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
@@ -139,7 +133,6 @@ public class AccidentCustomRepository implements AccidentRepository<Accident> {
         return accidents;
     }
 
-    @Override
     public List<Accident> findByCarNumbers(List<String> carNumbers) throws SQLException, ConnectionPoolException {
         List<Accident> accidents = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();
@@ -157,7 +150,6 @@ public class AccidentCustomRepository implements AccidentRepository<Accident> {
         return accidents;
     }
 
-    @Override
     public List<Accident> findByDamage(BigDecimal minDamage) throws SQLException, ConnectionPoolException {
         List<Accident> accidents = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();

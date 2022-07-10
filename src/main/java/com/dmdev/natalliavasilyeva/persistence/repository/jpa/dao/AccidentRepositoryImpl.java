@@ -1,12 +1,11 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 
-
 import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
-import com.dmdev.natalliavasilyeva.persistence.jpa.Accident;
+import com.dmdev.natalliavasilyeva.domain.jpa.Accident;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
-import com.dmdev.natalliavasilyeva.persistence.repository.ParseObjectUtils;
+import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.Repository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.AccidentResultExtractor;
 
@@ -39,7 +38,6 @@ public class AccidentRepositoryImpl implements Repository<Accident, Long> {
     private final static String DELETE = "" +
             "DELETE FROM accident WHERE id = ?";
 
-
     @Override
     public Optional<Accident> findById(Long id) throws SQLException, ConnectionPoolException {
 
@@ -49,10 +47,13 @@ public class AccidentRepositoryImpl implements Repository<Accident, Long> {
                 .appendWithSingleArg("WHERE id = ?", id);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-            return Optional.ofNullable(extractor.extractData(resultSet));
+            Accident accident = null;
+            if (resultSet.next()) {
+                accident = extractor.extractData(resultSet);
+            }
+            return Optional.ofNullable(accident);
         }
     }
-
 
     @Override
     public List<Accident> findAll() throws SQLException, ConnectionPoolException {
@@ -62,7 +63,6 @@ public class AccidentRepositoryImpl implements Repository<Accident, Long> {
                 .append(FIND);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-
             while (resultSet.next()) {
                 accidents.add(extractor.extractData(resultSet));
             }
@@ -90,7 +90,11 @@ public class AccidentRepositoryImpl implements Repository<Accident, Long> {
         try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
-            return Optional.ofNullable(extractor.extractData(generatedKeys));
+            Accident removedAccident = null;
+            if (generatedKeys.next()) {
+                removedAccident = extractor.extractData(generatedKeys);
+            }
+            return Optional.ofNullable(removedAccident);
         }
     }
 
@@ -116,7 +120,11 @@ public class AccidentRepositoryImpl implements Repository<Accident, Long> {
         try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
-            return Optional.ofNullable(extractor.extractData(generatedKeys));
+            Accident savedAccident = null;
+            if (generatedKeys.next()) {
+                savedAccident = extractor.extractData(generatedKeys);
+            }
+            return Optional.ofNullable(savedAccident);
         }
     }
 }

@@ -5,7 +5,7 @@ import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
 import com.dmdev.natalliavasilyeva.domain.model.Brand;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
-import com.dmdev.natalliavasilyeva.persistence.repository.custom.BrandRepository;
+import com.dmdev.natalliavasilyeva.persistence.repository.custom.GenericCustomRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.custom.rowmapper.BrandResultExtractor;
 
 import java.sql.SQLException;
@@ -13,10 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BrandCustomRepository implements BrandRepository<Brand> {
+public class BrandCustomRepository implements GenericCustomRepository<Brand, Long> {
     ConnectionPool connectionPool;
     BrandResultExtractor extractor;
-
 
     public BrandCustomRepository(ConnectionPool connectionPool) {
         this.connectionPool = ConnectionPool.getInstance();
@@ -33,7 +32,6 @@ public class BrandCustomRepository implements BrandRepository<Brand> {
                             "LEFT JOIN  categories c ON m.category_id = c.id\n" +
                     ") AS mod ON b.id = mod.mod_id\n";
 
-
     @Override
     public List<Brand> findAll() throws SQLException, ConnectionPoolException {
         List<Brand> brands = new ArrayList<>();
@@ -49,7 +47,6 @@ public class BrandCustomRepository implements BrandRepository<Brand> {
         }
         return brands;
     }
-
     @Override
     public Optional<Brand> findById(Long id) throws SQLException, ConnectionPoolException {
         var statementProvider = new BaseStatementProvider();
@@ -67,7 +64,6 @@ public class BrandCustomRepository implements BrandRepository<Brand> {
         }
     }
 
-    @Override
     public Optional<Brand> findByName(String name) throws SQLException, ConnectionPoolException {
         var statementProvider = new BaseStatementProvider();
         statementProvider
@@ -84,7 +80,6 @@ public class BrandCustomRepository implements BrandRepository<Brand> {
         }
     }
 
-    @Override
     public List<Brand> findByCategory(String category) throws SQLException, ConnectionPoolException {
         List<Brand> brands = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();

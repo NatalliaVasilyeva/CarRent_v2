@@ -3,9 +3,9 @@ package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
-import com.dmdev.natalliavasilyeva.persistence.jpa.Price;
+import com.dmdev.natalliavasilyeva.domain.jpa.Price;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
-import com.dmdev.natalliavasilyeva.persistence.repository.ParseObjectUtils;
+import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.Repository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.PriceResultExtractor;
 
@@ -14,11 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 public class PriceRepositoryImpl implements Repository<Price, Long> {
     ConnectionPool connectionPool;
     PriceResultExtractor extractor;
-
 
     public PriceRepositoryImpl(ConnectionPool connectionPool) {
         this.connectionPool = ConnectionPool.getInstance();
@@ -48,10 +46,13 @@ public class PriceRepositoryImpl implements Repository<Price, Long> {
                 .appendWithSingleArg("WHERE id = ?", id);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-            return Optional.ofNullable(extractor.extractData(resultSet));
+            Price price = null;
+            if (resultSet.next()) {
+                price = extractor.extractData(resultSet);
+            }
+            return Optional.ofNullable(price);
         }
     }
-
 
     @Override
     public List<Price> findAll() throws SQLException, ConnectionPoolException {
@@ -89,7 +90,11 @@ public class PriceRepositoryImpl implements Repository<Price, Long> {
         try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
-            return Optional.ofNullable(extractor.extractData(generatedKeys));
+            Price removedPrice = null;
+            if (generatedKeys.next()) {
+                removedPrice = extractor.extractData(generatedKeys);
+            }
+            return Optional.ofNullable(removedPrice);
         }
     }
 
@@ -115,7 +120,11 @@ public class PriceRepositoryImpl implements Repository<Price, Long> {
         try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
-            return Optional.ofNullable(extractor.extractData(generatedKeys));
+            Price savedPrice = null;
+            if (generatedKeys.next()) {
+                savedPrice = extractor.extractData(generatedKeys);
+            }
+            return Optional.ofNullable(savedPrice);
         }
     }
 }

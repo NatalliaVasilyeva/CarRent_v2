@@ -1,7 +1,7 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper;
 
 
-import com.dmdev.natalliavasilyeva.persistence.jpa.Brand;
+import com.dmdev.natalliavasilyeva.domain.jpa.Brand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

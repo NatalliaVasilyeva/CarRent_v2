@@ -3,7 +3,7 @@ package com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper;
 
 import com.dmdev.natalliavasilyeva.domain.model.EngineType;
 import com.dmdev.natalliavasilyeva.domain.model.Transmission;
-import com.dmdev.natalliavasilyeva.persistence.jpa.Model;
+import com.dmdev.natalliavasilyeva.domain.jpa.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

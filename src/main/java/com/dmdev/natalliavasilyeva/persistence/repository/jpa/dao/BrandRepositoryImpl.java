@@ -3,9 +3,9 @@ package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
-import com.dmdev.natalliavasilyeva.persistence.jpa.Brand;
+import com.dmdev.natalliavasilyeva.domain.jpa.Brand;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
-import com.dmdev.natalliavasilyeva.persistence.repository.ParseObjectUtils;
+import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.Repository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.BrandResultExtractor;
 
@@ -14,11 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 public class BrandRepositoryImpl implements Repository<Brand, Long> {
     ConnectionPool connectionPool;
     BrandResultExtractor extractor;
-
 
     public BrandRepositoryImpl(ConnectionPool connectionPool) {
         this.connectionPool = ConnectionPool.getInstance();
@@ -48,7 +46,11 @@ public class BrandRepositoryImpl implements Repository<Brand, Long> {
                 .appendWithSingleArg("WHERE id = ?", id);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-            return Optional.ofNullable(extractor.extractData(resultSet));
+            Brand brand = null;
+            if (resultSet.next()) {
+                brand = extractor.extractData(resultSet);
+            }
+            return Optional.ofNullable(brand);
         }
     }
 
@@ -61,7 +63,6 @@ public class BrandRepositoryImpl implements Repository<Brand, Long> {
                 .append(FIND);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-
             while (resultSet.next()) {
                 brands.add(extractor.extractData(resultSet));
             }
@@ -89,7 +90,11 @@ public class BrandRepositoryImpl implements Repository<Brand, Long> {
         try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
-            return Optional.ofNullable(extractor.extractData(generatedKeys));
+            Brand removedBrand = null;
+            if (generatedKeys.next()) {
+                removedBrand = extractor.extractData(generatedKeys);
+            }
+            return Optional.ofNullable(removedBrand);
         }
     }
 
@@ -115,7 +120,11 @@ public class BrandRepositoryImpl implements Repository<Brand, Long> {
         try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
-            return Optional.ofNullable(extractor.extractData(generatedKeys));
+            Brand savedBrand = null;
+            if (generatedKeys.next()) {
+                savedBrand = extractor.extractData(generatedKeys);
+            }
+            return Optional.ofNullable(savedBrand);
         }
     }
 
@@ -127,7 +136,11 @@ public class BrandRepositoryImpl implements Repository<Brand, Long> {
                 .appendWithSingleArg("WHERE name = ?", name);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-            return Optional.ofNullable(extractor.extractData(resultSet));
+            Brand brand = null;
+            if (resultSet.next()) {
+                brand = extractor.extractData(resultSet);
+            }
+            return Optional.ofNullable(brand);
         }
     }
 
@@ -139,7 +152,6 @@ public class BrandRepositoryImpl implements Repository<Brand, Long> {
                 .appendWithSingleArg("WHERE name = ANY (?)", brandNames.toArray(new String[0]));
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-
             while (resultSet.next()) {
                 brands.add(extractor.extractData(resultSet));
             }

@@ -9,5 +9,6 @@ import java.util.Optional;
 
 public interface GenericCustomRepository<T extends Identifiable, K> {
     List<T> findAll() throws SQLException, ConnectionPoolException;
+
     Optional<T> findById(K id) throws SQLException, ConnectionPoolException;
 }

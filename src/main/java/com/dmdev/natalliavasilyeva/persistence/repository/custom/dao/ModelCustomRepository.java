@@ -5,7 +5,7 @@ import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
 import com.dmdev.natalliavasilyeva.domain.model.Model;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
-import com.dmdev.natalliavasilyeva.persistence.repository.custom.ModelRepository;
+import com.dmdev.natalliavasilyeva.persistence.repository.custom.GenericCustomRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.custom.rowmapper.ModelResultExtractor;
 
 import java.sql.SQLException;
@@ -13,10 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ModelCustomRepository implements ModelRepository<Model> {
+public class ModelCustomRepository implements GenericCustomRepository<Model, Long> {
     ConnectionPool connectionPool;
     ModelResultExtractor extractor;
-
 
     public ModelCustomRepository(ConnectionPool connectionPool) {
         this.connectionPool = ConnectionPool.getInstance();
@@ -71,7 +70,6 @@ public class ModelCustomRepository implements ModelRepository<Model> {
         return models;
     }
 
-    @Override
     public List<Model> findAllByBrandIds(List<Long> brandIds) throws SQLException, ConnectionPoolException {
         List<Model> models = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();
@@ -88,7 +86,6 @@ public class ModelCustomRepository implements ModelRepository<Model> {
         return models;
     }
 
-    @Override
     public List<Model> findAllByBrandName(String brandName) throws SQLException, ConnectionPoolException {
         List<Model> models = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();
@@ -105,7 +102,6 @@ public class ModelCustomRepository implements ModelRepository<Model> {
         return models;
     }
 
-    @Override
     public List<Model> findAllByTransmission(String transmission) throws SQLException, ConnectionPoolException {
         List<Model> models = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();
@@ -122,7 +118,6 @@ public class ModelCustomRepository implements ModelRepository<Model> {
         return models;
     }
 
-    @Override
     public List<Model> findAllByEngineType(String engineType) throws SQLException, ConnectionPoolException {
         List<Model> models = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();
@@ -139,7 +134,6 @@ public class ModelCustomRepository implements ModelRepository<Model> {
         return models;
     }
 
-    @Override
     public List<Model> findAllByCategory(String category) throws SQLException, ConnectionPoolException {
         List<Model> models = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();
@@ -155,6 +149,4 @@ public class ModelCustomRepository implements ModelRepository<Model> {
         }
         return models;
     }
-
-
 }

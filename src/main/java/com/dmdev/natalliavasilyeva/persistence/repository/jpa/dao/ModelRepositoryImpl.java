@@ -3,9 +3,9 @@ package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
-import com.dmdev.natalliavasilyeva.persistence.jpa.Model;
+import com.dmdev.natalliavasilyeva.domain.jpa.Model;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
-import com.dmdev.natalliavasilyeva.persistence.repository.ParseObjectUtils;
+import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.Repository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ModelResultExtractor;
 
@@ -14,11 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 public class ModelRepositoryImpl implements Repository<Model, Long> {
     ConnectionPool connectionPool;
     ModelResultExtractor extractor;
-
 
     public ModelRepositoryImpl(ConnectionPool connectionPool) {
         this.connectionPool = ConnectionPool.getInstance();
@@ -38,7 +36,6 @@ public class ModelRepositoryImpl implements Repository<Model, Long> {
     private final static String DELETE = "" +
             "DELETE FROM model WHERE id = ?";
 
-
     @Override
     public Optional<Model> findById(Long id) throws SQLException, ConnectionPoolException {
 
@@ -48,10 +45,13 @@ public class ModelRepositoryImpl implements Repository<Model, Long> {
                 .appendWithSingleArg("WHERE id = ?", id);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-            return Optional.ofNullable(extractor.extractData(resultSet));
+            Model model = null;
+            if (resultSet.next()) {
+                model = extractor.extractData(resultSet);
+            }
+            return Optional.ofNullable(model);
         }
     }
-
 
     @Override
     public List<Model> findAll() throws SQLException, ConnectionPoolException {
@@ -89,7 +89,11 @@ public class ModelRepositoryImpl implements Repository<Model, Long> {
         try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
-            return Optional.ofNullable(extractor.extractData(generatedKeys));
+            Model removedModel = null;
+            if (generatedKeys.next()) {
+                removedModel = extractor.extractData(generatedKeys);
+            }
+            return Optional.ofNullable(removedModel);
         }
     }
 
@@ -115,7 +119,11 @@ public class ModelRepositoryImpl implements Repository<Model, Long> {
         try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
-            return Optional.ofNullable(extractor.extractData(generatedKeys));
+            Model savedModel = null;
+            if (generatedKeys.next()) {
+                savedModel = extractor.extractData(generatedKeys);
+            }
+            return Optional.ofNullable(savedModel);
         }
     }
 }

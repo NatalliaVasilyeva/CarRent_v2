@@ -3,6 +3,7 @@ package com.dmdev.natalliavasilyeva.persistence.repository.custom.rowmapper;
 import com.dmdev.natalliavasilyeva.domain.model.Accident;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

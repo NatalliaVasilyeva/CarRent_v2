@@ -5,7 +5,7 @@ import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
 import com.dmdev.natalliavasilyeva.domain.model.Category;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
-import com.dmdev.natalliavasilyeva.persistence.repository.custom.CategoryRepository;
+import com.dmdev.natalliavasilyeva.persistence.repository.custom.GenericCustomRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.custom.rowmapper.CategoryResultExtractor;
 
 import java.math.BigDecimal;
@@ -14,10 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CategoryCustomRepository implements CategoryRepository<Category> {
+public class CategoryCustomRepository implements GenericCustomRepository<Category, Long> {
     ConnectionPool connectionPool;
     CategoryResultExtractor extractor;
-
 
     public CategoryCustomRepository(ConnectionPool connectionPool) {
         this.connectionPool = ConnectionPool.getInstance();
@@ -28,7 +27,6 @@ public class CategoryCustomRepository implements CategoryRepository<Category> {
             "SELECT c.id as category_id, c.name as category_name, p.price\n" +
                     "FROM categories c\n" +
                     "LEFT JOIN price p ON p.id = c.price_id\n";
-
 
     @Override
     public List<Category> findAll() throws SQLException, ConnectionPoolException {
@@ -61,7 +59,6 @@ public class CategoryCustomRepository implements CategoryRepository<Category> {
         }
     }
 
-    @Override
     public Optional<Category> findByName(String name) throws SQLException, ConnectionPoolException {
         var statementProvider = new BaseStatementProvider();
         statementProvider
@@ -77,7 +74,6 @@ public class CategoryCustomRepository implements CategoryRepository<Category> {
         }
     }
 
-    @Override
     public List<Category> findByPrice(String sign, BigDecimal price) throws SQLException, ConnectionPoolException {
         List<Category> categories = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();
