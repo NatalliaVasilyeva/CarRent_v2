@@ -74,7 +74,13 @@ public class BaseStatementProvider {
     }
 
     public BaseStatementProvider appendWithMultipleArgs(String query, Object... args) {
-        return append(query, Arrays.stream(args).filter(Objects::nonNull).collect(Collectors.toList()));
+        return append(query, Arrays.stream(args).collect(Collectors.toList()));
+//        return append(query, Arrays.stream(args).filter(Objects::nonNull).collect(Collectors.toList()));
+    }
+
+    public BaseStatementProvider appendWithMultipleArgs(String query, List<Object> objects) {
+        return append(query, objects);
+//        return append(query, Arrays.stream(args).filter(Objects::nonNull).collect(Collectors.toList()));
     }
 
     public BaseStatementProvider appendOptional(String query, Object arg) {
@@ -111,7 +117,7 @@ public class BaseStatementProvider {
 
     public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            return setArguments(preparedStatement, args);
+        return setArguments(preparedStatement, args);
     }
 
     public PreparedStatement createPreparedStatementWithGeneratedKeys(Connection connection) throws SQLException {
