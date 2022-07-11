@@ -17,7 +17,7 @@ public class UserRepository implements GenericRepository<User, Long> {
     ConnectionPool connectionPool;
     UserResultExtractor extractor;
 
-    public UserRepository(ConnectionPool connectionPool) {
+    public UserRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new UserResultExtractor();
     }

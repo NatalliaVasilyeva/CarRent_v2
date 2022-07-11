@@ -17,7 +17,7 @@ public class ModelCustomRepository implements GenericCustomRepository<Model, Lon
     ConnectionPool connectionPool;
     ModelResultExtractor extractor;
 
-    public ModelCustomRepository(ConnectionPool connectionPool) {
+    public ModelCustomRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new ModelResultExtractor();
     }

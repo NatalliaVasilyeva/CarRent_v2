@@ -17,7 +17,7 @@ public class BrandCustomRepository implements GenericCustomRepository<Brand, Lon
     ConnectionPool connectionPool;
     BrandResultExtractor extractor;
 
-    public BrandCustomRepository(ConnectionPool connectionPool) {
+    public BrandCustomRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new BrandResultExtractor();
     }

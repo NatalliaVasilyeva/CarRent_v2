@@ -19,7 +19,7 @@ public class AccidentCustomRepository implements GenericCustomRepository<Acciden
     ConnectionPool connectionPool;
     AccidentResultExtractor extractor;
 
-    public AccidentCustomRepository(ConnectionPool connectionPool) {
+    public AccidentCustomRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new AccidentResultExtractor();
     }

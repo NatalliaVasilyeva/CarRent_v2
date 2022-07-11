@@ -21,7 +21,7 @@ public class OrderRepository implements GenericRepository<Order, Long> {
     OrderResultExtractor extractor;
 
 
-    public OrderRepository(ConnectionPool connectionPool) {
+    public OrderRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new OrderResultExtractor();
     }

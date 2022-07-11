@@ -19,7 +19,7 @@ public class DriverLicenseRepository implements GenericRepository<DriverLicense,
     DriverLicenseResultExtractor extractor;
 
 
-    public DriverLicenseRepository(ConnectionPool connectionPool) {
+    public DriverLicenseRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new DriverLicenseResultExtractor();
     }

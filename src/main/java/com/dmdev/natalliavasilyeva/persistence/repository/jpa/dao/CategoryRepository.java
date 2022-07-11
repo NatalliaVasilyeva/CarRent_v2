@@ -19,7 +19,7 @@ public class CategoryRepository implements GenericRepository<Category, Long> {
     ConnectionPool connectionPool;
     CategoryResultExtractor extractor;
 
-    public CategoryRepository(ConnectionPool connectionPool) {
+    public CategoryRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new CategoryResultExtractor();
     }

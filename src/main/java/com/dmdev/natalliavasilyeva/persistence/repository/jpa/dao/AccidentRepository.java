@@ -20,7 +20,7 @@ public class AccidentRepository implements GenericRepository<Accident, Long> {
     AccidentResultExtractor extractor;
 
 
-    public AccidentRepository(ConnectionPool connectionPool) {
+    public AccidentRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new AccidentResultExtractor();
     }

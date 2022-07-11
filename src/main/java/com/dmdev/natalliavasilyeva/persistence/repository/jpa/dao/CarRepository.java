@@ -21,7 +21,7 @@ public class CarRepository implements GenericRepository<Car, Long> {
     CarResultExtractor extractor;
 
 
-    public CarRepository(ConnectionPool connectionPool) {
+    public CarRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new CarResultExtractor();
     }

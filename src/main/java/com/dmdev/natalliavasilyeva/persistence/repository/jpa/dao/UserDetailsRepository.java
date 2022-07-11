@@ -18,7 +18,7 @@ public class UserDetailsRepository implements GenericRepository<UserDetails, Lon
     ConnectionPool connectionPool;
     UserDetailsResultExtractor extractor;
 
-    public UserDetailsRepository(ConnectionPool connectionPool) {
+    public UserDetailsRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new UserDetailsResultExtractor();
     }

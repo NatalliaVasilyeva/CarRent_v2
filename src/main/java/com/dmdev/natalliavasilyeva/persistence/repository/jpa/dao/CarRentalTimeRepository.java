@@ -19,7 +19,7 @@ public class CarRentalTimeRepository implements GenericRepository<CarRentalTime,
     ConnectionPool connectionPool;
     CarRentalTimeResultExtractor extractor;
 
-    public CarRentalTimeRepository(ConnectionPool connectionPool) {
+    public CarRentalTimeRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new CarRentalTimeResultExtractor();
     }

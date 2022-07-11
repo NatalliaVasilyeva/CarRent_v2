@@ -18,7 +18,7 @@ public class BrandRepository implements GenericRepository<Brand, Long> {
     ConnectionPool connectionPool;
     BrandResultExtractor extractor;
 
-    public BrandRepository(ConnectionPool connectionPool) {
+    public BrandRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new BrandResultExtractor();
     }

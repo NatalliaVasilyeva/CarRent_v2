@@ -18,7 +18,7 @@ public class UserCustomRepository implements GenericCustomRepository<User, Long>
     ConnectionPool connectionPool;
     UserResultExtractor extractor;
 
-    public UserCustomRepository(ConnectionPool connectionPool) {
+    public UserCustomRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new UserResultExtractor();
     }

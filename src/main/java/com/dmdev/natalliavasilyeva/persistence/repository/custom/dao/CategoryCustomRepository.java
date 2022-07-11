@@ -18,7 +18,7 @@ public class CategoryCustomRepository implements GenericCustomRepository<Categor
     ConnectionPool connectionPool;
     CategoryResultExtractor extractor;
 
-    public CategoryCustomRepository(ConnectionPool connectionPool) {
+    public CategoryCustomRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new CategoryResultExtractor();
     }

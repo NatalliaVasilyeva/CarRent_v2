@@ -20,7 +20,7 @@ public class OrderCustomRepository implements GenericCustomRepository<Order, Lon
     ConnectionPool connectionPool;
     OrderResultExtractor extractor;
 
-    public OrderCustomRepository(ConnectionPool connectionPool) {
+    public OrderCustomRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new OrderResultExtractor();
     }

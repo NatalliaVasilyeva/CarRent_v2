@@ -18,7 +18,7 @@ public class CarCustomRepository implements GenericCustomRepository<Car, Long> {
     ConnectionPool connectionPool;
     CarResultExtractor extractor;
 
-    public CarCustomRepository(ConnectionPool connectionPool) {
+    public CarCustomRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new CarResultExtractor();
     }

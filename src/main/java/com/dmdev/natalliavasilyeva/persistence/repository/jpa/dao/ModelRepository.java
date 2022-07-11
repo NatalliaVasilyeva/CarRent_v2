@@ -18,7 +18,7 @@ public class ModelRepository implements GenericRepository<Model, Long> {
     ConnectionPool connectionPool;
     ModelResultExtractor extractor;
 
-    public ModelRepository(ConnectionPool connectionPool) {
+    public ModelRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new ModelResultExtractor();
     }

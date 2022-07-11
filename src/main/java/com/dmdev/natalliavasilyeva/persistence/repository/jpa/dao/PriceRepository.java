@@ -18,7 +18,7 @@ public class PriceRepository implements GenericRepository<Price, Long> {
     ConnectionPool connectionPool;
     PriceResultExtractor extractor;
 
-    public PriceRepository(ConnectionPool connectionPool) {
+    public PriceRepository() {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new PriceResultExtractor();
     }
