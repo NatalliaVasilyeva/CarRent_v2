@@ -1,47 +1,51 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
-
 import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
-import com.dmdev.natalliavasilyeva.domain.jpa.Order;
+import com.dmdev.natalliavasilyeva.domain.jpa.User;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
-import com.dmdev.natalliavasilyeva.persistence.repository.jpa.Repository;
-import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.OrderResultExtractor;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.UserResultExtractor;
 
 import java.sql.SQLException;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
-public class OrderRepositoryImpl implements Repository<Order, Long> {
+public class UserRepository implements GenericRepository<User, Long> {
     ConnectionPool connectionPool;
-    OrderResultExtractor extractor;
+    UserResultExtractor extractor;
 
-
-    public OrderRepositoryImpl(ConnectionPool connectionPool) {
+    public UserRepository(ConnectionPool connectionPool) {
         this.connectionPool = ConnectionPool.getInstance();
-        this.extractor = new OrderResultExtractor();
+        this.extractor = new UserResultExtractor();
     }
 
     private final static String FIND = "" +
-            "SELECT id, date, user_id, car_id, passport, insurance, order_status, sum \n" +
-            "FROM orders \n";
+            "SELECT id, login, email, role\n" +
+            "FROM users\n";
 
     private final static String CREATE = "" +
-            "INSERT INTO orders(date, user_id, car_id, passport, insurance, order_status, sum) values (?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO users(login, email, password, role) values (?, ?, ?, ?)";
 
     private final static String UPDATE = "" +
-            "UPDATE orders SET date = ?, user_id = ?, car_id = ?, passport = ?, insurance = ?, order_status = ?, sum = ? WHERE id = ?";
+            "UPDATE users SET login = ?, email = ?, password = ?, role = ? WHERE id = ?";
+
+    private final static String UPDATE_PASSWORD = "" +
+            "UPDATE users SET password = ? WHERE id = ?";
 
     private final static String DELETE = "" +
-            "DELETE FROM orders WHERE id = ?";
+            "DELETE FROM users WHERE id = ?";
 
+    private final static String EXISTS_BY_LOGIN = "" +
+            "SELECT EXISTS (SELECT * FROM users WHERE login = ?)";
+
+    private final static String EXISTS_BY_EMAIL = "" +
+            "SELECT EXISTS (SELECT * FROM users WHERE login = ?)";
 
     @Override
-    public Optional<Order> findById(Long id) throws SQLException, ConnectionPoolException {
+    public Optional<User> findById(Long id) throws SQLException, ConnectionPoolException {
 
         var statementProvider = new BaseStatementProvider();
         statementProvider
@@ -49,28 +53,28 @@ public class OrderRepositoryImpl implements Repository<Order, Long> {
                 .appendWithSingleArg("WHERE id = ?", id);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-            Order order = null;
+            User user = null;
             if (resultSet.next()) {
-                order = extractor.extractData(resultSet);
+                user = extractor.extractData(resultSet);
             }
-            return Optional.ofNullable(order);
+            return Optional.ofNullable(user);
         }
     }
 
-
     @Override
-    public List<Order> findAll() throws SQLException, ConnectionPoolException {
-        List<Order> orders = new ArrayList<>();
+    public List<User> findAll() throws SQLException, ConnectionPoolException {
+        List<User> users = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
+
             while (resultSet.next()) {
-                orders.add(extractor.extractData(resultSet));
+                users.add(extractor.extractData(resultSet));
             }
         }
-        return orders;
+        return users;
     }
 
     @Override
@@ -85,124 +89,135 @@ public class OrderRepositoryImpl implements Repository<Order, Long> {
     }
 
     @Override
-    public Optional<Order> delete(Order order) throws ConnectionPoolException, SQLException {
+    public Optional<User> delete(User user) throws ConnectionPoolException, SQLException {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .appendWithSingleArg(DELETE, order.getId())
-                .append("RETURNING id, date, user_id, car_id, passport, insurance, order_status, sum");
+                .appendWithSingleArg(DELETE, user.getId())
+                .append("RETURNING id, login, email, role");
         try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
-            Order removedOrder = null;
+            User removedUser = null;
             if (generatedKeys.next()) {
-                removedOrder = extractor.extractData(generatedKeys);
+                removedUser = extractor.extractData(generatedKeys);
             }
-            return Optional.ofNullable(removedOrder);
+            return Optional.ofNullable(removedUser);
         }
     }
 
     @Override
-    public Optional<Order> update(Order order) throws ConnectionPoolException, SQLException {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(order);
-        values.add(order.getId());
+    public Optional<User> update(User user) throws ConnectionPoolException, SQLException {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(user);
+        values.add(user.getId());
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(UPDATE, values);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            return prepareStatement.executeUpdate() == 1 ? Optional.of(order) : Optional.empty();
+            return prepareStatement.executeUpdate() == 1 ? Optional.of(user) : Optional.empty();
         }
     }
 
+    public boolean updatePassword(Long userId, String password) throws ConnectionPoolException, SQLException {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .appendWithMultipleArgs(UPDATE_PASSWORD, userId, password);
+        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
+            return prepareStatement.executeUpdate() == 1;
+        }
+    }
 
     @Override
-    public Optional<Order> save(Order order) throws ConnectionPoolException, SQLException {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(order);
+    public Optional<User> save(User user) throws ConnectionPoolException, SQLException {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(user);
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(CREATE, values);
         try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
-            Order savedOrder = null;
+            User savedUser = null;
             if (generatedKeys.next()) {
-                savedOrder = extractor.extractData(generatedKeys);
+                savedUser = extractor.extractData(generatedKeys);
             }
-            return Optional.ofNullable(savedOrder);
+            return Optional.ofNullable(savedUser);
         }
     }
 
-    public List<Order> findAllByUser(Long userId) throws SQLException, ConnectionPoolException {
-        List<Order> orders = new ArrayList<>();
+    public Optional<User> findByLoginAndPassword(String login, String password) throws SQLException, ConnectionPoolException {
+
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND)
-                .appendWithSingleArg("WHERE user_id = ?", userId);
+                .appendWithMultipleArgs("WHERE login LIKE ? AND password LIKE ?", login, password);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-            while (resultSet.next()) {
-                orders.add(extractor.extractData(resultSet));
+            User user = null;
+            if (resultSet.next()) {
+                user = extractor.extractData(resultSet);
             }
+            return Optional.ofNullable(user);
         }
-        return orders;
     }
 
-    public List<Order> findAllByCar(Long carId) throws SQLException, ConnectionPoolException {
-        List<Order> orders = new ArrayList<>();
+    public Optional<User> findByEmailAndPassword(String email, String password) throws SQLException, ConnectionPoolException {
+
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND)
-                .appendWithSingleArg("WHERE car_id = ?", carId);
+                .appendWithMultipleArgs("WHERE email LIKE ? AND password LIKE ?", email, password);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-            while (resultSet.next()) {
-                orders.add(extractor.extractData(resultSet));
+            User user = null;
+            if (resultSet.next()) {
+                user = extractor.extractData(resultSet);
             }
+            return Optional.ofNullable(user);
         }
-        return orders;
     }
 
-    public List<Order> findAllByStatus(String status) throws SQLException, ConnectionPoolException {
-        List<Order> orders = new ArrayList<>();
+    public boolean existByLogin(String login) throws SQLException, ConnectionPoolException {
+
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
-                .appendWithSingleArg("WHERE status LIKE  ?", status);
+                .appendWithSingleArg(EXISTS_BY_LOGIN, login);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-            while (resultSet.next()) {
-                orders.add(extractor.extractData(resultSet));
+            boolean result = false;
+            if (resultSet.next()) {
+                result = resultSet.getBoolean(1);
             }
+            return result;
         }
-        return orders;
     }
 
-    public List<Order> findAllBetweenDates(Instant firstDate, Instant secondDate) throws SQLException, ConnectionPoolException {
-        List<Order> orders = new ArrayList<>();
+    public boolean existByEmail(String email) throws SQLException, ConnectionPoolException {
+
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
-                .appendWithMultipleArgs("WHERE date BETWEEN ? AND ?", firstDate, secondDate);
+                .appendWithSingleArg(EXISTS_BY_EMAIL, email);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-            while (resultSet.next()) {
-                orders.add(extractor.extractData(resultSet));
+            boolean result = false;
+            if (resultSet.next()) {
+                result = resultSet.getBoolean(1);
             }
+            return result;
         }
-        return orders;
     }
 
-    public List<Order> findAllWithAccidents() throws SQLException, ConnectionPoolException {
-        List<Order> orders = new ArrayList<>();
+    public List<User> findAllByRole(String role) throws SQLException, ConnectionPoolException {
+        List<User> users = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND)
-                .append("WHERE id IN (SELECT order_id from accident)");
+                .appendWithSingleArg("WHERE role LIKE ?", role);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
+
             while (resultSet.next()) {
-                orders.add(extractor.extractData(resultSet));
+                users.add(extractor.extractData(resultSet));
             }
         }
-        return orders;
+        return users;
     }
 }

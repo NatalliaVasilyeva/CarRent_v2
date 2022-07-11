@@ -6,7 +6,7 @@ import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
 import com.dmdev.natalliavasilyeva.domain.jpa.Brand;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
-import com.dmdev.natalliavasilyeva.persistence.repository.jpa.Repository;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.BrandResultExtractor;
 
 import java.sql.SQLException;
@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BrandRepositoryImpl implements Repository<Brand, Long> {
+public class BrandRepository implements GenericRepository<Brand, Long> {
     ConnectionPool connectionPool;
     BrandResultExtractor extractor;
 
-    public BrandRepositoryImpl(ConnectionPool connectionPool) {
+    public BrandRepository(ConnectionPool connectionPool) {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new BrandResultExtractor();
     }

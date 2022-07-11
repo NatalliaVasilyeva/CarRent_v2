@@ -1,74 +1,73 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 
+
 import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
-import com.dmdev.natalliavasilyeva.domain.jpa.CarRentalTime;
+import com.dmdev.natalliavasilyeva.domain.jpa.Category;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
-import com.dmdev.natalliavasilyeva.persistence.repository.jpa.Repository;
-import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.CarRentalTimeResultExtractor;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.CategoryResultExtractor;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
-public class CarRentalTimeRepositoryImpl implements Repository<CarRentalTime, Long> {
+public class CategoryRepository implements GenericRepository<Category, Long> {
     ConnectionPool connectionPool;
-    CarRentalTimeResultExtractor extractor;
+    CategoryResultExtractor extractor;
 
-    public CarRentalTimeRepositoryImpl(ConnectionPool connectionPool) {
+    public CategoryRepository(ConnectionPool connectionPool) {
         this.connectionPool = ConnectionPool.getInstance();
-        this.extractor = new CarRentalTimeResultExtractor();
+        this.extractor = new CategoryResultExtractor();
     }
 
     private final static String FIND = "" +
-            "SELECT crt.id, crt.order_id, crt.start_rental_date, crt.end_rental_date\n" +
-            "FROM carrentaltime crt\n";
+            "SELECT id, name, price_id\n" +
+            "FROM categories\n";
 
     private final static String CREATE = "" +
-            "INSERT INTO carrentaltime(order_id, start_rental_date, end_rental_date) values (?, ?, ?)";
+            "INSERT INTO categories(name, price_id) values (?, ?)";
 
     private final static String UPDATE = "" +
-            "UPDATE carrentaltime SET order_id = ?, start_rental_date = ?, end_rental_date = ? WHERE id = ?";
+            "UPDATE categories SET name = ?, price_id = ? WHERE id = ?";
 
     private final static String DELETE = "" +
-            "DELETE FROM carrentaltime WHERE id = ?";
-
+            "DELETE FROM categories WHERE id = ?";
 
     @Override
-    public Optional<CarRentalTime> findById(Long id) throws SQLException, ConnectionPoolException {
+    public Optional<Category> findById(Long id) throws SQLException, ConnectionPoolException {
 
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND)
-                .appendWithSingleArg("WHERE crt.id = ?", id);
+                .appendWithSingleArg("WHERE id = ?", id);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-            CarRentalTime carRentalTime = null;
+            Category category = null;
             if (resultSet.next()) {
-                carRentalTime = extractor.extractData(resultSet);
+                category = extractor.extractData(resultSet);
             }
-            return Optional.ofNullable(carRentalTime);
+            return Optional.ofNullable(category);
         }
     }
 
-
     @Override
-    public List<CarRentalTime> findAll() throws SQLException, ConnectionPoolException {
-        List<CarRentalTime> carRentalTimes = new ArrayList<>();
+    public List<Category> findAll() throws SQLException, ConnectionPoolException {
+        List<Category> categories = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
+
             while (resultSet.next()) {
-                carRentalTimes.add(extractor.extractData(resultSet));
+                categories.add(extractor.extractData(resultSet));
             }
         }
-        return carRentalTimes;
+        return categories;
     }
 
     @Override
@@ -83,65 +82,80 @@ public class CarRentalTimeRepositoryImpl implements Repository<CarRentalTime, Lo
     }
 
     @Override
-    public Optional<CarRentalTime> delete(CarRentalTime carRentalTime) throws ConnectionPoolException, SQLException {
+    public Optional<Category> delete(Category category) throws ConnectionPoolException, SQLException {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .appendWithSingleArg(DELETE, carRentalTime.getId())
-                .append("RETURNING id, order_id, start_rental_date, end_rental_date");
+                .appendWithSingleArg(DELETE, category.getId())
+                .append("RETURNING id, name, price_id");
         try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
-            CarRentalTime removedCarRentalTime = null;
+            Category removedCategory = null;
             if (generatedKeys.next()) {
-                removedCarRentalTime = extractor.extractData(generatedKeys);
+                removedCategory = extractor.extractData(generatedKeys);
             }
-            return Optional.ofNullable(removedCarRentalTime);
+            return Optional.ofNullable(removedCategory);
         }
     }
 
     @Override
-    public Optional<CarRentalTime> update(CarRentalTime carRentalTime) throws ConnectionPoolException, SQLException {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(carRentalTime);
-        values.add(carRentalTime.getId());
+    public Optional<Category> update(Category category) throws ConnectionPoolException, SQLException {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(category);
+        values.add(category.getId());
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(UPDATE, values);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            return prepareStatement.executeUpdate() == 1 ? Optional.of(carRentalTime) : Optional.empty();
+            return prepareStatement.executeUpdate() == 1 ? Optional.of(category) : Optional.empty();
         }
     }
 
-
     @Override
-    public Optional<CarRentalTime> save(CarRentalTime carRentalTime) throws ConnectionPoolException, SQLException {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(carRentalTime);
+    public Optional<Category> save(Category category) throws ConnectionPoolException, SQLException {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(category);
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(CREATE, values);
         try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
-            CarRentalTime savedCarRentalTime = null;
+            Category savedCategory = null;
             if (generatedKeys.next()) {
-                savedCarRentalTime = extractor.extractData(generatedKeys);
+                savedCategory = extractor.extractData(generatedKeys);
             }
-            return Optional.ofNullable(savedCarRentalTime);
+            return Optional.ofNullable(savedCategory);
         }
     }
 
-    public Optional<CarRentalTime> findByOrderId(Long orderId) throws SQLException, ConnectionPoolException {
+    public Optional<Category> findByName(String name) throws SQLException, ConnectionPoolException {
 
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND)
-                .appendWithSingleArg("WHERE crt.order_id = ?", orderId);
+                .appendWithSingleArg("WHERE name = ?", name);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-            CarRentalTime carRentalTime = null;
+            Category category = null;
             if (resultSet.next()) {
-                carRentalTime = extractor.extractData(resultSet);
+                category = extractor.extractData(resultSet);
             }
-            return Optional.ofNullable(carRentalTime);
+            return Optional.ofNullable(category);
         }
+    }
+
+    public List<Category> findByNames(List<String> categoriesNames) throws SQLException, ConnectionPoolException {
+        List<Category> brands = new ArrayList<>();
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .append(FIND)
+                .appendWithSingleArg("WHERE name = ANY (?)", categoriesNames.toArray(new String[0]));
+        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
+            var resultSet = prepareStatement.executeQuery();
+
+            while (resultSet.next()) {
+                brands.add(extractor.extractData(resultSet));
+            }
+        }
+        return brands;
     }
 }

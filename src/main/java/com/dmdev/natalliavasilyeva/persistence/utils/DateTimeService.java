@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
-
 public final class DateTimeService {
 
     public static Instant fromStringDateToInstant(String date) {

@@ -6,7 +6,7 @@ import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
 import com.dmdev.natalliavasilyeva.domain.jpa.Car;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
-import com.dmdev.natalliavasilyeva.persistence.repository.jpa.Repository;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.CarResultExtractor;
 
 import java.sql.SQLException;
@@ -16,12 +16,12 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class CarRepositoryImpl implements Repository<Car, Long> {
+public class CarRepository implements GenericRepository<Car, Long> {
     ConnectionPool connectionPool;
     CarResultExtractor extractor;
 
 
-    public CarRepositoryImpl(ConnectionPool connectionPool) {
+    public CarRepository(ConnectionPool connectionPool) {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new CarResultExtractor();
     }

@@ -3,43 +3,42 @@ package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
-import com.dmdev.natalliavasilyeva.domain.jpa.Accident;
+import com.dmdev.natalliavasilyeva.domain.jpa.Price;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
-import com.dmdev.natalliavasilyeva.persistence.repository.jpa.Repository;
-import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.AccidentResultExtractor;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.PriceResultExtractor;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
-public class AccidentRepositoryImpl implements Repository<Accident, Long> {
+public class PriceRepository implements GenericRepository<Price, Long> {
     ConnectionPool connectionPool;
-    AccidentResultExtractor extractor;
+    PriceResultExtractor extractor;
 
-
-    public AccidentRepositoryImpl(ConnectionPool connectionPool) {
+    public PriceRepository(ConnectionPool connectionPool) {
         this.connectionPool = ConnectionPool.getInstance();
-        this.extractor = new AccidentResultExtractor();
+        this.extractor = new PriceResultExtractor();
     }
 
     private final static String FIND = "" +
-            "SELECT id, order_id, date, description, damage\n" +
-            "FROM accident\n";
+            "SELECT id, price\n" +
+            "FROM price\n";
 
     private final static String CREATE = "" +
-            "INSERT INTO accident(order_id, date, description, damage) values (?, ?, ?, ?)";
+            "INSERT INTO price(price) values (?)";
 
     private final static String UPDATE = "" +
-            "UPDATE accident SET order_id = ?, date = ?, description = ?, damage = ? WHERE id = ?";
+            "UPDATE price SET price = ? WHERE id = ?";
 
     private final static String DELETE = "" +
-            "DELETE FROM accident WHERE id = ?";
+            "DELETE FROM price WHERE id = ?";
+
 
     @Override
-    public Optional<Accident> findById(Long id) throws SQLException, ConnectionPoolException {
+    public Optional<Price> findById(Long id) throws SQLException, ConnectionPoolException {
 
         var statementProvider = new BaseStatementProvider();
         statementProvider
@@ -47,27 +46,28 @@ public class AccidentRepositoryImpl implements Repository<Accident, Long> {
                 .appendWithSingleArg("WHERE id = ?", id);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
-            Accident accident = null;
+            Price price = null;
             if (resultSet.next()) {
-                accident = extractor.extractData(resultSet);
+                price = extractor.extractData(resultSet);
             }
-            return Optional.ofNullable(accident);
+            return Optional.ofNullable(price);
         }
     }
 
     @Override
-    public List<Accident> findAll() throws SQLException, ConnectionPoolException {
-        List<Accident> accidents = new ArrayList<>();
+    public List<Price> findAll() throws SQLException, ConnectionPoolException {
+        List<Price> prices = new ArrayList<>();
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
+
             while (resultSet.next()) {
-                accidents.add(extractor.extractData(resultSet));
+                prices.add(extractor.extractData(resultSet));
             }
         }
-        return accidents;
+        return prices;
     }
 
     @Override
@@ -82,49 +82,49 @@ public class AccidentRepositoryImpl implements Repository<Accident, Long> {
     }
 
     @Override
-    public Optional<Accident> delete(Accident accident) throws ConnectionPoolException, SQLException {
+    public Optional<Price> delete(Price price) throws ConnectionPoolException, SQLException {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .appendWithSingleArg(DELETE, accident.getId())
-                .append("RETURNING id, order_id, date, description, damage");
+                .appendWithSingleArg(DELETE, price.getId())
+                .append("RETURNING id, price");
         try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
-            Accident removedAccident = null;
+            Price removedPrice = null;
             if (generatedKeys.next()) {
-                removedAccident = extractor.extractData(generatedKeys);
+                removedPrice = extractor.extractData(generatedKeys);
             }
-            return Optional.ofNullable(removedAccident);
+            return Optional.ofNullable(removedPrice);
         }
     }
 
     @Override
-    public Optional<Accident> update(Accident accident) throws ConnectionPoolException, SQLException {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(accident);
-        values.add(accident.getId());
+    public Optional<Price> update(Price price) throws ConnectionPoolException, SQLException {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(price);
+        values.add(price.getId());
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(UPDATE, values);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            return prepareStatement.executeUpdate() == 1 ? Optional.of(accident) : Optional.empty();
+            return prepareStatement.executeUpdate() == 1 ? Optional.of(price) : Optional.empty();
         }
     }
 
 
     @Override
-    public Optional<Accident> save(Accident accident) throws ConnectionPoolException, SQLException {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(accident);
+    public Optional<Price> save(Price price) throws ConnectionPoolException, SQLException {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(price);
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(CREATE, values);
         try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
-            Accident savedAccident = null;
+            Price savedPrice = null;
             if (generatedKeys.next()) {
-                savedAccident = extractor.extractData(generatedKeys);
+                savedPrice = extractor.extractData(generatedKeys);
             }
-            return Optional.ofNullable(savedAccident);
+            return Optional.ofNullable(savedPrice);
         }
     }
 }

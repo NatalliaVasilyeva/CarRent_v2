@@ -5,7 +5,7 @@ import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
 import com.dmdev.natalliavasilyeva.domain.jpa.DriverLicense;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
-import com.dmdev.natalliavasilyeva.persistence.repository.jpa.Repository;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.DriverLicenseResultExtractor;
 
 import java.sql.SQLException;
@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class DriverLicenseRepositoryImpl implements Repository<DriverLicense, Long> {
+public class DriverLicenseRepository implements GenericRepository<DriverLicense, Long> {
     ConnectionPool connectionPool;
     DriverLicenseResultExtractor extractor;
 
 
-    public DriverLicenseRepositoryImpl(ConnectionPool connectionPool) {
+    public DriverLicenseRepository(ConnectionPool connectionPool) {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new DriverLicenseResultExtractor();
     }

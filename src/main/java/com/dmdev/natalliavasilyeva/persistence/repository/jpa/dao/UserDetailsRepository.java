@@ -5,7 +5,7 @@ import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
 import com.dmdev.natalliavasilyeva.domain.jpa.UserDetails;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
-import com.dmdev.natalliavasilyeva.persistence.repository.jpa.Repository;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.UserDetailsResultExtractor;
 
 import java.sql.SQLException;
@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserDetailsRepositoryImpl implements Repository<UserDetails, Long> {
+public class UserDetailsRepository implements GenericRepository<UserDetails, Long> {
     ConnectionPool connectionPool;
     UserDetailsResultExtractor extractor;
 
-    public UserDetailsRepositoryImpl(ConnectionPool connectionPool) {
+    public UserDetailsRepository(ConnectionPool connectionPool) {
         this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new UserDetailsResultExtractor();
     }
