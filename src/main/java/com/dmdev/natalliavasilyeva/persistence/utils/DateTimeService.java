@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 
 public final class DateTimeService {
 
+    private DateTimeService() {
+    }
+
     public static Instant fromStringDateToInstant(String date) {
         if (date == null) {
             return null;
