@@ -1,161 +1,120 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 
-
-import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
-import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
 import com.dmdev.natalliavasilyeva.domain.jpa.Category;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ResultSetExtractor;
 import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.CategoryResultExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CategoryRepository implements GenericRepository<Category, Long> {
-    ConnectionPool connectionPool;
-    CategoryResultExtractor extractor;
+public class CategoryRepository extends AbstractRepository<Category> implements GenericRepository<Category, Long> {
+
+    private static final Logger logger = LoggerFactory.getLogger(CategoryRepository.class);
+    ResultSetExtractor<Category> extractor;
 
     public CategoryRepository() {
-        this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new CategoryResultExtractor();
     }
 
-    private final static String FIND = "" +
+    private static final String FIND_QUERY_PREFIX = "" +
             "SELECT id, name, price_id\n" +
             "FROM categories\n";
 
-    private final static String CREATE = "" +
+    private static final String CREATE = "" +
             "INSERT INTO categories(name, price_id) values (?, ?)";
 
-    private final static String UPDATE = "" +
+    private static final String UPDATE = "" +
             "UPDATE categories SET name = ?, price_id = ? WHERE id = ?";
 
-    private final static String DELETE = "" +
+    private static final String DELETE = "" +
             "DELETE FROM categories WHERE id = ?";
 
-    @Override
-    public Optional<Category> findById(Long id) throws SQLException, ConnectionPoolException {
+    private static final String EXISTS_BY_NAME = "" +
+            "SELECT EXISTS (SELECT * FROM categories WHERE name = ?)";
 
+    private static final String RETURNING = "" +
+            "RETURNING id, name, price_id";
+
+    @Override
+    public Optional<Category> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE id = ?", id);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            Category category = null;
-            if (resultSet.next()) {
-                category = extractor.extractData(resultSet);
-            }
-            return Optional.ofNullable(category);
-        }
+        return findOne(statementProvider, extractor);
     }
 
     @Override
-    public List<Category> findAll() throws SQLException, ConnectionPoolException {
-        List<Category> categories = new ArrayList<>();
+    public List<Category> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-
-            while (resultSet.next()) {
-                categories.add(extractor.extractData(resultSet));
-            }
-        }
-        return categories;
+                .append(FIND_QUERY_PREFIX);
+        return findAll(statementProvider, extractor);
     }
 
     @Override
-    public boolean deleteById(Long id) throws SQLException, ConnectionPoolException {
+    public boolean deleteById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(DELETE, id);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeUpdate();
-            return resultSet > 0;
-        }
+        return deleteById(statementProvider);
     }
 
     @Override
-    public Optional<Category> delete(Category category) throws ConnectionPoolException, SQLException {
+    public Optional<Category> delete(Category category) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(DELETE, category.getId())
-                .append("RETURNING id, name, price_id");
-        try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
-            prepareStatement.executeUpdate();
-            var generatedKeys = prepareStatement.getGeneratedKeys();
-            Category removedCategory = null;
-            if (generatedKeys.next()) {
-                removedCategory = extractor.extractData(generatedKeys);
-            }
-            return Optional.ofNullable(removedCategory);
-        }
+                .append(RETURNING);
+        return delete(statementProvider, extractor);
     }
 
     @Override
-    public Optional<Category> update(Category category) throws ConnectionPoolException, SQLException {
+    public Optional<Category> update(Category category) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(category);
         values.add(category.getId());
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(UPDATE, values);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            return prepareStatement.executeUpdate() == 1 ? Optional.of(category) : Optional.empty();
-        }
+        return update(category, statementProvider);
     }
 
     @Override
-    public Optional<Category> save(Category category) throws ConnectionPoolException, SQLException {
+    public Optional<Category> save(Category category) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(category);
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .appendWithMultipleArgs(CREATE, values);
-        try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
-            prepareStatement.executeUpdate();
-            var generatedKeys = prepareStatement.getGeneratedKeys();
-            Category savedCategory = null;
-            if (generatedKeys.next()) {
-                savedCategory = extractor.extractData(generatedKeys);
-            }
-            return Optional.ofNullable(savedCategory);
-        }
+                .appendWithMultipleArgs(CREATE, values)
+                .append(RETURNING);
+        return save(statementProvider, extractor);
     }
 
-    public Optional<Category> findByName(String name) throws SQLException, ConnectionPoolException {
-
+    public Optional<Category> findByName(String name) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
-                .appendWithSingleArg("WHERE name = ?", name);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            Category category = null;
-            if (resultSet.next()) {
-                category = extractor.extractData(resultSet);
-            }
-            return Optional.ofNullable(category);
-        }
+                .append(FIND_QUERY_PREFIX)
+                .appendWithSingleArg("WHERE name LIKE ?", name);
+        return findOne(statementProvider, extractor);
     }
 
-    public List<Category> findByNames(List<String> categoriesNames) throws SQLException, ConnectionPoolException {
-        List<Category> brands = new ArrayList<>();
+    public List<Category> findByNames(List<String> categoriesNames) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE name = ANY (?)", categoriesNames.toArray(new String[0]));
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
+        return findAll(statementProvider, extractor);
+    }
 
-            while (resultSet.next()) {
-                brands.add(extractor.extractData(resultSet));
-            }
-        }
-        return brands;
+    public boolean existByName(String name) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .appendWithSingleArg(EXISTS_BY_NAME, name);
+        return exist(statementProvider);
     }
 }

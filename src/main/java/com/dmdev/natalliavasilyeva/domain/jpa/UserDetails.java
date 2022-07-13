@@ -17,7 +17,14 @@ public class UserDetails implements Entity, Serializable {
     public UserDetails() {
     }
 
-    private UserDetails(long id, long userId, String name, String surname, String address, String phone, Instant birthday, Instant registrationDate) {
+    private UserDetails(long id,
+                        long userId,
+                        String name,
+                        String surname,
+                        String address,
+                        String phone,
+                        Instant birthday,
+                        Instant registrationDate) {
         this.id = id;
         this.userId = userId;
         this.name = name;

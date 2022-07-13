@@ -14,6 +14,7 @@ public class UserLogin implements Identifiable {
 
     private UserLogin(String email, String login, String password) {
         this.email = email;
+        this.login = login;
         this.password = password;
     }
 
@@ -58,7 +59,7 @@ public class UserLogin implements Identifiable {
         private String password;
 
         public Builder() {
-
+                //default
         }
 
         public Builder email(String email) {

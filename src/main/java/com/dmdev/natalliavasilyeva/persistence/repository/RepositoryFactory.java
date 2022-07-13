@@ -35,48 +35,47 @@ public class RepositoryFactory {
     private UserDetailsRepository userDetailsRepository;
     private UserRepository userRepository;
 
-
     public AccidentRepository getAccidentRepository() {
-        return accidentRepository != null ? accidentRepository : (accidentRepository = new AccidentRepository());
+        return accidentRepository != null ? accidentRepository : new AccidentRepository();
     }
 
     public BrandRepository getBrandRepository() {
-        return brandRepository != null ? brandRepository : (brandRepository = new BrandRepository());
+        return brandRepository != null ? brandRepository : new BrandRepository();
     }
 
     public CarRentalTimeRepository getCarRentalTimeRepository() {
-        return carRentalTimeRepository != null ? carRentalTimeRepository : (carRentalTimeRepository = new CarRentalTimeRepository());
+        return carRentalTimeRepository != null ? carRentalTimeRepository : new CarRentalTimeRepository();
     }
 
     public CarRepository getCarRepository() {
-        return carRepository != null ? carRepository : (carRepository = new CarRepository());
+        return carRepository != null ? carRepository : new CarRepository();
     }
 
     public CategoryRepository getCategoryRepository() {
-        return categoryRepository != null ? categoryRepository : (categoryRepository = new CategoryRepository());
+        return categoryRepository != null ? categoryRepository : new CategoryRepository();
     }
 
     public DriverLicenseRepository getDriverLicenseRepository() {
-        return driverLicenseRepository != null ? driverLicenseRepository : (driverLicenseRepository = new DriverLicenseRepository());
+        return driverLicenseRepository != null ? driverLicenseRepository : new DriverLicenseRepository();
     }
 
     public ModelRepository getModelRepository() {
-        return modelRepository != null ? modelRepository : (modelRepository = new ModelRepository());
+        return modelRepository != null ? modelRepository : new ModelRepository();
     }
 
     public OrderRepository getOrderRepository() {
-        return orderRepository != null ? orderRepository : (orderRepository = new OrderRepository());
+        return orderRepository != null ? orderRepository : new OrderRepository();
     }
 
     public PriceRepository getPriceRepository() {
-        return priceRepository != null ? priceRepository : (priceRepository = new PriceRepository());
+        return priceRepository != null ? priceRepository : new PriceRepository();
     }
 
     public UserDetailsRepository getUserDetailsRepository() {
-        return userDetailsRepository != null ? userDetailsRepository : (userDetailsRepository = new UserDetailsRepository());
+        return userDetailsRepository != null ? userDetailsRepository : new UserDetailsRepository();
     }
 
     public UserRepository getUserRepository() {
-        return userRepository != null ? userRepository : (userRepository = new UserRepository());
+        return userRepository != null ? userRepository : new UserRepository();
     }
 }

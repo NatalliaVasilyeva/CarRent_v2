@@ -30,30 +30,30 @@ public class RepositoryCustomFactory {
 
 
     public AccidentCustomRepository getAccidentCustomRepository() {
-        return accidentCustomRepository != null ? accidentCustomRepository : (accidentCustomRepository = new AccidentCustomRepository());
+        return accidentCustomRepository != null ? accidentCustomRepository : new AccidentCustomRepository();
     }
 
     public BrandCustomRepository getBrandCustomRepository() {
-        return brandCustomRepository != null ? brandCustomRepository : (brandCustomRepository = new BrandCustomRepository());
+        return brandCustomRepository != null ? brandCustomRepository : new BrandCustomRepository();
     }
 
     public CarCustomRepository getCarCustomRepository() {
-        return carCustomRepository != null ? carCustomRepository : (carCustomRepository = new CarCustomRepository());
+        return carCustomRepository != null ? carCustomRepository : new CarCustomRepository();
     }
 
     public CategoryCustomRepository getCategoryCustomRepository() {
-        return categoryCustomRepository != null ? categoryCustomRepository : (categoryCustomRepository = new CategoryCustomRepository());
+        return categoryCustomRepository != null ? categoryCustomRepository : new CategoryCustomRepository();
     }
 
     public ModelCustomRepository getModelCustomRepository() {
-        return modelCustomRepository != null ? modelCustomRepository : (modelCustomRepository = new ModelCustomRepository());
+        return modelCustomRepository != null ? modelCustomRepository : new ModelCustomRepository();
     }
 
     public OrderCustomRepository getOrderCustomRepository() {
-        return orderCustomRepository != null ? orderCustomRepository : (orderCustomRepository = new OrderCustomRepository());
+        return orderCustomRepository != null ? orderCustomRepository : new OrderCustomRepository();
     }
 
     public UserCustomRepository getUserCustomRepository() {
-        return userCustomRepository != null ? userCustomRepository : (userCustomRepository = new UserCustomRepository());
+        return userCustomRepository != null ? userCustomRepository : new UserCustomRepository();
     }
 }

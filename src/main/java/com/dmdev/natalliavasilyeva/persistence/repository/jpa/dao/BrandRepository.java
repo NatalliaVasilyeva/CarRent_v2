@@ -1,161 +1,120 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 
-import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
-import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
 import com.dmdev.natalliavasilyeva.domain.jpa.Brand;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ResultSetExtractor;
 import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.BrandResultExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BrandRepository implements GenericRepository<Brand, Long> {
-    ConnectionPool connectionPool;
-    BrandResultExtractor extractor;
+public class BrandRepository extends AbstractRepository<Brand> implements GenericRepository<Brand, Long> {
+
+    private static final Logger logger = LoggerFactory.getLogger(BrandRepository.class);
+    ResultSetExtractor<Brand> extractor;
 
     public BrandRepository() {
-        this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new BrandResultExtractor();
     }
 
-    private final static String FIND = "" +
+    private static final String FIND_QUERY_PREFIX = "" +
             "SELECT id, name\n" +
             "FROM brand\n";
 
-    private final static String CREATE = "" +
+    private static final String CREATE = "" +
             "INSERT INTO brand(name) values (?)";
 
-    private final static String UPDATE = "" +
+    private static final String UPDATE = "" +
             "UPDATE brand SET name = ? WHERE id = ?";
 
-    private final static String DELETE = "" +
+    private static final String DELETE = "" +
             "DELETE FROM brand WHERE id = ?";
 
+    private static final String EXISTS_BY_NAME = "" +
+            "SELECT EXISTS (SELECT * FROM brand WHERE name = ?)";
+
+    private static final String RETURNING = "" +
+            "RETURNING id, name";
 
     @Override
-    public Optional<Brand> findById(Long id) throws SQLException, ConnectionPoolException {
-
+    public Optional<Brand> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE id = ?", id);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            Brand brand = null;
-            if (resultSet.next()) {
-                brand = extractor.extractData(resultSet);
-            }
-            return Optional.ofNullable(brand);
-        }
+        return findOne(statementProvider, extractor);
     }
 
-
     @Override
-    public List<Brand> findAll() throws SQLException, ConnectionPoolException {
-        List<Brand> brands = new ArrayList<>();
+    public List<Brand> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            while (resultSet.next()) {
-                brands.add(extractor.extractData(resultSet));
-            }
-        }
-        return brands;
+                .append(FIND_QUERY_PREFIX);
+        return findAll(statementProvider, extractor);
     }
 
     @Override
-    public boolean deleteById(Long id) throws SQLException, ConnectionPoolException {
+    public boolean deleteById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(DELETE, id);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeUpdate();
-            return resultSet > 0;
-        }
+        return deleteById(statementProvider);
     }
 
     @Override
-    public Optional<Brand> delete(Brand brand) throws ConnectionPoolException, SQLException {
+    public Optional<Brand> delete(Brand brand) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(DELETE, brand.getId())
-                .append("RETURNING id, name");
-        try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
-            prepareStatement.executeUpdate();
-            var generatedKeys = prepareStatement.getGeneratedKeys();
-            Brand removedBrand = null;
-            if (generatedKeys.next()) {
-                removedBrand = extractor.extractData(generatedKeys);
-            }
-            return Optional.ofNullable(removedBrand);
-        }
+                .append(RETURNING);
+        return delete(statementProvider, extractor);
     }
 
     @Override
-    public Optional<Brand> update(Brand brand) throws ConnectionPoolException, SQLException {
+    public Optional<Brand> update(Brand brand) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(brand);
         values.add(brand.getId());
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(UPDATE, values);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            return prepareStatement.executeUpdate() == 1 ? Optional.of(brand) : Optional.empty();
-        }
+        return update(brand, statementProvider);
     }
 
-
     @Override
-    public Optional<Brand> save(Brand brand) throws ConnectionPoolException, SQLException {
+    public Optional<Brand> save(Brand brand) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(brand);
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .appendWithMultipleArgs(CREATE, values);
-        try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
-            prepareStatement.executeUpdate();
-            var generatedKeys = prepareStatement.getGeneratedKeys();
-            Brand savedBrand = null;
-            if (generatedKeys.next()) {
-                savedBrand = extractor.extractData(generatedKeys);
-            }
-            return Optional.ofNullable(savedBrand);
-        }
+                .appendWithMultipleArgs(CREATE, values)
+                .append(RETURNING);
+        return save(statementProvider, extractor);
     }
 
-    public Optional<Brand> findByName(String name) throws SQLException, ConnectionPoolException {
-
+    public Optional<Brand> findByName(String name) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE name = ?", name);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            Brand brand = null;
-            if (resultSet.next()) {
-                brand = extractor.extractData(resultSet);
-            }
-            return Optional.ofNullable(brand);
-        }
+        return findOne(statementProvider, extractor);
     }
 
-    public List<Brand> findByNames(List<String> brandNames) throws SQLException, ConnectionPoolException {
-        List<Brand> brands = new ArrayList<>();
+    public List<Brand> findByNames(List<String> brandNames) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE name = ANY (?)", brandNames.toArray(new String[0]));
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            while (resultSet.next()) {
-                brands.add(extractor.extractData(resultSet));
-            }
-        }
-        return brands;
+        return findAll(statementProvider, extractor);
+    }
+
+    public boolean existByName(String name) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .appendWithSingleArg(EXISTS_BY_NAME, name);
+        return exist(statementProvider);
     }
 }

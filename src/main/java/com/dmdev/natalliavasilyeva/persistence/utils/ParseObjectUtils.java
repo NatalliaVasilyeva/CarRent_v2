@@ -17,9 +17,10 @@ public final class ParseObjectUtils {
         Arrays.stream(fields).forEach(field -> {
             if (!field.getName().equals("id")) {
                 try {
+                    field.setAccessible(true);
                     values.add(field.get(o));
                 } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException(String.format("Wrong attempt to get object fields %s", e.getCause()), e);
                 }
             }
         });

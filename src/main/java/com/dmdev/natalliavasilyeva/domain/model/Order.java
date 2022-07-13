@@ -22,7 +22,16 @@ public class Order implements Identifiable {
     public Order() {
     }
 
-    private Order(Long id, Instant date, CarRentalTime carRentalTime, Car car, User user, String passport, boolean isInsuranceNeeded, OrderStatus orderStatus, BigDecimal sum, boolean withAccident) {
+    private Order(Long id,
+                  Instant date,
+                  CarRentalTime carRentalTime,
+                  Car car,
+                  User user,
+                  String passport,
+                  boolean isInsuranceNeeded,
+                  OrderStatus orderStatus,
+                  BigDecimal sum,
+                  boolean withAccident) {
         this.id = id;
         this.date = date;
         this.carRentalTime = carRentalTime;

@@ -1,207 +1,132 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
-import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
-import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
 import com.dmdev.natalliavasilyeva.domain.jpa.UserDetails;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.UserDetailsResultExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserDetailsRepository implements GenericRepository<UserDetails, Long> {
-    ConnectionPool connectionPool;
+public class UserDetailsRepository extends AbstractRepository<UserDetails> implements GenericRepository<UserDetails, Long> {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserDetailsRepository.class);
     UserDetailsResultExtractor extractor;
 
     public UserDetailsRepository() {
-        this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new UserDetailsResultExtractor();
     }
-    private final static String FIND = "" +
+    private static final String FIND_QUERY_PREFIX = "" +
             "SELECT id, user_id, name, surname, address, phone, birthday, registration_date\n" +
             "FROM userdetails\n";
 
-    private final static String CREATE = "" +
+    private static final String CREATE = "" +
             "INSERT INTO userdetails(user_id, name, surname, address, phone, birthday, registration_date) values (?, ?, ?, ?, ?, ?, ?)";
 
-    private final static String UPDATE = "" +
+    private static final String UPDATE = "" +
             "UPDATE userdetails SET user_id = ?, name = ?, surname = ?, address = ?, phone = ?, birthday = ? WHERE id = ?";
 
-    private final static String DELETE = "" +
+    private static final String DELETE = "" +
             "DELETE FROM userdetails WHERE id = ?";
 
-    @Override
-    public Optional<UserDetails> findById(Long id) throws SQLException, ConnectionPoolException {
+    private static final String RETURNING = "" +
+            "RETURNING id, user_id, name, surname, address, phone, birthday, registration_date";
 
+    @Override
+    public Optional<UserDetails> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE id = ?", id);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            UserDetails userDetails = null;
-            if (resultSet.next()) {
-                userDetails = extractor.extractData(resultSet);
-            }
-            return Optional.ofNullable(userDetails);
-        }
+        return findOne(statementProvider, extractor);
     }
 
     @Override
-    public List<UserDetails> findAll() throws SQLException, ConnectionPoolException {
-        List<UserDetails> userDetails = new ArrayList<>();
+    public List<UserDetails> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-
-            while (resultSet.next()) {
-                userDetails.add(extractor.extractData(resultSet));
-            }
-        }
-        return userDetails;
+                .append(FIND_QUERY_PREFIX);
+        return findAll(statementProvider, extractor);
     }
 
     @Override
-    public boolean deleteById(Long id) throws SQLException, ConnectionPoolException {
+    public boolean deleteById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(DELETE, id);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeUpdate();
-            return resultSet > 0;
-        }
+        return deleteById(statementProvider);
     }
 
     @Override
-    public Optional<UserDetails> delete(UserDetails userDetails) throws ConnectionPoolException, SQLException {
+    public Optional<UserDetails> delete(UserDetails userDetails) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(DELETE, userDetails.getId())
-                .append("RETURNING id, user_id, name, surname, address, phone, birthday, registration_date");
-        try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
-            prepareStatement.executeUpdate();
-            var generatedKeys = prepareStatement.getGeneratedKeys();
-            UserDetails removedUserDetails = null;
-            if (generatedKeys.next()) {
-                removedUserDetails = extractor.extractData(generatedKeys);
-            }
-            return Optional.ofNullable(removedUserDetails);
-        }
+                .append(RETURNING);
+        return delete(statementProvider, extractor);
     }
 
     @Override
-    public Optional<UserDetails> update(UserDetails userDetails) throws ConnectionPoolException, SQLException {
+    public Optional<UserDetails> update(UserDetails userDetails) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(userDetails);
         values.add(userDetails.getId());
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(UPDATE, values);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            return prepareStatement.executeUpdate() == 1 ? Optional.of(userDetails) : Optional.empty();
-        }
+        return update(userDetails, statementProvider);
     }
 
     @Override
-    public Optional<UserDetails> save(UserDetails userDetails) throws ConnectionPoolException, SQLException {
+    public Optional<UserDetails> save(UserDetails userDetails) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(userDetails);
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .appendWithMultipleArgs(CREATE, values);
-        try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
-            prepareStatement.executeUpdate();
-            var generatedKeys = prepareStatement.getGeneratedKeys();
-            UserDetails savedUserDetails = null;
-            if (generatedKeys.next()) {
-                savedUserDetails = extractor.extractData(generatedKeys);
-            }
-            return Optional.ofNullable(savedUserDetails);
-        }
+                .appendWithMultipleArgs(CREATE, values)
+                .append(RETURNING);
+        return save(statementProvider, extractor);
     }
 
-    public Optional<UserDetails> findByUserId(Long userId) throws SQLException, ConnectionPoolException {
-
+    public Optional<UserDetails> findByUserId(Long userId) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE user_id = ?", userId);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            UserDetails userDetails = null;
-            if (resultSet.next()) {
-                userDetails = extractor.extractData(resultSet);
-            }
-            return Optional.ofNullable(userDetails);
-        }
+        return findOne(statementProvider, extractor);
     }
 
-    public List<UserDetails> findAllByRegistrationDate(Instant registrationDate) throws SQLException, ConnectionPoolException {
-        List<UserDetails> userDetails = new ArrayList<>();
+    public List<UserDetails> findAllByRegistrationDate(Instant registrationDate) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE registration_date = ?", registrationDate);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-
-            while (resultSet.next()) {
-                userDetails.add(extractor.extractData(resultSet));
-            }
-        }
-        return userDetails;
+        return findAll(statementProvider, extractor);
     }
 
-    public List<UserDetails> findAllByRegistrationDateLess(Instant registrationDate) throws SQLException, ConnectionPoolException {
-        List<UserDetails> userDetails = new ArrayList<>();
+    public List<UserDetails> findAllByRegistrationDateLess(Instant registrationDate) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE registration_date < ?", registrationDate);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-
-            while (resultSet.next()) {
-                userDetails.add(extractor.extractData(resultSet));
-            }
-        }
-        return userDetails;
+        return findAll(statementProvider, extractor);
     }
 
-    public List<UserDetails> findAllByRegistrationDateMore(Instant registrationDate) throws SQLException, ConnectionPoolException {
-        List<UserDetails> userDetails = new ArrayList<>();
+    public List<UserDetails> findAllByRegistrationDateMore(Instant registrationDate) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE registration_date > ?", registrationDate);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-
-            while (resultSet.next()) {
-                userDetails.add(extractor.extractData(resultSet));
-            }
-        }
-        return userDetails;
+        return findAll(statementProvider, extractor);
     }
 
-    public List<UserDetails> findAllByRegistrationDates(Instant from, Instant to) throws SQLException, ConnectionPoolException {
-        List<UserDetails> userDetails = new ArrayList<>();
+    public List<UserDetails> findAllByRegistrationDates(Instant from, Instant to) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithMultipleArgs("WHERE registration_date BETWEEN ? AND ?", from, to);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-
-            while (resultSet.next()) {
-                userDetails.add(extractor.extractData(resultSet));
-            }
-        }
-        return userDetails;
+        return findAll(statementProvider, extractor);
     }
 }

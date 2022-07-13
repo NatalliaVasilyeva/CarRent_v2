@@ -21,7 +21,14 @@ public class Order implements Entity, Serializable {
     public Order() {
     }
 
-    private Order(long id, Instant date, long userId, long carId,String passport, boolean isInsuranceNeeded, OrderStatus orderStatus, BigDecimal sum) {
+    private Order(long id,
+                  Instant date,
+                  long userId,
+                  long carId,
+                  String passport,
+                  boolean isInsuranceNeeded,
+                  OrderStatus orderStatus,
+                  BigDecimal sum) {
         this.id = id;
         this.date = date;
         this.userId = userId;

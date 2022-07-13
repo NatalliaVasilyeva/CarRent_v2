@@ -1,31 +1,28 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.custom.dao;
 
 
-import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
-import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
 import com.dmdev.natalliavasilyeva.domain.model.Order;
-import com.dmdev.natalliavasilyeva.domain.model.User;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.repository.custom.GenericCustomRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.custom.rowmapper.OrderResultExtractor;
-import com.dmdev.natalliavasilyeva.persistence.repository.custom.rowmapper.UserResultExtractor;
+import com.dmdev.natalliavasilyeva.persistence.repository.custom.rowmapper.ResultSetExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class OrderCustomRepository implements GenericCustomRepository<Order, Long> {
-    ConnectionPool connectionPool;
-    OrderResultExtractor extractor;
+public class OrderCustomRepository extends AbstractCustomRepository<Order> implements GenericCustomRepository<Order, Long> {
+
+    private static final Logger logger = LoggerFactory.getLogger(OrderCustomRepository.class);
+    ResultSetExtractor<Order> extractor;
 
     public OrderCustomRepository() {
-        this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new OrderResultExtractor();
     }
 
-    private final static String FIND= "" +
+    private static final String FIND_QUERY_PREFIX = "" +
             "SELECT o.id                             as order_id,\n" +
             "       o.date,\n" +
             "       o.insurance,\n" +
@@ -49,123 +46,67 @@ public class OrderCustomRepository implements GenericCustomRepository<Order, Lon
             "       LEFT JOIN brand b ON b.id = m.brand_id\n";
 
     @Override
-    public List<Order> findAll() throws SQLException, ConnectionPoolException {
-        List<Order> orders = new ArrayList<>();
+    public List<Order> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            while (resultSet.next()) {
-                orders.add(extractor.extractData(resultSet));
-            }
-        }
-        return orders;
+                .append(FIND_QUERY_PREFIX);
+        return findAll(statementProvider, extractor);
     }
 
     @Override
-    public Optional<Order> findById(Long id) throws SQLException, ConnectionPoolException {
+    public Optional<Order> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE o.id = ?", id);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            Order order = null;
-            if (resultSet.next()) {
-                order = extractor.extractData(resultSet);
-            }
-            return Optional.ofNullable(order);
-        }
+        return findOne(statementProvider, extractor);
     }
 
-    public List<Order> findAllByUser(Long userId) throws SQLException, ConnectionPoolException {
-        List<Order> orders = new ArrayList<>();
+    public List<Order> findAllByUser(Long userId) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE u.id = ?", userId);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            while (resultSet.next()) {
-                orders.add(extractor.extractData(resultSet));
-            }
-        }
-        return orders;
+        return findAll(statementProvider, extractor);
     }
 
-    public List<Order> findAllByCar(Long carId) throws SQLException, ConnectionPoolException {
-        List<Order> orders = new ArrayList<>();
+    public List<Order> findAllByCar(Long carId) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE c.id = ?", carId);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            while (resultSet.next()) {
-                orders.add(extractor.extractData(resultSet));
-            }
-        }
-        return orders;
+        return findAll(statementProvider, extractor);
     }
 
-    public List<Order> findAllByStatus(String orderStatus) throws SQLException, ConnectionPoolException {
-        List<Order> orders = new ArrayList<>();
+    public List<Order> findAllByStatus(String orderStatus) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE o.order_status = ?", orderStatus);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            while (resultSet.next()) {
-                orders.add(extractor.extractData(resultSet));
-            }
-        }
-        return orders;
+        return findAll(statementProvider, extractor);
     }
 
-    public List<Order> findAllBetweenDates(Instant first, Instant second) throws SQLException, ConnectionPoolException {
-        List<Order> orders = new ArrayList<>();
+    public List<Order> findAllBetweenDates(Instant first, Instant second) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithMultipleArgs("WHERE o.date BETWEEN ? AND ?", first, second);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            while (resultSet.next()) {
-                orders.add(extractor.extractData(resultSet));
-            }
-        }
-        return orders;
+        return findAll(statementProvider, extractor);
     }
 
-    public List<Order> findAllByDate(Instant date) throws SQLException, ConnectionPoolException {
-        List<Order> orders = new ArrayList<>();
+    public List<Order> findAllByDate(Instant date) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE o.date = ?", date);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            while (resultSet.next()) {
-                orders.add(extractor.extractData(resultSet));
-            }
-        }
-        return orders;
+        return findAll(statementProvider, extractor);
     }
 
-    public List<Order> findAllWithAccidents() throws SQLException, ConnectionPoolException {
-        List<Order> orders = new ArrayList<>();
+    public List<Order> findAllWithAccidents() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .append("WHERE CASE WHEN o.id IN (SELECT order_id FROM accident) THEN true ELSE false END = true");
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            while (resultSet.next()) {
-                orders.add(extractor.extractData(resultSet));
-            }
-        }
-        return orders;
+        return findAll(statementProvider, extractor);
     }
 }

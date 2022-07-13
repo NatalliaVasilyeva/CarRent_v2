@@ -1,180 +1,120 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
-import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
-import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
 import com.dmdev.natalliavasilyeva.domain.jpa.DriverLicense;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ResultSetExtractor;
 import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.DriverLicenseResultExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class DriverLicenseRepository implements GenericRepository<DriverLicense, Long> {
-    ConnectionPool connectionPool;
-    DriverLicenseResultExtractor extractor;
+public class DriverLicenseRepository extends AbstractRepository<DriverLicense> implements GenericRepository<DriverLicense, Long> {
 
+    private static final Logger logger = LoggerFactory.getLogger(DriverLicenseRepository.class);
+    ResultSetExtractor<DriverLicense> extractor;
 
     public DriverLicenseRepository() {
-        this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new DriverLicenseResultExtractor();
     }
 
-    private final static String FIND = "" +
+    private static final String FIND_QUERY_PREFIX = "" +
             "SELECT id, user_details_id, number, issue_date, expired_date\n" +
             "FROM driverlicense\n";
 
-    private final static String CREATE = "" +
+    private static final String CREATE = "" +
             "INSERT INTO driverlicense(user_details_id, number, issue_date, expired_date) values (?, ?, ?, ?)";
 
-    private final static String UPDATE = "" +
-            "UPDATE driverlicense SET number = ?, issue_date = ?, expired_date = ? WHERE id = ?";
+    private static final String UPDATE = "" +
+            "UPDATE driverlicense SET user_details_id = ?, number = ?, issue_date = ?, expired_date = ? WHERE id = ?";
 
-    private final static String DELETE = "" +
+    private static final String DELETE = "" +
             "DELETE FROM driverlicense WHERE id = ?";
 
+    private static final String RETURNING = "" +
+            "RETURNING id, user_details_id, number, issue_date, expired_date";
+
 
     @Override
-    public Optional<DriverLicense> findById(Long id) throws SQLException, ConnectionPoolException {
-
+    public Optional<DriverLicense> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE id = ?", id);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            DriverLicense driverLicense = null;
-            if (resultSet.next()) {
-                driverLicense = extractor.extractData(resultSet);
-            }
-            return Optional.ofNullable(driverLicense);
-        }
+        return findOne(statementProvider, extractor);
     }
 
-
     @Override
-    public List<DriverLicense> findAll() throws SQLException, ConnectionPoolException {
-        List<DriverLicense> driverLicenses = new ArrayList<>();
+    public List<DriverLicense> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-
-            while (resultSet.next()) {
-                driverLicenses.add(extractor.extractData(resultSet));
-            }
-        }
-        return driverLicenses;
+                .append(FIND_QUERY_PREFIX);
+        return findAll(statementProvider, extractor);
     }
 
     @Override
-    public boolean deleteById(Long id) throws SQLException, ConnectionPoolException {
+    public boolean deleteById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(DELETE, id);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeUpdate();
-            return resultSet > 0;
-        }
+        return deleteById(statementProvider);
     }
 
     @Override
-    public Optional<DriverLicense> delete(DriverLicense driverLicense) throws ConnectionPoolException, SQLException {
+    public Optional<DriverLicense> delete(DriverLicense driverLicense) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(DELETE, driverLicense.getId())
-                .append("RETURNING id, user_details_id, number, issue_date, expired_date");
-        try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
-            prepareStatement.executeUpdate();
-            var generatedKeys = prepareStatement.getGeneratedKeys();
-            DriverLicense removedDriverLicense = null;
-            if (generatedKeys.next()) {
-                removedDriverLicense = extractor.extractData(generatedKeys);
-            }
-            return Optional.ofNullable(removedDriverLicense);
-        }
+                .append(RETURNING);
+        return delete(statementProvider, extractor);
     }
 
     @Override
-    public Optional<DriverLicense> update(DriverLicense driverLicense) throws ConnectionPoolException, SQLException {
+    public Optional<DriverLicense> update(DriverLicense driverLicense) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(driverLicense);
         values.add(driverLicense.getId());
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(UPDATE, values);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            return prepareStatement.executeUpdate() == 1 ? Optional.of(driverLicense) : Optional.empty();
-        }
+        return update(driverLicense, statementProvider);
     }
 
     @Override
-    public Optional<DriverLicense> save(DriverLicense driverLicense) throws ConnectionPoolException, SQLException {
+    public Optional<DriverLicense> save(DriverLicense driverLicense) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(driverLicense);
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .appendWithMultipleArgs(CREATE, values);
-        try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
-            prepareStatement.executeUpdate();
-            var generatedKeys = prepareStatement.getGeneratedKeys();
-            DriverLicense savedDriverLicense = null;
-            if (generatedKeys.next()) {
-                savedDriverLicense = extractor.extractData(generatedKeys);
-            }
-            return Optional.ofNullable(savedDriverLicense);
-        }
+                .appendWithMultipleArgs(CREATE, values)
+                .append(RETURNING);
+        return save(statementProvider, extractor);
     }
 
-    public Optional<DriverLicense> findByUserDetailsId(Long userDetailsId) throws SQLException, ConnectionPoolException {
-
+    public Optional<DriverLicense> findByUserDetailsId(Long userDetailsId) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE user_details_id = ?", userDetailsId);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            DriverLicense driverLicense = null;
-            if (resultSet.next()) {
-                driverLicense = extractor.extractData(resultSet);
-            }
-            return Optional.ofNullable(driverLicense);
-        }
+        return findOne(statementProvider, extractor);
     }
 
-    public Optional<DriverLicense> findByUserId(Long userId) throws SQLException, ConnectionPoolException {
+    public Optional<DriverLicense> findByUserId(Long userId) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .append("LEFT JOIN userdetails ud ON driverlicense.user_details_id = ud.user_id")
                 .appendWithSingleArg("WHERE ud.user_id = ?", userId);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-
-            DriverLicense driverLicense = null;
-            if (resultSet.next()) {
-                driverLicense = extractor.extractData(resultSet);
-            }
-            return Optional.ofNullable(driverLicense);
-        }
+        return findOne(statementProvider, extractor);
     }
 
-    public List<DriverLicense> findAllExpired() throws SQLException, ConnectionPoolException {
-        List<DriverLicense> driverLicenses = new ArrayList<>();
+    public List<DriverLicense> findAllExpired() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE expired_date = ?", Instant.now());
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-
-            while (resultSet.next()) {
-                driverLicenses.add(extractor.extractData(resultSet));
-            }
-        }
-        return driverLicenses;
+        return findAll(statementProvider, extractor);
     }
 }

@@ -11,7 +11,6 @@ public class Accident implements Entity, Serializable {
     private String description;
     private BigDecimal damage;
 
-
     public Accident() {
     }
 

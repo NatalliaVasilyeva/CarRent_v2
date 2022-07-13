@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -62,7 +61,7 @@ public class BaseStatementProvider {
                     throw new IllegalArgumentException("Unsupported argument type provided");
                 }
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException(String.format("Something wrong with set arguments for prepare statement: %s", e.getCause()), e);
             }
         }
 

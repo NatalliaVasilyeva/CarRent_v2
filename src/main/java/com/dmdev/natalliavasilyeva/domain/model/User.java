@@ -25,6 +25,8 @@ public class User extends ShotUser implements Identifiable {
         this.phone = builder.phone;
         this.birthday = builder.birthday;
         this.registrationDate = builder.registrationDate;
+        this.driverLicense = builder.driverLicense;
+        this.orders = builder.orders;
     }
 
 
@@ -155,6 +157,7 @@ public class User extends ShotUser implements Identifiable {
             return this;
         }
 
+        @Override
         public User build() {
 
             return new User(this);

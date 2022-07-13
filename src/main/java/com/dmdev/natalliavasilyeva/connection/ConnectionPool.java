@@ -1,14 +1,15 @@
 package com.dmdev.natalliavasilyeva.connection;
 
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
+import com.dmdev.natalliavasilyeva.connection.utils.DatabasePropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ConnectionPool {
@@ -16,8 +17,8 @@ public class ConnectionPool {
     private static final Logger logger = LoggerFactory.getLogger(ConnectionPool.class);
     private static final String DATABASE_POOL_SIZE = "db.poolsize";
     private final Integer POOL_SIZE = Integer.parseInt(DatabasePropertyUtils.get(DATABASE_POOL_SIZE));
-    private ArrayBlockingQueue<ProxyConnection> freeConnections;
-    private ArrayBlockingQueue<ProxyConnection> releaseConnections;
+    private BlockingQueue<ProxyConnection> freeConnections;
+    private BlockingQueue<ProxyConnection> releaseConnections;
     private static ReentrantLock lock = new ReentrantLock();
     private static ConnectionPool instance;
 
@@ -58,47 +59,37 @@ public class ConnectionPool {
                 connection = createConnection();
                 freeConnections.offer(connection);
             } catch (MissingResourceException e) {
-                logger.error("Exception during database initialization", e);
-                throw new RuntimeException("Exception during database initialization", e);
-            } catch (ClassNotFoundException e) {
-                throw new IllegalArgumentException("Driver is not found" + e.getMessage(), e);
+                throw new RuntimeException("Exception during database initialization ", e);
             } catch (SQLException e) {
                 try {
-                    throw new ConnectionPoolException("Exception with create connection", e);
+                    throw new ConnectionPoolException(String.format("Connection has not been created: %s", e.getMessage()), e);
                 } catch (ConnectionPoolException e1) {
                     e1.printStackTrace();
                 }
             }
-
         }
-
     }
 
     public ProxyConnection getConnection() throws ConnectionPoolException {
-        ProxyConnection connection = null;
+        ProxyConnection connection;
         try {
             connection = freeConnections.take();
             releaseConnections.offer(connection);
         } catch (InterruptedException e) {
-            logger.error("Error getting connection ", e);
-            throw new ConnectionPoolException("Problem with take connection from pool, e");
-
+            throw new ConnectionPoolException(String.format("Problem with connection take from pool %s", e.getMessage()), e);
         }
         return connection;
     }
 
-
     public void closeConnection(ProxyConnection proxyConnection) {
         releaseConnections.remove(proxyConnection);
         if (freeConnections.offer(proxyConnection)) {
-            logger.error("Connection successfully returned: ", proxyConnection.toString());
+            logger.info("Connection successfully returned");
         }
     }
 
     public void closeConnectionsQueue(List<ProxyConnection> queue) throws SQLException {
-        Iterator<ProxyConnection> iterator = queue.iterator();
-        while (iterator.hasNext()) {
-            ProxyConnection proxyConnection = iterator.next();
+        for (ProxyConnection proxyConnection : queue) {
             if (!proxyConnection.getAutoCommit()) {
                 proxyConnection.commit();
             }
@@ -113,14 +104,12 @@ public class ConnectionPool {
         for (ProxyConnection proxyConnection : releaseConnections) {
             proxyConnection.realClose();
         }
-
     }
 
-    private ProxyConnection createConnection() throws SQLException, ClassNotFoundException {
+    private ProxyConnection createConnection() throws SQLException {
         ConnectionCreator connectionCreator = ConnectionCreator.getInstance();
         ProxyConnection connection = new ProxyConnection(connectionCreator.openConnection());
-        logger.info("Connection created. " + connection);
+        logger.info("Connection has been created.");
         return connection;
     }
-
 }

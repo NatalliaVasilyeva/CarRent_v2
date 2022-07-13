@@ -1,5 +1,6 @@
 package com.dmdev.natalliavasilyeva.connection;
 
+import com.dmdev.natalliavasilyeva.connection.utils.DatabasePropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +18,6 @@ public class ConnectionCreator {
     private static final String DATABASE_PASSWORD = "db.password";
     private static final String DATABASE_DRIVER = "db.driver";
 
-//    static {
-//        loadDriver();
-//    }
-
     private ConnectionCreator() {
         loadDriver();
     }
@@ -36,15 +33,14 @@ public class ConnectionCreator {
         try {
             Class.forName(DatabasePropertyUtils.get(DATABASE_DRIVER));
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(String.format("Database driver has not been loaded into app %s", e.getMessage()), e);
         }
     }
 
-    public static Connection openConnection() throws SQLException  {
+    public static Connection openConnection() throws SQLException {
 
-        return  DriverManager.getConnection(DatabasePropertyUtils.get(DATABASE_URL),
+        return DriverManager.getConnection(DatabasePropertyUtils.get(DATABASE_URL),
                 DatabasePropertyUtils.get(DATABASE_USER),
                 DatabasePropertyUtils.get(DATABASE_PASSWORD));
     }
-
 }

@@ -6,6 +6,7 @@ import com.dmdev.natalliavasilyeva.domain.model.EngineType;
 import com.dmdev.natalliavasilyeva.domain.model.Model;
 import com.dmdev.natalliavasilyeva.domain.model.Price;
 import com.dmdev.natalliavasilyeva.domain.model.Transmission;
+import com.dmdev.natalliavasilyeva.persistence.exception.RepositoryException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,17 +26,19 @@ public class ModelResultExtractor implements ResultSetExtractor<Model> {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public Model extractData(ResultSet rs) throws SQLException {
-
-
-        return new Model.Builder()
-                .id(rs.getLong("model_id"))
-                .brand(mapToBrand(rs))
-                .category(mapToCategory(rs))
-                .name(rs.getString("model_name"))
-                .transmission(Transmission.valueOf(rs.getString("model_transmission").toUpperCase()))
-                .engine(EngineType.valueOf(rs.getString("model_engine_type").toUpperCase()))
-                .build();
+    public Model extractData(ResultSet rs) {
+        try {
+            return new Model.Builder()
+                    .id(rs.getLong("model_id"))
+                    .brand(mapToBrand(rs))
+                    .category(mapToCategory(rs))
+                    .name(rs.getString("model_name"))
+                    .transmission(Transmission.valueOf(rs.getString("model_transmission").toUpperCase()))
+                    .engine(EngineType.valueOf(rs.getString("model_engine_type").toUpperCase()))
+                    .build();
+        } catch (SQLException ex) {
+            throw new RepositoryException(String.format("Exception for model custom in extract data method: %s", ex.getCause()), ex);
+        }
     }
 
     private Brand mapToBrand(ResultSet rs) throws SQLException {
@@ -71,8 +74,6 @@ public class ModelResultExtractor implements ResultSetExtractor<Model> {
     }
 
     private Price mapToPrice(Object o) {
-
-        ObjectMapper objectMapper = new ObjectMapper();
         return o != null ? objectMapper.convertValue(o, Price.class) : null;
     }
 }

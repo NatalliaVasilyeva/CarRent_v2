@@ -6,6 +6,7 @@ import com.dmdev.natalliavasilyeva.domain.model.Category;
 import com.dmdev.natalliavasilyeva.domain.model.EngineType;
 import com.dmdev.natalliavasilyeva.domain.model.Model;
 import com.dmdev.natalliavasilyeva.domain.model.Transmission;
+import com.dmdev.natalliavasilyeva.persistence.exception.RepositoryException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -22,14 +23,18 @@ public class BrandResultExtractor implements ResultSetExtractor<Brand> {
     private static final Logger logger = LoggerFactory.getLogger(BrandResultExtractor.class);
 
     @Override
-    public Brand extractData(ResultSet rs) throws SQLException {
-        List<Model> models = this.mapJsonResultToModel(rs.getString("model_description"));
+    public Brand extractData(ResultSet rs) {
+        try {
+            List<Model> models = this.mapJsonResultToModel(rs.getString("model_description"));
 
-        return new Brand.Builder()
-                .id(rs.getLong("brand_id"))
-                .name(rs.getString("brand_name"))
-                .models(models)
-                .build();
+            return new Brand.Builder()
+                    .id(rs.getLong("brand_id"))
+                    .name(rs.getString("brand_name"))
+                    .models(models)
+                    .build();
+        } catch (SQLException ex) {
+            throw new RepositoryException(String.format("Exception for brand custom in extract data method: %s", ex.getCause()), ex);
+        }
     }
 
     private List<Model> mapJsonResultToModel(String modelsJson) {

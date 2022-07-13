@@ -20,7 +20,16 @@ public class Accident implements Identifiable {
     public Accident() {
     }
 
-    private Accident(Long id, long orderId, Instant date, String brand, String model, String carNumber, String userFirstName, String userLastName, String description, BigDecimal damage) {
+    private Accident(Long id,
+                     long orderId,
+                     Instant date,
+                     String brand,
+                     String model,
+                     String carNumber,
+                     String userFirstName,
+                     String userLastName,
+                     String description,
+                     BigDecimal damage) {
         this.id = id;
         this.orderNumber = orderId;
         this.date = date;

@@ -9,6 +9,7 @@ import com.dmdev.natalliavasilyeva.domain.model.EngineType;
 import com.dmdev.natalliavasilyeva.domain.model.Model;
 import com.dmdev.natalliavasilyeva.domain.model.Price;
 import com.dmdev.natalliavasilyeva.domain.model.Transmission;
+import com.dmdev.natalliavasilyeva.persistence.exception.RepositoryException;
 import com.dmdev.natalliavasilyeva.persistence.utils.DateTimeService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,28 +29,27 @@ public class CarResultExtractor implements ResultSetExtractor<Car> {
 
     private static final Logger logger = LoggerFactory.getLogger(CarResultExtractor.class);
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
     @Override
-    public Car extractData(ResultSet rs) throws SQLException {
-
-        String accidentsJson = getAccidentDescription(rs);
-        List<Accident> accidents =
-                accidentsJson.isBlank() ? Collections.emptyList() :
-                        this.mapJsonResultToAccident(rs.getString("accident_description"));
-
-
-        return new Car.Builder()
-                .id(rs.getLong("car_id"))
-                .model(mapToModel(rs))
-                .color(Color.valueOf(rs.getString("color").toUpperCase()))
-                .year(rs.getString("year"))
-                .number(rs.getString("car_number"))
-                .vin(rs.getString("vin"))
-                .repaired(rs.getBoolean("is_repaired"))
-                .image(rs.getString("image"))
-                .accidents(accidents)
-                .build();
+    public Car extractData(ResultSet rs) {
+        try {
+            String accidentsJson = getAccidentDescription(rs);
+            List<Accident> accidents =
+                    accidentsJson.isBlank() ? Collections.emptyList() :
+                            this.mapJsonResultToAccident(rs.getString("accident_description"));
+            return new Car.Builder()
+                    .id(rs.getLong("car_id"))
+                    .model(mapToModel(rs))
+                    .color(Color.valueOf(rs.getString("color").toUpperCase()))
+                    .year(rs.getString("year"))
+                    .number(rs.getString("car_number"))
+                    .vin(rs.getString("vin"))
+                    .repaired(rs.getBoolean("is_repaired"))
+                    .image(rs.getString("image"))
+                    .accidents(accidents)
+                    .build();
+        } catch (SQLException ex) {
+            throw new RepositoryException(String.format("Exception for car custom in extract data method: %s", ex.getCause()), ex);
+        }
     }
 
     private Model mapToModel(ResultSet rs) throws SQLException {

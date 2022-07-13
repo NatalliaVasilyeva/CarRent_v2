@@ -11,6 +11,7 @@ public class Brand implements Identifiable {
     private List<Model> models;
 
     public Brand() {
+        //default constructor
     }
 
     public Long getId() {

@@ -36,7 +36,7 @@ public class Car implements Identifiable {
         this.yearOfProduction = yearOfProduction;
         this.number = number;
         this.vin = vin;
-        this.isRepaired = false;
+        this.isRepaired = isRepaired;
         this.image = image;
         this.accidents = accidents;
     }

@@ -1,130 +1,105 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 
-import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
-import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
 import com.dmdev.natalliavasilyeva.domain.jpa.Price;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ResultSetExtractor;
 import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.PriceResultExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-public class PriceRepository implements GenericRepository<Price, Long> {
-    ConnectionPool connectionPool;
-    PriceResultExtractor extractor;
+public class PriceRepository extends AbstractRepository<Price> implements GenericRepository<Price, Long> {
+
+    private static final Logger logger = LoggerFactory.getLogger(PriceRepository.class);
+    ResultSetExtractor<Price> extractor;
 
     public PriceRepository() {
-        this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new PriceResultExtractor();
     }
 
-    private final static String FIND = "" +
+    private static final String FIND_QUERY_PREFIX = "" +
             "SELECT id, price\n" +
             "FROM price\n";
 
-    private final static String CREATE = "" +
+    private static final String CREATE = "" +
             "INSERT INTO price(price) values (?)";
 
-    private final static String UPDATE = "" +
+    private static final String UPDATE = "" +
             "UPDATE price SET price = ? WHERE id = ?";
 
-    private final static String DELETE = "" +
+    private static final String DELETE = "" +
             "DELETE FROM price WHERE id = ?";
 
+    private static final String EXISTS_BY_PRICE = "" +
+            "SELECT EXISTS (SELECT * FROM price WHERE price = ?)";
+
+    private static final String RETURNING = "" +
+            "RETURNING id, price";
 
     @Override
-    public Optional<Price> findById(Long id) throws SQLException, ConnectionPoolException {
-
+    public Optional<Price> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE id = ?", id);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            Price price = null;
-            if (resultSet.next()) {
-                price = extractor.extractData(resultSet);
-            }
-            return Optional.ofNullable(price);
-        }
+        return findOne(statementProvider, extractor);
     }
 
     @Override
-    public List<Price> findAll() throws SQLException, ConnectionPoolException {
-        List<Price> prices = new ArrayList<>();
+    public List<Price> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-
-            while (resultSet.next()) {
-                prices.add(extractor.extractData(resultSet));
-            }
-        }
-        return prices;
+                .append(FIND_QUERY_PREFIX);
+        return findAll(statementProvider, extractor);
     }
 
     @Override
-    public boolean deleteById(Long id) throws SQLException, ConnectionPoolException {
+    public boolean deleteById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(DELETE, id);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeUpdate();
-            return resultSet > 0;
-        }
+        return deleteById(statementProvider);
     }
 
     @Override
-    public Optional<Price> delete(Price price) throws ConnectionPoolException, SQLException {
+    public Optional<Price> delete(Price price) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(DELETE, price.getId())
-                .append("RETURNING id, price");
-        try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
-            prepareStatement.executeUpdate();
-            var generatedKeys = prepareStatement.getGeneratedKeys();
-            Price removedPrice = null;
-            if (generatedKeys.next()) {
-                removedPrice = extractor.extractData(generatedKeys);
-            }
-            return Optional.ofNullable(removedPrice);
-        }
+                .append(RETURNING);
+        return delete(statementProvider, extractor);
     }
 
     @Override
-    public Optional<Price> update(Price price) throws ConnectionPoolException, SQLException {
+    public Optional<Price> update(Price price) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(price);
         values.add(price.getId());
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(UPDATE, values);
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            return prepareStatement.executeUpdate() == 1 ? Optional.of(price) : Optional.empty();
-        }
+        return update(price, statementProvider);
     }
 
-
     @Override
-    public Optional<Price> save(Price price) throws ConnectionPoolException, SQLException {
+    public Optional<Price> save(Price price) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(price);
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .appendWithMultipleArgs(CREATE, values);
-        try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
-            prepareStatement.executeUpdate();
-            var generatedKeys = prepareStatement.getGeneratedKeys();
-            Price savedPrice = null;
-            if (generatedKeys.next()) {
-                savedPrice = extractor.extractData(generatedKeys);
-            }
-            return Optional.ofNullable(savedPrice);
-        }
+                .appendWithMultipleArgs(CREATE, values)
+                .append(RETURNING);
+        return save(statementProvider, extractor);
+    }
+
+    public boolean existByNameTransmissionEngine(BigDecimal price) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .appendWithSingleArg(EXISTS_BY_PRICE, price);
+        return exist(statementProvider);
     }
 }

@@ -1,99 +1,76 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.custom.dao;
 
 
-import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
-import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
 import com.dmdev.natalliavasilyeva.domain.model.Brand;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.repository.custom.GenericCustomRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.custom.rowmapper.BrandResultExtractor;
+import com.dmdev.natalliavasilyeva.persistence.repository.custom.rowmapper.ResultSetExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class BrandCustomRepository implements GenericCustomRepository<Brand, Long> {
-    ConnectionPool connectionPool;
-    BrandResultExtractor extractor;
+public class BrandCustomRepository extends AbstractCustomRepository<Brand> implements GenericCustomRepository<Brand, Long> {
+
+    private static final Logger logger = LoggerFactory.getLogger(BrandCustomRepository.class);
+    ResultSetExtractor<Brand> extractor;
 
     public BrandCustomRepository() {
-        this.connectionPool = ConnectionPool.getInstance();
         this.extractor = new BrandResultExtractor();
     }
 
-    private final static String FIND = "" +
-            "SELECT b.id as brand_id, b.name as brand_name, json_agg(row_to_json(mod)) as model_description\n" +
-                    "FROM brand b\n" +
-                    "LEFT JOIN (\n" +
-                            "SELECT m.id as mod_id, m.name as model_name, m.transmission as transmission, m.engine_type as engine,\n" +
-                                    "c.name as category_name\n" +
-                            "FROM model m\n" +
-                            "LEFT JOIN  categories c ON m.category_id = c.id\n" +
-                    ") AS mod ON b.id = mod.mod_id\n";
+    private static final String FIND_QUERY_PREFIX = "" +
+            "SELECT b.id                            as brand_id,\n" +
+            "       b.name                          as brand_name,\n" +
+            "       json_agg(row_to_json(mod))      as model_description\n" +
+            "FROM brand b\n" +
+            "       LEFT JOIN (\n" +
+            "               SELECT m.id             as mod_id,\n" +
+            "                      m.name           as model_name,\n" +
+            "                      m.transmission   as transmission,\n" +
+            "                      m.engine_type    as engine,\n" +
+            "                      c.name           as category_name\n" +
+            "               FROM model m\n" +
+            "                       LEFT JOIN  categories c ON m.category_id = c.id\n" +
+            "               ) AS mod ON b.id = mod.mod_id\n";
 
+    private static final String GROUP_BY = "" +
+            "GROUP BY b.id";
     @Override
-    public List<Brand> findAll() throws SQLException, ConnectionPoolException {
-        List<Brand> brands = new ArrayList<>();
+    public List<Brand> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
-                .append("GROUP BY b.id");
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            while (resultSet.next()) {
-                brands.add(extractor.extractData(resultSet));
-            }
-        }
-        return brands;
+                .append(FIND_QUERY_PREFIX)
+                .append(GROUP_BY);
+        return findAll(statementProvider, extractor);
     }
     @Override
-    public Optional<Brand> findById(Long id) throws SQLException, ConnectionPoolException {
+    public Optional<Brand> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE b.id = ?", id)
-                .append("GROUP BY b.id");
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            Brand brand = null;
-            if (resultSet.next()) {
-                brand = extractor.extractData(resultSet);
-            }
-            return Optional.ofNullable(brand);
-        }
+                .append(GROUP_BY);
+        return findOne(statementProvider, extractor);
     }
 
-    public Optional<Brand> findByName(String name) throws SQLException, ConnectionPoolException {
+    public Optional<Brand> findByName(String name) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE b.name = ?", name)
-                .append("GROUP BY b.id");
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            Brand brand = null;
-            if (resultSet.next()) {
-                brand = extractor.extractData(resultSet);
-            }
-            return Optional.ofNullable(brand);
-        }
+                .append(GROUP_BY);
+        return findOne(statementProvider, extractor);
     }
 
-    public List<Brand> findByCategory(String category) throws SQLException, ConnectionPoolException {
-        List<Brand> brands = new ArrayList<>();
+    public List<Brand> findByCategory(String category) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .append(FIND)
+                .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("WHERE category_name = ?", category)
-                .append("GROUP BY b.id");
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
-            var resultSet = prepareStatement.executeQuery();
-            while (resultSet.next()) {
-                brands.add(extractor.extractData(resultSet));
-            }
-        }
-        return brands;
+                .append(GROUP_BY);
+        return findAll(statementProvider, extractor);
     }
-
 }

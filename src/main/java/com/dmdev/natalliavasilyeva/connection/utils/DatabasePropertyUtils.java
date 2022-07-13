@@ -1,4 +1,4 @@
-package com.dmdev.natalliavasilyeva.connection;
+package com.dmdev.natalliavasilyeva.connection.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +9,7 @@ import java.util.Properties;
 public final class DatabasePropertyUtils {
     private static final Logger logger = LoggerFactory.getLogger(DatabasePropertyUtils.class);
     private static final String DATABASE_PROPERTY = "database.properties";
-    public static final Properties PROPERTIES = new Properties();
+    protected static final Properties PROPERTIES = new Properties();
 
     static {
         loadProperties();
@@ -26,8 +26,7 @@ public final class DatabasePropertyUtils {
         try (var inputStream = DatabasePropertyUtils.class.getClassLoader().getResourceAsStream(DATABASE_PROPERTY)) {
             PROPERTIES.load(inputStream);
         } catch (IOException e) {
-            logger.error("ConnectionPool properties not loaded.", e);
-            throw new RuntimeException(e);
+            throw new RuntimeException(String.format("Something wrong with load connection pool properties %s", e.getCause()), e);
         }
     }
 }
