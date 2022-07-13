@@ -1,0 +1,120 @@
+package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
+
+
+import com.dmdev.natalliavasilyeva.domain.jpa.Category;
+import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ResultSetExtractor;
+import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.CategoryResultExtractor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Optional;
+
+public class CategoryRepository extends AbstractRepository<Category> implements GenericRepository<Category, Long> {
+
+    private static final Logger logger = LoggerFactory.getLogger(CategoryRepository.class);
+    ResultSetExtractor<Category> extractor;
+
+    public CategoryRepository() {
+        this.extractor = new CategoryResultExtractor();
+    }
+
+    private static final String FIND_QUERY_PREFIX = "" +
+            "SELECT id, name, price_id\n" +
+            "FROM categories\n";
+
+    private static final String CREATE = "" +
+            "INSERT INTO categories(name, price_id) values (?, ?)";
+
+    private static final String UPDATE = "" +
+            "UPDATE categories SET name = ?, price_id = ? WHERE id = ?";
+
+    private static final String DELETE = "" +
+            "DELETE FROM categories WHERE id = ?";
+
+    private static final String EXISTS_BY_NAME = "" +
+            "SELECT EXISTS (SELECT * FROM categories WHERE name = ?)";
+
+    private static final String RETURNING = "" +
+            "RETURNING id, name, price_id";
+
+    @Override
+    public Optional<Category> findById(Long id) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .append(FIND_QUERY_PREFIX)
+                .appendWithSingleArg("WHERE id = ?", id);
+        return findOne(statementProvider, extractor);
+    }
+
+    @Override
+    public List<Category> findAll() {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .append(FIND_QUERY_PREFIX);
+        return findAll(statementProvider, extractor);
+    }
+
+    @Override
+    public boolean deleteById(Long id) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .appendWithSingleArg(DELETE, id);
+        return deleteById(statementProvider);
+    }
+
+    @Override
+    public Optional<Category> delete(Category category) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .appendWithSingleArg(DELETE, category.getId())
+                .append(RETURNING);
+        return delete(statementProvider, extractor);
+    }
+
+    @Override
+    public Optional<Category> update(Category category) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(category);
+        values.add(category.getId());
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .appendWithMultipleArgs(UPDATE, values);
+        return update(category, statementProvider);
+    }
+
+    @Override
+    public Optional<Category> save(Category category) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(category);
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .appendWithMultipleArgs(CREATE, values)
+                .append(RETURNING);
+        return save(statementProvider, extractor);
+    }
+
+    public Optional<Category> findByName(String name) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .append(FIND_QUERY_PREFIX)
+                .appendWithSingleArg("WHERE name LIKE ?", name);
+        return findOne(statementProvider, extractor);
+    }
+
+    public List<Category> findByNames(List<String> categoriesNames) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .append(FIND_QUERY_PREFIX)
+                .appendWithSingleArg("WHERE name = ANY (?)", categoriesNames.toArray(new String[0]));
+        return findAll(statementProvider, extractor);
+    }
+
+    public boolean existByName(String name) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .appendWithSingleArg(EXISTS_BY_NAME, name);
+        return exist(statementProvider);
+    }
+}
