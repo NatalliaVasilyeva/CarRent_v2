@@ -1,10 +1,10 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 
-import com.dmdev.natalliavasilyeva.domain.jpa.Category;
+import com.dmdev.natalliavasilyeva.domain.jpa.CategoryJpa;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ResultSetExtractor;
-import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
+import com.dmdev.natalliavasilyeva.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.CategoryResultExtractor;
 import org.slf4j.Logger;
@@ -13,10 +13,10 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 
-public class CategoryRepository extends AbstractRepository<Category> implements GenericRepository<Category, Long> {
+public class CategoryRepository extends AbstractRepository<CategoryJpa> implements GenericRepository<CategoryJpa, Long> {
 
     private static final Logger logger = LoggerFactory.getLogger(CategoryRepository.class);
-    ResultSetExtractor<Category> extractor;
+    ResultSetExtractor<CategoryJpa> extractor;
 
     public CategoryRepository() {
         this.extractor = new CategoryResultExtractor();
@@ -38,11 +38,14 @@ public class CategoryRepository extends AbstractRepository<Category> implements 
     private static final String EXISTS_BY_NAME = "" +
             "SELECT EXISTS (SELECT * FROM categories WHERE name = ?)";
 
+    private static final String EXISTS_BY_ID = "" +
+            "SELECT EXISTS (SELECT * FROM categories WHERE id = ?)";
+
     private static final String RETURNING = "" +
             "RETURNING id, name, price_id";
 
     @Override
-    public Optional<Category> findById(Long id) {
+    public Optional<CategoryJpa> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -51,7 +54,7 @@ public class CategoryRepository extends AbstractRepository<Category> implements 
     }
 
     @Override
-    public List<Category> findAll() {
+    public List<CategoryJpa> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX);
@@ -67,7 +70,7 @@ public class CategoryRepository extends AbstractRepository<Category> implements 
     }
 
     @Override
-    public Optional<Category> delete(Category category) {
+    public Optional<CategoryJpa> delete(CategoryJpa category) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(DELETE, category.getId())
@@ -76,7 +79,7 @@ public class CategoryRepository extends AbstractRepository<Category> implements 
     }
 
     @Override
-    public Optional<Category> update(Category category) {
+    public Optional<CategoryJpa> update(CategoryJpa category) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(category);
         values.add(category.getId());
         var statementProvider = new BaseStatementProvider();
@@ -86,7 +89,7 @@ public class CategoryRepository extends AbstractRepository<Category> implements 
     }
 
     @Override
-    public Optional<Category> save(Category category) {
+    public Optional<CategoryJpa> save(CategoryJpa category) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(category);
         var statementProvider = new BaseStatementProvider();
         statementProvider
@@ -95,7 +98,7 @@ public class CategoryRepository extends AbstractRepository<Category> implements 
         return save(statementProvider, extractor);
     }
 
-    public Optional<Category> findByName(String name) {
+    public Optional<CategoryJpa> findByName(String name) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -103,7 +106,7 @@ public class CategoryRepository extends AbstractRepository<Category> implements 
         return findOne(statementProvider, extractor);
     }
 
-    public List<Category> findByNames(List<String> categoriesNames) {
+    public List<CategoryJpa> findByNames(List<String> categoriesNames) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -115,6 +118,13 @@ public class CategoryRepository extends AbstractRepository<Category> implements 
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(EXISTS_BY_NAME, name);
+        return exist(statementProvider);
+    }
+
+    public boolean existById(Long id) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .appendWithSingleArg(EXISTS_BY_ID, id);
         return exist(statementProvider);
     }
 }

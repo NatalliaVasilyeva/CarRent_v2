@@ -1,5 +1,6 @@
 package com.dmdev.natalliavasilyeva.domain.model;
 
+import javax.servlet.http.Part;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -13,6 +14,8 @@ public class Car implements Identifiable {
     private String vin;
     private boolean isRepaired;
     private String image;
+
+    private Part imageContent;
     private List<Accident> accidents;
 
 
@@ -73,6 +76,9 @@ public class Car implements Identifiable {
         return image;
     }
 
+    public Part getImageContent() {
+        return imageContent;
+    }
     public List<Accident> getAccidents() {
         return accidents;
     }
@@ -115,6 +121,8 @@ public class Car implements Identifiable {
         private String vin;
         private boolean isRepaired;
         private String image;
+
+        private Part imageContent;
 
         private List<Accident> accidents;
 
@@ -163,6 +171,11 @@ public class Car implements Identifiable {
             return this;
         }
 
+        public Builder content(Part imageContent) {
+            this.imageContent = imageContent;
+            return this;
+        }
+
         public Builder accidents(List<Accident> accidents) {
             this.accidents = accidents;
             return this;
@@ -178,6 +191,7 @@ public class Car implements Identifiable {
             car.vin = this.vin;
             car.isRepaired = this.isRepaired;
             car.image = this.image;
+            car.imageContent = this.imageContent;
             car.accidents = this.accidents;
             return car;
         }

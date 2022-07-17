@@ -2,7 +2,7 @@ package com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper;
 
 
 import com.dmdev.natalliavasilyeva.domain.model.Color;
-import com.dmdev.natalliavasilyeva.domain.jpa.Car;
+import com.dmdev.natalliavasilyeva.domain.jpa.CarJpa;
 import com.dmdev.natalliavasilyeva.persistence.exception.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,14 +10,14 @@ import org.slf4j.LoggerFactory;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class CarResultExtractor implements ResultSetExtractor<Car> {
+public class CarResultExtractor implements ResultSetExtractor<CarJpa> {
 
     private static final Logger logger = LoggerFactory.getLogger(CarResultExtractor.class);
 
     @Override
-    public Car extractData(ResultSet rs) {
+    public CarJpa extractData(ResultSet rs) {
         try {
-            return new Car.Builder()
+            return new CarJpa.Builder()
                     .id(rs.getLong("id"))
                     .model(rs.getLong("model_id"))
                     .color(Color.valueOf(rs.getString("color").toUpperCase()))

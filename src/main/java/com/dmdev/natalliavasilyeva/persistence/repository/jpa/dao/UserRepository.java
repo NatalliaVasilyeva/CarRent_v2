@@ -1,11 +1,11 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
-import com.dmdev.natalliavasilyeva.domain.jpa.User;
+import com.dmdev.natalliavasilyeva.domain.jpa.UserJpa;
 import com.dmdev.natalliavasilyeva.persistence.exception.RepositoryException;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ResultSetExtractor;
-import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
+import com.dmdev.natalliavasilyeva.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.UserResultExtractor;
 import org.slf4j.Logger;
@@ -15,10 +15,10 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-public class UserRepository extends AbstractRepository<User> implements GenericRepository<User, Long> {
+public class UserRepository extends AbstractRepository<UserJpa> implements GenericRepository<UserJpa, Long> {
 
     private static final Logger logger = LoggerFactory.getLogger(UserRepository.class);
-    ResultSetExtractor<User> extractor;
+    ResultSetExtractor<UserJpa> extractor;
 
     public UserRepository() {
         this.extractor = new UserResultExtractor();
@@ -50,7 +50,7 @@ public class UserRepository extends AbstractRepository<User> implements GenericR
             "RETURNING id, login, email, role";
 
     @Override
-    public Optional<User> findById(Long id) {
+    public Optional<UserJpa> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -59,7 +59,7 @@ public class UserRepository extends AbstractRepository<User> implements GenericR
     }
 
     @Override
-    public List<User> findAll() {
+    public List<UserJpa> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX);
@@ -75,22 +75,22 @@ public class UserRepository extends AbstractRepository<User> implements GenericR
     }
 
     @Override
-    public Optional<User> delete(User user) {
+    public Optional<UserJpa> delete(UserJpa userJpa) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .appendWithSingleArg(DELETE, user.getId())
+                .appendWithSingleArg(DELETE, userJpa.getId())
                 .append(RETURNING);
         return delete(statementProvider, extractor);
     }
 
     @Override
-    public Optional<User> update(User user) {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(user);
-        values.add(user.getId());
+    public Optional<UserJpa> update(UserJpa userJpa) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(userJpa);
+        values.add(userJpa.getId());
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(UPDATE, values);
-        return update(user, statementProvider);
+        return update(userJpa, statementProvider);
     }
 
     public boolean updatePassword(Long userId, String password) {
@@ -106,8 +106,8 @@ public class UserRepository extends AbstractRepository<User> implements GenericR
     }
 
     @Override
-    public Optional<User> save(User user) {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(user);
+    public Optional<UserJpa> save(UserJpa userJpa) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(userJpa);
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(CREATE, values)
@@ -115,7 +115,7 @@ public class UserRepository extends AbstractRepository<User> implements GenericR
         return save(statementProvider, extractor);
     }
 
-    public Optional<User> findByLoginAndPassword(String login, String password) {
+    public Optional<UserJpa> findByLoginAndPassword(String login, String password) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -123,7 +123,7 @@ public class UserRepository extends AbstractRepository<User> implements GenericR
         return findOne(statementProvider, extractor);
     }
 
-    public Optional<User> findByEmailAndPassword(String email, String password) {
+    public Optional<UserJpa> findByEmailAndPassword(String email, String password) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -145,7 +145,7 @@ public class UserRepository extends AbstractRepository<User> implements GenericR
         return exist(statementProvider);
     }
 
-    public List<User> findAllByRole(String role) {
+    public List<UserJpa> findAllByRole(String role) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)

@@ -1,9 +1,9 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper;
 
 
+import com.dmdev.natalliavasilyeva.domain.jpa.ModelJpa;
 import com.dmdev.natalliavasilyeva.domain.model.EngineType;
 import com.dmdev.natalliavasilyeva.domain.model.Transmission;
-import com.dmdev.natalliavasilyeva.domain.jpa.Model;
 import com.dmdev.natalliavasilyeva.persistence.exception.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,14 +11,14 @@ import org.slf4j.LoggerFactory;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ModelResultExtractor implements ResultSetExtractor<Model> {
+public class ModelResultExtractor implements ResultSetExtractor<ModelJpa> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelResultExtractor.class);
 
     @Override
-    public Model extractData(ResultSet rs) {
+    public ModelJpa extractData(ResultSet rs) {
         try {
-            return new Model.Builder()
+            return new ModelJpa.Builder()
                     .id(rs.getLong("id"))
                     .brand(rs.getLong("brand_id"))
                     .category(rs.getLong("category_id"))

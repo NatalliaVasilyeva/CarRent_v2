@@ -1,10 +1,10 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 
-import com.dmdev.natalliavasilyeva.domain.jpa.Model;
+import com.dmdev.natalliavasilyeva.domain.jpa.ModelJpa;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ResultSetExtractor;
-import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
+import com.dmdev.natalliavasilyeva.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ModelResultExtractor;
 import org.slf4j.Logger;
@@ -13,10 +13,10 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 
-public class ModelRepository extends AbstractRepository<Model> implements GenericRepository<Model, Long> {
+public class ModelRepository extends AbstractRepository<ModelJpa> implements GenericRepository<ModelJpa, Long> {
 
     private static final Logger logger = LoggerFactory.getLogger(ModelRepository.class);
-    ResultSetExtractor<Model> extractor;
+    ResultSetExtractor<ModelJpa> extractor;
 
     public ModelRepository() {
         this.extractor = new ModelResultExtractor();
@@ -42,7 +42,7 @@ public class ModelRepository extends AbstractRepository<Model> implements Generi
             "RETURNING id, brand_id, category_id, name, transmission, engine_type";
 
     @Override
-    public Optional<Model> findById(Long id) {
+    public Optional<ModelJpa> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -51,7 +51,7 @@ public class ModelRepository extends AbstractRepository<Model> implements Generi
     }
 
     @Override
-    public List<Model> findAll() {
+    public List<ModelJpa> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX);
@@ -67,27 +67,27 @@ public class ModelRepository extends AbstractRepository<Model> implements Generi
     }
 
     @Override
-    public Optional<Model> delete(Model model) {
+    public Optional<ModelJpa> delete(ModelJpa modelJpa) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .appendWithSingleArg(DELETE, model.getId())
+                .appendWithSingleArg(DELETE, modelJpa.getId())
                 .append(RETURNING);
         return delete(statementProvider, extractor);
     }
 
     @Override
-    public Optional<Model> update(Model model) {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(model);
-        values.add(model.getId());
+    public Optional<ModelJpa> update(ModelJpa modelJpa) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(modelJpa);
+        values.add(modelJpa.getId());
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(UPDATE, values);
-        return update(model, statementProvider);
+        return update(modelJpa, statementProvider);
     }
 
     @Override
-    public Optional<Model> save(Model model) {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(model);
+    public Optional<ModelJpa> save(ModelJpa modelJpa) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(modelJpa);
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(CREATE, values)
@@ -100,5 +100,13 @@ public class ModelRepository extends AbstractRepository<Model> implements Generi
         statementProvider
                 .appendWithMultipleArgs(EXISTS_BY_NAME_TRANSMISSION_ENGINE, name, transmission, engine);
         return exist(statementProvider);
+    }
+
+    public List<ModelJpa> findByNameTransmissionEngine(String name, String transmission, String engine) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .append(FIND_QUERY_PREFIX)
+                .appendWithMultipleArgs("WHERE name = ? AND transmission = ? AND engine_type = ?", name, transmission, engine);
+        return findAll(statementProvider, extractor);
     }
 }

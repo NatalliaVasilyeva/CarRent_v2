@@ -12,7 +12,6 @@ public class User extends ShotUser implements Identifiable {
     private String phone;
     private Instant birthday;
     private Instant registrationDate;
-
     private DriverLicense driverLicense;
     private List<Order> orders;
 
@@ -66,8 +65,8 @@ public class User extends ShotUser implements Identifiable {
         return orders;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public void setDriverLicense(DriverLicense driverLicense) {
+        this.driverLicense = driverLicense;
     }
 
     @Override
@@ -109,7 +108,6 @@ public class User extends ShotUser implements Identifiable {
         private String phone;
         private Instant birthday;
         private Instant registrationDate;
-
         private DriverLicense driverLicense;
         private List<Order> orders;
 

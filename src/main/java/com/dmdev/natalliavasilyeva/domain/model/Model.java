@@ -72,11 +72,9 @@ public class Model implements Identifiable {
     }
 
     public static final class Builder {
-
         private Long id;
         private String name;
         private Brand brand;
-
         private Transmission transmission;
 
         private EngineType engineType;

@@ -2,11 +2,11 @@ package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
-import com.dmdev.natalliavasilyeva.domain.jpa.Car;
+import com.dmdev.natalliavasilyeva.domain.jpa.CarJpa;
 import com.dmdev.natalliavasilyeva.persistence.exception.RepositoryException;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ResultSetExtractor;
-import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
+import com.dmdev.natalliavasilyeva.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.CarResultExtractor;
 import org.slf4j.Logger;
@@ -18,10 +18,10 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class CarRepository extends AbstractRepository<Car> implements GenericRepository<Car, Long> {
+public class CarRepository extends AbstractRepository<CarJpa> implements GenericRepository<CarJpa, Long> {
 
     private static final Logger logger = LoggerFactory.getLogger(CarRepository.class);
-    ResultSetExtractor<Car> extractor;
+    ResultSetExtractor<CarJpa> extractor;
 
     public CarRepository() {
         this.extractor = new CarResultExtractor();
@@ -45,7 +45,7 @@ public class CarRepository extends AbstractRepository<Car> implements GenericRep
 
 
     @Override
-    public Optional<Car> findById(Long id) {
+    public Optional<CarJpa> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -54,7 +54,7 @@ public class CarRepository extends AbstractRepository<Car> implements GenericRep
     }
 
     @Override
-    public List<Car> findAll() {
+    public List<CarJpa> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX);
@@ -70,7 +70,7 @@ public class CarRepository extends AbstractRepository<Car> implements GenericRep
     }
 
     @Override
-    public Optional<Car> delete(Car car) {
+    public Optional<CarJpa> delete(CarJpa car) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(DELETE, car.getId())
@@ -79,7 +79,7 @@ public class CarRepository extends AbstractRepository<Car> implements GenericRep
     }
 
     @Override
-    public Optional<Car> update(Car car) {
+    public Optional<CarJpa> update(CarJpa car) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(car);
         values.add(car.getId());
         var statementProvider = new BaseStatementProvider();
@@ -89,7 +89,7 @@ public class CarRepository extends AbstractRepository<Car> implements GenericRep
     }
 
     @Override
-    public Optional<Car> save(Car car) {
+    public Optional<CarJpa> save(CarJpa car) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(car);
         var statementProvider = new BaseStatementProvider();
         statementProvider
@@ -98,7 +98,7 @@ public class CarRepository extends AbstractRepository<Car> implements GenericRep
         return save(statementProvider, extractor);
     }
 
-    public List<Car> findAllByYear(String year) {
+    public List<CarJpa> findAllByYear(String year) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -106,7 +106,7 @@ public class CarRepository extends AbstractRepository<Car> implements GenericRep
         return findAll(statementProvider, extractor);
     }
 
-    public List<Car> findAllUnderRepair() {
+    public List<CarJpa> findAllUnderRepair() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -114,7 +114,7 @@ public class CarRepository extends AbstractRepository<Car> implements GenericRep
         return findAll(statementProvider, extractor);
     }
 
-    public Optional<Car> findByCarNumber(String car_number) {
+    public Optional<CarJpa> findByCarNumber(String car_number) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -122,7 +122,7 @@ public class CarRepository extends AbstractRepository<Car> implements GenericRep
         return findOne(statementProvider, extractor);
     }
 
-    public List<Car> findAllByBrandName(String brandName) {
+    public List<CarJpa> findAllByBrandName(String brandName) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -132,7 +132,7 @@ public class CarRepository extends AbstractRepository<Car> implements GenericRep
         return findAll(statementProvider, extractor);
     }
 
-    public List<Car> findAllByBrandId(Long brandId) {
+    public List<CarJpa> findAllByBrandId(Long brandId) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -142,7 +142,7 @@ public class CarRepository extends AbstractRepository<Car> implements GenericRep
         return findAll(statementProvider, extractor);
     }
 
-    public List<Car> findAllByCategoryName(String categoryName) {
+    public List<CarJpa> findAllByCategoryName(String categoryName) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)

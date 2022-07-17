@@ -1,9 +1,9 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
-import com.dmdev.natalliavasilyeva.domain.jpa.DriverLicense;
+import com.dmdev.natalliavasilyeva.domain.jpa.DriverLicenseJpa;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ResultSetExtractor;
-import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
+import com.dmdev.natalliavasilyeva.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.DriverLicenseResultExtractor;
 import org.slf4j.Logger;
@@ -13,10 +13,10 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-public class DriverLicenseRepository extends AbstractRepository<DriverLicense> implements GenericRepository<DriverLicense, Long> {
+public class DriverLicenseRepository extends AbstractRepository<DriverLicenseJpa> implements GenericRepository<DriverLicenseJpa, Long> {
 
     private static final Logger logger = LoggerFactory.getLogger(DriverLicenseRepository.class);
-    ResultSetExtractor<DriverLicense> extractor;
+    ResultSetExtractor<DriverLicenseJpa> extractor;
 
     public DriverLicenseRepository() {
         this.extractor = new DriverLicenseResultExtractor();
@@ -40,7 +40,7 @@ public class DriverLicenseRepository extends AbstractRepository<DriverLicense> i
 
 
     @Override
-    public Optional<DriverLicense> findById(Long id) {
+    public Optional<DriverLicenseJpa> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -49,7 +49,7 @@ public class DriverLicenseRepository extends AbstractRepository<DriverLicense> i
     }
 
     @Override
-    public List<DriverLicense> findAll() {
+    public List<DriverLicenseJpa> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX);
@@ -65,27 +65,27 @@ public class DriverLicenseRepository extends AbstractRepository<DriverLicense> i
     }
 
     @Override
-    public Optional<DriverLicense> delete(DriverLicense driverLicense) {
+    public Optional<DriverLicenseJpa> delete(DriverLicenseJpa driverLicenseJpa) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .appendWithSingleArg(DELETE, driverLicense.getId())
+                .appendWithSingleArg(DELETE, driverLicenseJpa.getId())
                 .append(RETURNING);
         return delete(statementProvider, extractor);
     }
 
     @Override
-    public Optional<DriverLicense> update(DriverLicense driverLicense) {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(driverLicense);
-        values.add(driverLicense.getId());
+    public Optional<DriverLicenseJpa> update(DriverLicenseJpa driverLicenseJpa) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(driverLicenseJpa);
+        values.add(driverLicenseJpa.getId());
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(UPDATE, values);
-        return update(driverLicense, statementProvider);
+        return update(driverLicenseJpa, statementProvider);
     }
 
     @Override
-    public Optional<DriverLicense> save(DriverLicense driverLicense) {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(driverLicense);
+    public Optional<DriverLicenseJpa> save(DriverLicenseJpa driverLicenseJpa) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(driverLicenseJpa);
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(CREATE, values)
@@ -93,7 +93,7 @@ public class DriverLicenseRepository extends AbstractRepository<DriverLicense> i
         return save(statementProvider, extractor);
     }
 
-    public Optional<DriverLicense> findByUserDetailsId(Long userDetailsId) {
+    public Optional<DriverLicenseJpa> findByUserDetailsId(Long userDetailsId) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -101,7 +101,7 @@ public class DriverLicenseRepository extends AbstractRepository<DriverLicense> i
         return findOne(statementProvider, extractor);
     }
 
-    public Optional<DriverLicense> findByUserId(Long userId) {
+    public Optional<DriverLicenseJpa> findByUserId(Long userId) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -110,7 +110,7 @@ public class DriverLicenseRepository extends AbstractRepository<DriverLicense> i
         return findOne(statementProvider, extractor);
     }
 
-    public List<DriverLicense> findAllExpired() {
+    public List<DriverLicenseJpa> findAllExpired() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)

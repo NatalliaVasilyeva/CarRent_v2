@@ -10,7 +10,7 @@ import com.dmdev.natalliavasilyeva.domain.model.Model;
 import com.dmdev.natalliavasilyeva.domain.model.Price;
 import com.dmdev.natalliavasilyeva.domain.model.Transmission;
 import com.dmdev.natalliavasilyeva.persistence.exception.RepositoryException;
-import com.dmdev.natalliavasilyeva.persistence.utils.DateTimeService;
+import com.dmdev.natalliavasilyeva.utils.DateTimeService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

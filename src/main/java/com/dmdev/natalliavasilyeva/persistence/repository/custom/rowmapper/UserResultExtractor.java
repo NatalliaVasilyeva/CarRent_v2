@@ -7,7 +7,7 @@ import com.dmdev.natalliavasilyeva.domain.model.Order;
 import com.dmdev.natalliavasilyeva.domain.model.Role;
 import com.dmdev.natalliavasilyeva.domain.model.User;
 import com.dmdev.natalliavasilyeva.persistence.exception.RepositoryException;
-import com.dmdev.natalliavasilyeva.persistence.utils.DateTimeService;
+import com.dmdev.natalliavasilyeva.utils.DateTimeService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;

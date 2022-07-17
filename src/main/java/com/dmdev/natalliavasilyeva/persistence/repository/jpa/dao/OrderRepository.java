@@ -1,10 +1,10 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 
-import com.dmdev.natalliavasilyeva.domain.jpa.Order;
+import com.dmdev.natalliavasilyeva.domain.jpa.OrderJpa;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ResultSetExtractor;
-import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
+import com.dmdev.natalliavasilyeva.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.OrderResultExtractor;
 import org.slf4j.Logger;
@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class OrderRepository extends AbstractRepository<Order> implements GenericRepository<Order, Long> {
+public class OrderRepository extends AbstractRepository<OrderJpa> implements GenericRepository<OrderJpa, Long> {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderRepository.class);
-    ResultSetExtractor<Order> extractor;
+    ResultSetExtractor<OrderJpa> extractor;
 
     public OrderRepository() {
         this.extractor = new OrderResultExtractor();
@@ -42,7 +42,7 @@ public class OrderRepository extends AbstractRepository<Order> implements Generi
 
 
     @Override
-    public Optional<Order> findById(Long id) {
+    public Optional<OrderJpa> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -51,7 +51,7 @@ public class OrderRepository extends AbstractRepository<Order> implements Generi
     }
 
     @Override
-    public List<Order> findAll() {
+    public List<OrderJpa> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX);
@@ -67,27 +67,27 @@ public class OrderRepository extends AbstractRepository<Order> implements Generi
     }
 
     @Override
-    public Optional<Order> delete(Order order) {
+    public Optional<OrderJpa> delete(OrderJpa orderJpa) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .appendWithSingleArg(DELETE, order.getId())
+                .appendWithSingleArg(DELETE, orderJpa.getId())
                 .append(RETURNING);
         return delete(statementProvider, extractor);
     }
 
     @Override
-    public Optional<Order> update(Order order) {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(order);
-        values.add(order.getId());
+    public Optional<OrderJpa> update(OrderJpa orderJpa) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(orderJpa);
+        values.add(orderJpa.getId());
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(UPDATE, values);
-        return update(order, statementProvider);
+        return update(orderJpa, statementProvider);
     }
 
     @Override
-    public Optional<Order> save(Order order) {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(order);
+    public Optional<OrderJpa> save(OrderJpa orderJpa) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(orderJpa);
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(CREATE, values)
@@ -95,7 +95,7 @@ public class OrderRepository extends AbstractRepository<Order> implements Generi
         return save(statementProvider, extractor);
     }
 
-    public List<Order> findAllByUser(Long userId) {
+    public List<OrderJpa> findAllByUser(Long userId) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -103,7 +103,7 @@ public class OrderRepository extends AbstractRepository<Order> implements Generi
         return findAll(statementProvider, extractor);
     }
 
-    public List<Order> findAllByCar(Long carId) {
+    public List<OrderJpa> findAllByCar(Long carId) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -111,7 +111,7 @@ public class OrderRepository extends AbstractRepository<Order> implements Generi
         return findAll(statementProvider, extractor);
     }
 
-    public List<Order> findAllByStatus(String status) {
+    public List<OrderJpa> findAllByStatus(String status) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -119,7 +119,7 @@ public class OrderRepository extends AbstractRepository<Order> implements Generi
         return findAll(statementProvider, extractor);
     }
 
-    public List<Order> findAllBetweenDates(Instant firstDate, Instant secondDate) {
+    public List<OrderJpa> findAllBetweenDates(Instant firstDate, Instant secondDate) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -127,7 +127,7 @@ public class OrderRepository extends AbstractRepository<Order> implements Generi
         return findAll(statementProvider, extractor);
     }
 
-    public List<Order> findAllWithAccidents() {
+    public List<OrderJpa> findAllWithAccidents() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)

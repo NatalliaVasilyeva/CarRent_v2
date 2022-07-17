@@ -1,5 +1,11 @@
 package com.dmdev.natalliavasilyeva.persistence.repository;
 
+import com.dmdev.natalliavasilyeva.domain.model.Color;
+import com.dmdev.natalliavasilyeva.domain.model.EngineType;
+import com.dmdev.natalliavasilyeva.domain.model.OrderStatus;
+import com.dmdev.natalliavasilyeva.domain.model.Role;
+import com.dmdev.natalliavasilyeva.domain.model.Transmission;
+
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -47,6 +53,8 @@ public class BaseStatementProvider {
                     statement.setTimestamp(i++, Timestamp.from((Instant) arg));
                 } else if (arg instanceof String) {
                     statement.setString(i++, (String) arg);
+                } else if (arg instanceof Transmission || arg instanceof EngineType || arg instanceof Color || arg instanceof OrderStatus || arg instanceof Role) {
+                    statement.setString(i++, (String) ((Enum<?>) arg).name());
                 } else if (arg.getClass().isArray() && arg instanceof String[]) {
                     var stringObjects = statement.getConnection().createArrayOf("VARCHAR", (Object[]) arg);
                     statement.setArray(i++, stringObjects);

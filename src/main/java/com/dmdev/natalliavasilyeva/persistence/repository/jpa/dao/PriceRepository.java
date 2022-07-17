@@ -1,10 +1,10 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 
-import com.dmdev.natalliavasilyeva.domain.jpa.Price;
+import com.dmdev.natalliavasilyeva.domain.jpa.PriceJpa;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ResultSetExtractor;
-import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
+import com.dmdev.natalliavasilyeva.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.PriceResultExtractor;
 import org.slf4j.Logger;
@@ -14,10 +14,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-public class PriceRepository extends AbstractRepository<Price> implements GenericRepository<Price, Long> {
+public class PriceRepository extends AbstractRepository<PriceJpa> implements GenericRepository<PriceJpa, Long> {
 
     private static final Logger logger = LoggerFactory.getLogger(PriceRepository.class);
-    ResultSetExtractor<Price> extractor;
+    ResultSetExtractor<PriceJpa> extractor;
 
     public PriceRepository() {
         this.extractor = new PriceResultExtractor();
@@ -43,7 +43,7 @@ public class PriceRepository extends AbstractRepository<Price> implements Generi
             "RETURNING id, price";
 
     @Override
-    public Optional<Price> findById(Long id) {
+    public Optional<PriceJpa> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -52,7 +52,7 @@ public class PriceRepository extends AbstractRepository<Price> implements Generi
     }
 
     @Override
-    public List<Price> findAll() {
+    public List<PriceJpa> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX);
@@ -68,27 +68,27 @@ public class PriceRepository extends AbstractRepository<Price> implements Generi
     }
 
     @Override
-    public Optional<Price> delete(Price price) {
+    public Optional<PriceJpa> delete(PriceJpa priceJpa) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .appendWithSingleArg(DELETE, price.getId())
+                .appendWithSingleArg(DELETE, priceJpa.getId())
                 .append(RETURNING);
         return delete(statementProvider, extractor);
     }
 
     @Override
-    public Optional<Price> update(Price price) {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(price);
-        values.add(price.getId());
+    public Optional<PriceJpa> update(PriceJpa priceJpa) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(priceJpa);
+        values.add(priceJpa.getId());
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(UPDATE, values);
-        return update(price, statementProvider);
+        return update(priceJpa, statementProvider);
     }
 
     @Override
-    public Optional<Price> save(Price price) {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(price);
+    public Optional<PriceJpa> save(PriceJpa priceJpa) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(priceJpa);
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(CREATE, values)
@@ -96,7 +96,7 @@ public class PriceRepository extends AbstractRepository<Price> implements Generi
         return save(statementProvider, extractor);
     }
 
-    public boolean existByNameTransmissionEngine(BigDecimal price) {
+    public boolean existByPriceSum(BigDecimal price) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(EXISTS_BY_PRICE, price);

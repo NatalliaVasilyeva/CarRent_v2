@@ -1,10 +1,10 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 
-import com.dmdev.natalliavasilyeva.domain.jpa.Brand;
+import com.dmdev.natalliavasilyeva.domain.jpa.BrandJpa;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ResultSetExtractor;
-import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
+import com.dmdev.natalliavasilyeva.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.BrandResultExtractor;
 import org.slf4j.Logger;
@@ -13,10 +13,10 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 
-public class BrandRepository extends AbstractRepository<Brand> implements GenericRepository<Brand, Long> {
+public class BrandRepository extends AbstractRepository<BrandJpa> implements GenericRepository<BrandJpa, Long> {
 
     private static final Logger logger = LoggerFactory.getLogger(BrandRepository.class);
-    ResultSetExtractor<Brand> extractor;
+    ResultSetExtractor<BrandJpa> extractor;
 
     public BrandRepository() {
         this.extractor = new BrandResultExtractor();
@@ -38,11 +38,14 @@ public class BrandRepository extends AbstractRepository<Brand> implements Generi
     private static final String EXISTS_BY_NAME = "" +
             "SELECT EXISTS (SELECT * FROM brand WHERE name = ?)";
 
+    private static final String EXISTS_BY_ID = "" +
+            "SELECT EXISTS (SELECT * FROM brand WHERE id = ?)";
+
     private static final String RETURNING = "" +
             "RETURNING id, name";
 
     @Override
-    public Optional<Brand> findById(Long id) {
+    public Optional<BrandJpa> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -51,7 +54,7 @@ public class BrandRepository extends AbstractRepository<Brand> implements Generi
     }
 
     @Override
-    public List<Brand> findAll() {
+    public List<BrandJpa> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX);
@@ -67,27 +70,27 @@ public class BrandRepository extends AbstractRepository<Brand> implements Generi
     }
 
     @Override
-    public Optional<Brand> delete(Brand brand) {
+    public Optional<BrandJpa> delete(BrandJpa brandJpa) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .appendWithSingleArg(DELETE, brand.getId())
+                .appendWithSingleArg(DELETE, brandJpa.getId())
                 .append(RETURNING);
         return delete(statementProvider, extractor);
     }
 
     @Override
-    public Optional<Brand> update(Brand brand) {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(brand);
-        values.add(brand.getId());
+    public Optional<BrandJpa> update(BrandJpa brandJpa) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(brandJpa);
+        values.add(brandJpa.getId());
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(UPDATE, values);
-        return update(brand, statementProvider);
+        return update(brandJpa, statementProvider);
     }
 
     @Override
-    public Optional<Brand> save(Brand brand) {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(brand);
+    public Optional<BrandJpa> save(BrandJpa brandJpa) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(brandJpa);
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(CREATE, values)
@@ -95,7 +98,7 @@ public class BrandRepository extends AbstractRepository<Brand> implements Generi
         return save(statementProvider, extractor);
     }
 
-    public Optional<Brand> findByName(String name) {
+    public Optional<BrandJpa> findByName(String name) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -103,7 +106,7 @@ public class BrandRepository extends AbstractRepository<Brand> implements Generi
         return findOne(statementProvider, extractor);
     }
 
-    public List<Brand> findByNames(List<String> brandNames) {
+    public List<BrandJpa> findByNames(List<String> brandNames) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -115,6 +118,13 @@ public class BrandRepository extends AbstractRepository<Brand> implements Generi
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(EXISTS_BY_NAME, name);
+        return exist(statementProvider);
+    }
+
+    public boolean existById(Long id) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .appendWithSingleArg(EXISTS_BY_ID, id);
         return exist(statementProvider);
     }
 }

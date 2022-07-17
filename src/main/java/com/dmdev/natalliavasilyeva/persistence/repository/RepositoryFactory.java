@@ -1,6 +1,6 @@
 package com.dmdev.natalliavasilyeva.persistence.repository;
 
-import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.AccidentRepository;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.AccidentJpaRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.BrandRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.CarRentalTimeRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.CarRepository;
@@ -23,7 +23,7 @@ public class RepositoryFactory {
         return INSTANCE;
     }
 
-    private AccidentRepository accidentRepository;
+    private AccidentJpaRepository accidentRepository;
     private BrandRepository brandRepository;
     private CarRentalTimeRepository carRentalTimeRepository;
     private CarRepository carRepository;
@@ -35,8 +35,8 @@ public class RepositoryFactory {
     private UserDetailsRepository userDetailsRepository;
     private UserRepository userRepository;
 
-    public AccidentRepository getAccidentRepository() {
-        return accidentRepository != null ? accidentRepository : new AccidentRepository();
+    public AccidentJpaRepository getAccidentRepository() {
+        return accidentRepository != null ? accidentRepository : new AccidentJpaRepository();
     }
 
     public BrandRepository getBrandRepository() {

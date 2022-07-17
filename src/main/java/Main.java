@@ -1,21 +1,17 @@
 import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
-import com.dmdev.natalliavasilyeva.domain.model.Accident;
+import com.dmdev.natalliavasilyeva.domain.jpa.AccidentJpa;
+import com.dmdev.natalliavasilyeva.domain.jpa.ModelJpa;
 import com.dmdev.natalliavasilyeva.domain.model.Brand;
 import com.dmdev.natalliavasilyeva.domain.model.Category;
+import com.dmdev.natalliavasilyeva.domain.model.EngineType;
 import com.dmdev.natalliavasilyeva.domain.model.Model;
-import com.dmdev.natalliavasilyeva.persistence.repository.custom.AccidentRepository;
-import com.dmdev.natalliavasilyeva.persistence.repository.custom.dao.AccidentCustomRepository;
-import com.dmdev.natalliavasilyeva.persistence.repository.custom.dao.BrandCustomRepository;
-import com.dmdev.natalliavasilyeva.persistence.repository.custom.dao.CategoryCustomRepository;
-import com.dmdev.natalliavasilyeva.persistence.repository.custom.dao.ModelCustomRepository;
+import com.dmdev.natalliavasilyeva.domain.model.Transmission;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.AccidentJpaRepository;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.ModelRepository;
+import com.dmdev.natalliavasilyeva.service.ModelService;
 
-import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.chrono.ChronoLocalDate;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -23,14 +19,43 @@ public class Main {
 
     public static void main(String[] args) throws SQLException, ConnectionPoolException {
         ConnectionPool connectionPool = ConnectionPool.getInstance();
-        AccidentCustomRepository accidentRepository = new AccidentCustomRepository(connectionPool) {
-        };
+//        OrderCustomRepository orderRepository = new OrderCustomRepository(connectionPool);
+        ModelService modelService = new ModelService();
+//
+////        System.out.println(userRepository.findByLoginAndPassword("RabbitAdm", "abcd"));
+//
+//       List<Order> orders = orderRepository.findAll();
+//        orders.stream().forEach(System.out::println);
+//
+////        Optional<User> user = userCustomRepository.findByRole("client");
+////        System.out.println(user.get());
+//
+////                boolean car = carRepository.isCarAvailable(23l, LocalDateTime.parse( "2022-07-05T10:15:39").toInstant(ZoneOffset.UTC), LocalDateTime.parse( "2022-07-10T10:15:39").toInstant(ZoneOffset.UTC));
+////        System.out.println(car);
+//
+//    }
+//        Optional<Accident> accident = accidentRepository.findById(1l);
+//        System.out.println(accident.get());
 
+//        List<Accident> accidents = accidentRepository.findAll();
+//        accidents.stream().forEach(System.out::println);
 
-       List<Accident> accidents = accidentRepository.findByDamage(new BigDecimal(100));
-        accidents.stream().forEach(System.out::println);
+//        Accident accident = new Accident.Builder()
+//                .order(1l)
+//                .date(LocalDateTime.now().toInstant(ZoneOffset.UTC))
+//                .description("saved description")
+//                .damage(BigDecimal.valueOf(15))
+//                .build();
 
-        Optional<Accident> accident = accidentRepository.findById(1l);
-        System.out.println(!accident.isPresent()? null : accident.get());
+        Model model = new Model.Builder()
+                .brand(new Brand.Builder().id(1l).build())
+                .category(new Category.Builder().id(1l).build())
+                .name("test_model_2")
+                .transmission(Transmission.AUTOMATIC)
+                .engine(EngineType.DIESEL)
+                .build();
+
+        Model saved = modelService.createModel(model);
+        System.out.println(saved);
     }
 }

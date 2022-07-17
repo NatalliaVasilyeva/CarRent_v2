@@ -50,9 +50,7 @@ public class Brand implements Identifiable {
 
     public static final class Builder {
         private Long id;
-
         private String name;
-
         private List<Model> models;
 
 

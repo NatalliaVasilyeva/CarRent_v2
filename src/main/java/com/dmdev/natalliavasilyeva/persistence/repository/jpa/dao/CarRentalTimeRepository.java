@@ -1,10 +1,10 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
 
-import com.dmdev.natalliavasilyeva.domain.jpa.CarRentalTime;
+import com.dmdev.natalliavasilyeva.domain.jpa.CarRentalTimeJpa;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.ResultSetExtractor;
-import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
+import com.dmdev.natalliavasilyeva.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.CarRentalTimeResultExtractor;
 import org.slf4j.Logger;
@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class CarRentalTimeRepository extends AbstractRepository<CarRentalTime> implements GenericRepository<CarRentalTime, Long> {
+public class CarRentalTimeRepository extends AbstractRepository<CarRentalTimeJpa> implements GenericRepository<CarRentalTimeJpa, Long> {
 
     private static final Logger logger = LoggerFactory.getLogger(CarRentalTimeRepository.class);
-    ResultSetExtractor<CarRentalTime> extractor;
+    ResultSetExtractor<CarRentalTimeJpa> extractor;
 
     public CarRentalTimeRepository() {
         this.extractor = new CarRentalTimeResultExtractor();
@@ -40,7 +40,7 @@ public class CarRentalTimeRepository extends AbstractRepository<CarRentalTime> i
             "RETURNING id, order_id, start_rental_date, end_rental_date";
 
     @Override
-    public Optional<CarRentalTime> findById(Long id) {
+    public Optional<CarRentalTimeJpa> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -49,7 +49,7 @@ public class CarRentalTimeRepository extends AbstractRepository<CarRentalTime> i
     }
 
     @Override
-    public List<CarRentalTime> findAll() {
+    public List<CarRentalTimeJpa> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX);
@@ -65,7 +65,7 @@ public class CarRentalTimeRepository extends AbstractRepository<CarRentalTime> i
     }
 
     @Override
-    public Optional<CarRentalTime> delete(CarRentalTime carRentalTime) {
+    public Optional<CarRentalTimeJpa> delete(CarRentalTimeJpa carRentalTime) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithSingleArg(DELETE, carRentalTime.getId())
@@ -74,7 +74,7 @@ public class CarRentalTimeRepository extends AbstractRepository<CarRentalTime> i
     }
 
     @Override
-    public Optional<CarRentalTime> update(CarRentalTime carRentalTime) {
+    public Optional<CarRentalTimeJpa> update(CarRentalTimeJpa carRentalTime) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(carRentalTime);
         values.add(carRentalTime.getId());
         var statementProvider = new BaseStatementProvider();
@@ -84,7 +84,7 @@ public class CarRentalTimeRepository extends AbstractRepository<CarRentalTime> i
     }
 
     @Override
-    public Optional<CarRentalTime> save(CarRentalTime carRentalTime) {
+    public Optional<CarRentalTimeJpa> save(CarRentalTimeJpa carRentalTime) {
         List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(carRentalTime);
         var statementProvider = new BaseStatementProvider();
         statementProvider
@@ -93,7 +93,7 @@ public class CarRentalTimeRepository extends AbstractRepository<CarRentalTime> i
         return save(statementProvider, extractor);
     }
 
-    public Optional<CarRentalTime> findByOrderId(Long orderId) {
+    public Optional<CarRentalTimeJpa> findByOrderId(Long orderId) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)

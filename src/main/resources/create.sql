@@ -7,16 +7,16 @@ CREATE SCHEMA IF NOT EXISTS car_rent;
 
 SET search_path TO car_rent, public;
 
-CREATE TABLE IF NOT EXISTS brand
+CREATE TABLE IF NOT EXISTS brandJpa
 (
     id   BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS price
+CREATE TABLE IF NOT EXISTS priceJpa
 (
     id    BIGSERIAL PRIMARY KEY,
-    price NUMERIC(10, 2) NOT NULL CHECK (price > 0)
+    priceJpa NUMERIC(10, 2) NOT NULL CHECK (priceJpa > 0)
 );
 
 CREATE TABLE IF NOT EXISTS categories
@@ -25,11 +25,11 @@ CREATE TABLE IF NOT EXISTS categories
     name     VARCHAR(255) DEFAULT 'ECONOMY' NOT NULL,
     price_id BIGINT,
     CONSTRAINT category_price_fk
-        FOREIGN KEY (price_id) REFERENCES price (id)
+        FOREIGN KEY (price_id) REFERENCES priceJpa (id)
             ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-CREATE TABLE IF NOT EXISTS model
+CREATE TABLE IF NOT EXISTS modelJpa
 (
     id           BIGSERIAL PRIMARY KEY,
     brand_id     BIGINT,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS model
     transmission VARCHAR(128),
     engine_type  VARCHAR(128),
     CONSTRAINT model_brand_fk
-        FOREIGN KEY (brand_id) REFERENCES brand (id)
+        FOREIGN KEY (brand_id) REFERENCES brandJpa (id)
             ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT model_category_fk
         FOREIGN KEY (category_id) REFERENCES categories (id)
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS car
     is_repaired BOOLEAN,
     image       TEXT,
     CONSTRAINT car_model_fk
-        FOREIGN KEY (model_id) REFERENCES model (id)
+        FOREIGN KEY (model_id) REFERENCES modelJpa (id)
             ON UPDATE CASCADE ON DELETE SET NULL
 );
 
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS users
     login    VARCHAR(255) NOT NULL,
     email    VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    role     VARCHAR(32),
+    role     VARCHAR(32)  NOT NULL DEFAULT 'CLIENT',
     UNIQUE (email),
     UNIQUE (login)
 );
@@ -78,9 +78,9 @@ CREATE TABLE IF NOT EXISTS orders
     user_id      BIGINT                                    NOT NULL,
     car_id       BIGINT                                    NOT NULL,
     passport     varchar(128)                              NOT NULL,
-    insurance    BOOLEAN,
+    insurance    BOOLEAN                                   NOT NULL,
     order_status VARCHAR(32)                               NOT NULL,
-    sum          NUMERIC(10, 2),
+    sum          NUMERIC(10, 2)                            NOT NULL,
     CONSTRAINT order_user_fk
         FOREIGN KEY (user_id) REFERENCES users (id)
             ON UPDATE CASCADE ON DELETE SET NULL,
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS orders
 
 );
 
-CREATE TABLE IF NOT EXISTS accident
+CREATE TABLE IF NOT EXISTS accidentJpa
 (
     id            BIGSERIAL PRIMARY KEY,
     order_id      BIGINT                      NOT NULL,
@@ -117,11 +117,11 @@ CREATE TABLE IF NOT EXISTS userdetails
 (
     id                BIGSERIAL PRIMARY KEY,
     user_id           BIGINT                      NOT NULL,
-    name              VARCHAR(128),
-    surname           VARCHAR(128),
-    address           VARCHAR(255),
-    phone             VARCHAR(32),
-    birthday          TIMESTAMP WITHOUT TIME ZONE,
+    name              VARCHAR(128)                NOT NULL,
+    surname           VARCHAR(128)                NOT NULL,
+    address           VARCHAR(255)                NOT NULL,
+    phone             VARCHAR(32)                 NOT NULL,
+    birthday          TIMESTAMP WITHOUT TIME ZONE NOT NULL ,
     registration_date TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now(),
     CONSTRAINT userdetails_user_fk
         FOREIGN KEY (user_id) REFERENCES users (id)

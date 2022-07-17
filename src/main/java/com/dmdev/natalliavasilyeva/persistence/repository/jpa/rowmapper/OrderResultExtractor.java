@@ -2,7 +2,7 @@ package com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper;
 
 
 import com.dmdev.natalliavasilyeva.domain.model.OrderStatus;
-import com.dmdev.natalliavasilyeva.domain.jpa.Order;
+import com.dmdev.natalliavasilyeva.domain.jpa.OrderJpa;
 import com.dmdev.natalliavasilyeva.persistence.exception.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,16 +11,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-public class OrderResultExtractor implements ResultSetExtractor<Order> {
+public class OrderResultExtractor implements ResultSetExtractor<OrderJpa> {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderResultExtractor.class);
 
     @Override
-    public Order extractData(ResultSet rs) {
+    public OrderJpa extractData(ResultSet rs) {
         try {
             Timestamp date = rs.getTimestamp("date");
 
-            return new Order.Builder()
+            return new OrderJpa.Builder()
                     .id(rs.getLong("id"))
                     .date(date == null ? null : date.toInstant())
                     .user(rs.getLong("user_id"))

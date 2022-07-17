@@ -1,8 +1,8 @@
 package com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao;
 
-import com.dmdev.natalliavasilyeva.domain.jpa.UserDetails;
+import com.dmdev.natalliavasilyeva.domain.jpa.UserDetailsJpa;
 import com.dmdev.natalliavasilyeva.persistence.repository.BaseStatementProvider;
-import com.dmdev.natalliavasilyeva.persistence.utils.ParseObjectUtils;
+import com.dmdev.natalliavasilyeva.utils.ParseObjectUtils;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.GenericRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.rowmapper.UserDetailsResultExtractor;
 import org.slf4j.Logger;
@@ -12,7 +12,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-public class UserDetailsRepository extends AbstractRepository<UserDetails> implements GenericRepository<UserDetails, Long> {
+public class UserDetailsRepository extends AbstractRepository<UserDetailsJpa> implements GenericRepository<UserDetailsJpa, Long> {
 
     private static final Logger logger = LoggerFactory.getLogger(UserDetailsRepository.class);
     UserDetailsResultExtractor extractor;
@@ -37,7 +37,7 @@ public class UserDetailsRepository extends AbstractRepository<UserDetails> imple
             "RETURNING id, user_id, name, surname, address, phone, birthday, registration_date";
 
     @Override
-    public Optional<UserDetails> findById(Long id) {
+    public Optional<UserDetailsJpa> findById(Long id) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -46,7 +46,7 @@ public class UserDetailsRepository extends AbstractRepository<UserDetails> imple
     }
 
     @Override
-    public List<UserDetails> findAll() {
+    public List<UserDetailsJpa> findAll() {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX);
@@ -62,27 +62,27 @@ public class UserDetailsRepository extends AbstractRepository<UserDetails> imple
     }
 
     @Override
-    public Optional<UserDetails> delete(UserDetails userDetails) {
+    public Optional<UserDetailsJpa> delete(UserDetailsJpa userDetailsJpa) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
-                .appendWithSingleArg(DELETE, userDetails.getId())
+                .appendWithSingleArg(DELETE, userDetailsJpa.getId())
                 .append(RETURNING);
         return delete(statementProvider, extractor);
     }
 
     @Override
-    public Optional<UserDetails> update(UserDetails userDetails) {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(userDetails);
-        values.add(userDetails.getId());
+    public Optional<UserDetailsJpa> update(UserDetailsJpa userDetailsJpa) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(userDetailsJpa);
+        values.add(userDetailsJpa.getId());
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(UPDATE, values);
-        return update(userDetails, statementProvider);
+        return update(userDetailsJpa, statementProvider);
     }
 
     @Override
-    public Optional<UserDetails> save(UserDetails userDetails) {
-        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(userDetails);
+    public Optional<UserDetailsJpa> save(UserDetailsJpa userDetailsJpa) {
+        List<Object> values = ParseObjectUtils.getFieldObjectsWithoutId(userDetailsJpa);
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .appendWithMultipleArgs(CREATE, values)
@@ -90,7 +90,7 @@ public class UserDetailsRepository extends AbstractRepository<UserDetails> imple
         return save(statementProvider, extractor);
     }
 
-    public Optional<UserDetails> findByUserId(Long userId) {
+    public Optional<UserDetailsJpa> findByUserId(Long userId) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -98,7 +98,7 @@ public class UserDetailsRepository extends AbstractRepository<UserDetails> imple
         return findOne(statementProvider, extractor);
     }
 
-    public List<UserDetails> findAllByRegistrationDate(Instant registrationDate) {
+    public List<UserDetailsJpa> findAllByRegistrationDate(Instant registrationDate) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -106,7 +106,7 @@ public class UserDetailsRepository extends AbstractRepository<UserDetails> imple
         return findAll(statementProvider, extractor);
     }
 
-    public List<UserDetails> findAllByRegistrationDateLess(Instant registrationDate) {
+    public List<UserDetailsJpa> findAllByRegistrationDateLess(Instant registrationDate) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -114,7 +114,7 @@ public class UserDetailsRepository extends AbstractRepository<UserDetails> imple
         return findAll(statementProvider, extractor);
     }
 
-    public List<UserDetails> findAllByRegistrationDateMore(Instant registrationDate) {
+    public List<UserDetailsJpa> findAllByRegistrationDateMore(Instant registrationDate) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
@@ -122,7 +122,7 @@ public class UserDetailsRepository extends AbstractRepository<UserDetails> imple
         return findAll(statementProvider, extractor);
     }
 
-    public List<UserDetails> findAllByRegistrationDates(Instant from, Instant to) {
+    public List<UserDetailsJpa> findAllByRegistrationDates(Instant from, Instant to) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
