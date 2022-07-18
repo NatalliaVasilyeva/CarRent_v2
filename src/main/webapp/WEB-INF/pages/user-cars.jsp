@@ -6,8 +6,8 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jstl/core" prefix="c "%>
 <%@ taglib uri="http://java.sun.com/jstl/fmt"  prefix="fmt" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -15,7 +15,7 @@
     <title>Car list for user</title>
 </head>
 <body>
-<h2>Welcome ${requestScope.user.firstName}!</h2>
+<h2>Welcome ${sessionScope.user.firstName}!</h2>
 <table class="table table-dark">
     <thead>
     <tr>
@@ -32,7 +32,7 @@
     </thead>
     <tbody>
     <c:forEach items="${cars}" var="car">
-        <c:if test="${car.rentedCar == false}">
+<%--        <c:if test="${car.rentedCar == false}">--%>
             <tr>
                 <th scope="row" hidden=true>${car.id}</th>
                 <td>${car.brand}</td>
@@ -53,7 +53,7 @@
                     </form>
                 </td>
             </tr>
-        </c:if>
+<%--        </c:if>--%>
     </c:forEach>
     </tbody>
 </table>
