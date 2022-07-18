@@ -32,13 +32,13 @@ public class CarRepository extends AbstractRepository<CarJpa> implements Generic
             "FROM car c\n";
 
     private static final String CREATE = "" +
-            "INSERT INTO car(model_id, color, year, car_number, vin, is_repaired, image) values (?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO car(model_id, color, year, car_number, vin, is_repaired, image) values (?, ?, ?, ?, ?, ?, ?)\n";
 
     private static final String UPDATE = "" +
             "UPDATE car SET model_id = ?, color = ?, year = ?, car_number = ?, vin = ?, is_repaired = ?, image = ? WHERE id = ?";
 
     private static final String DELETE = "" +
-            "DELETE FROM car WHERE id = ?";
+            "DELETE FROM car WHERE id = ?\n";
 
     private static final String RETURNING = "" +
             "RETURNING id, model_id, color, year, car_number, vin, is_repaired, image";

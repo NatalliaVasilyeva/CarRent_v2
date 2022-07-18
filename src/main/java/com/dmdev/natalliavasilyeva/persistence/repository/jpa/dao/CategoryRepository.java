@@ -27,13 +27,13 @@ public class CategoryRepository extends AbstractRepository<CategoryJpa> implemen
             "FROM categories\n";
 
     private static final String CREATE = "" +
-            "INSERT INTO categories(name, price_id) values (?, ?)";
+            "INSERT INTO categories(name, price_id) values (?, ?)\n";
 
     private static final String UPDATE = "" +
             "UPDATE categories SET name = ?, price_id = ? WHERE id = ?";
 
     private static final String DELETE = "" +
-            "DELETE FROM categories WHERE id = ?";
+            "DELETE FROM categories WHERE id = ?\n";
 
     private static final String EXISTS_BY_NAME = "" +
             "SELECT EXISTS (SELECT * FROM categories WHERE name = ?)";

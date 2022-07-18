@@ -27,13 +27,13 @@ public class ModelRepository extends AbstractRepository<ModelJpa> implements Gen
             "FROM model\n";
 
     private static final String CREATE = "" +
-            "INSERT INTO model(brand_id, category_id, name, transmission, engine_type) values (?, ?, ?, ?, ?)";
+            "INSERT INTO model(brand_id, category_id, name, transmission, engine_type) values (?, ?, ?, ?, ?)\n";
 
     private static final String UPDATE = "" +
             "UPDATE model SET brand_id = ?, category_id = ?, name = ?, transmission = ?, engine_type = ? WHERE id = ?";
 
     private static final String DELETE = "" +
-            "DELETE FROM model WHERE id = ?";
+            "DELETE FROM model WHERE id = ?\n";
 
     private static final String EXISTS_BY_NAME_TRANSMISSION_ENGINE = "" +
             "SELECT EXISTS (SELECT * FROM model WHERE name = ? AND transmission = ? AND engine_type = ?)";

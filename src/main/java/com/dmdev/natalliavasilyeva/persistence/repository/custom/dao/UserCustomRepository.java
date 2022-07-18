@@ -91,7 +91,7 @@ public class UserCustomRepository extends AbstractCustomRepository<User> impleme
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITH_ORDERS)
-                .appendWithSingleArg("WHERE u.id = ?", id)
+                .appendWithSingleArg("WHERE u.id = ?\n", id)
                 .append(GROUP_BY);
         return findOne(statementProvider, extractor);
     }
@@ -100,7 +100,7 @@ public class UserCustomRepository extends AbstractCustomRepository<User> impleme
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ORDERS)
-                .appendWithSingleArg("WHERE u.login LIKE ?", login)
+                .appendWithSingleArg("WHERE u.login LIKE ?\n", login)
                 .append(GROUP_BY);
         return findOne(statementProvider, extractor);
     }
@@ -109,7 +109,7 @@ public class UserCustomRepository extends AbstractCustomRepository<User> impleme
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ORDERS)
-                .appendWithSingleArg("WHERE u.email LIKE ?", email)
+                .appendWithSingleArg("WHERE u.email LIKE ?\n", email)
                 .append(GROUP_BY);
         return findOne(statementProvider, extractor);
     }
@@ -118,7 +118,7 @@ public class UserCustomRepository extends AbstractCustomRepository<User> impleme
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ORDERS)
-                .appendWithSingleArg("WHERE u.role LIKE ?", role)
+                .appendWithSingleArg("WHERE u.role LIKE ?\n", role)
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -127,7 +127,7 @@ public class UserCustomRepository extends AbstractCustomRepository<User> impleme
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ORDERS)
-                .appendWithSingleArg("WHERE ud.registration_date = ?", registrationDate)
+                .appendWithSingleArg("WHERE ud.registration_date = ?\n", registrationDate)
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -136,7 +136,7 @@ public class UserCustomRepository extends AbstractCustomRepository<User> impleme
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ORDERS)
-                .appendWithSingleArg("WHERE ud.registration_date < ?", registrationDate)
+                .appendWithSingleArg("WHERE ud.registration_date < ?\n", registrationDate)
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -145,7 +145,7 @@ public class UserCustomRepository extends AbstractCustomRepository<User> impleme
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ORDERS)
-                .appendWithSingleArg("WHERE ud.registration_date > ?", registrationDate)
+                .appendWithSingleArg("WHERE ud.registration_date > ?\n", registrationDate)
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -154,7 +154,7 @@ public class UserCustomRepository extends AbstractCustomRepository<User> impleme
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ORDERS)
-                .appendWithSingleArg("WHERE ud.phone LIKE ?", phone)
+                .appendWithSingleArg("WHERE ud.phone LIKE ?\n", phone)
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -163,7 +163,7 @@ public class UserCustomRepository extends AbstractCustomRepository<User> impleme
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ORDERS)
-                .appendWithSingleArg("WHERE ud.phone = ?", birthday)
+                .appendWithSingleArg("WHERE ud.phone = ?\n", birthday)
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -172,7 +172,7 @@ public class UserCustomRepository extends AbstractCustomRepository<User> impleme
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITH_ORDERS)
-                .append("WHERE user_id IN (SELECT od.user_id FROM orders od WHERE od.user_id IS NOT NULL)")
+                .append("WHERE user_id IN (SELECT od.user_id FROM orders od WHERE od.user_id IS NOT NULL)\n")
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -181,7 +181,7 @@ public class UserCustomRepository extends AbstractCustomRepository<User> impleme
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ORDERS)
-                .append("WHERE user_id NOT IN (SELECT od.user_id FROM orders od WHERE od.user_id IS NOT NULL)")
+                .append("WHERE user_id NOT IN (SELECT od.user_id FROM orders od WHERE od.user_id IS NOT NULL)\n")
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -190,7 +190,7 @@ public class UserCustomRepository extends AbstractCustomRepository<User> impleme
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ORDERS)
-                .appendWithSingleArg("WHERE dl.expired_date < ?", Instant.now())
+                .appendWithSingleArg("WHERE dl.expired_date < ?\n", Instant.now())
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }

@@ -25,13 +25,13 @@ public class UserDetailsRepository extends AbstractRepository<UserDetailsJpa> im
             "FROM userdetails\n";
 
     private static final String CREATE = "" +
-            "INSERT INTO userdetails(user_id, name, surname, address, phone, birthday, registration_date) values (?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO userdetails(user_id, name, surname, address, phone, birthday, registration_date) values (?, ?, ?, ?, ?, ?, ?)\n";
 
     private static final String UPDATE = "" +
             "UPDATE userdetails SET user_id = ?, name = ?, surname = ?, address = ?, phone = ?, birthday = ? WHERE id = ?";
 
     private static final String DELETE = "" +
-            "DELETE FROM userdetails WHERE id = ?";
+            "DELETE FROM userdetails WHERE id = ?\n";
 
     private static final String RETURNING = "" +
             "RETURNING id, user_id, name, surname, address, phone, birthday, registration_date";

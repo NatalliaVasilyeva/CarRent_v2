@@ -51,7 +51,7 @@ public class BrandCustomRepository extends AbstractCustomRepository<Brand> imple
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE b.id = ?", id)
+                .appendWithSingleArg("WHERE b.id = ?\n", id)
                 .append(GROUP_BY);
         return findOne(statementProvider, extractor);
     }
@@ -60,7 +60,7 @@ public class BrandCustomRepository extends AbstractCustomRepository<Brand> imple
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE b.name = ?", name)
+                .appendWithSingleArg("WHERE b.name = ?\n", name)
                 .append(GROUP_BY);
         return findOne(statementProvider, extractor);
     }
@@ -69,7 +69,7 @@ public class BrandCustomRepository extends AbstractCustomRepository<Brand> imple
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE category_name = ?", category)
+                .appendWithSingleArg("WHERE category_name = ?\n", category)
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }

@@ -27,13 +27,13 @@ public class DriverLicenseRepository extends AbstractRepository<DriverLicenseJpa
             "FROM driverlicense\n";
 
     private static final String CREATE = "" +
-            "INSERT INTO driverlicense(user_details_id, number, issue_date, expired_date) values (?, ?, ?, ?)";
+            "INSERT INTO driverlicense(user_details_id, number, issue_date, expired_date) values (?, ?, ?, ?)\n";
 
     private static final String UPDATE = "" +
             "UPDATE driverlicense SET user_details_id = ?, number = ?, issue_date = ?, expired_date = ? WHERE id = ?";
 
     private static final String DELETE = "" +
-            "DELETE FROM driverlicense WHERE id = ?";
+            "DELETE FROM driverlicense WHERE id = ?\n";
 
     private static final String RETURNING = "" +
             "RETURNING id, user_details_id, number, issue_date, expired_date";

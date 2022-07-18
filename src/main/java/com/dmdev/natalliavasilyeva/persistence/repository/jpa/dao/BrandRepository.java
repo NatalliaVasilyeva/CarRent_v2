@@ -27,13 +27,13 @@ public class BrandRepository extends AbstractRepository<BrandJpa> implements Gen
             "FROM brand\n";
 
     private static final String CREATE = "" +
-            "INSERT INTO brand(name) values (?)";
+            "INSERT INTO brand(name) values (?)\n";
 
     private static final String UPDATE = "" +
             "UPDATE brand SET name = ? WHERE id = ?";
 
     private static final String DELETE = "" +
-            "DELETE FROM brand WHERE id = ?";
+            "DELETE FROM brand WHERE id = ?\n";
 
     private static final String EXISTS_BY_NAME = "" +
             "SELECT EXISTS (SELECT * FROM brand WHERE name = ?)";

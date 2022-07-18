@@ -29,7 +29,7 @@ public class UserRepository extends AbstractRepository<UserJpa> implements Gener
             "FROM users\n";
 
     private static final String CREATE = "" +
-            "INSERT INTO users(login, email, password, role) values (?, ?, ?, ?)";
+            "INSERT INTO users(login, email, password, role) values (?, ?, ?, ?)\n";
 
     private static final String UPDATE = "" +
             "UPDATE users SET login = ?, email = ?, password = ?, role = ? WHERE id = ?";
@@ -38,7 +38,7 @@ public class UserRepository extends AbstractRepository<UserJpa> implements Gener
             "UPDATE users SET password = ? WHERE id = ?";
 
     private static final String DELETE = "" +
-            "DELETE FROM users WHERE id = ?";
+            "DELETE FROM users WHERE id = ?\n";
 
     private static final String EXISTS_BY_LOGIN = "" +
             "SELECT EXISTS (SELECT * FROM users WHERE login = ?)";
