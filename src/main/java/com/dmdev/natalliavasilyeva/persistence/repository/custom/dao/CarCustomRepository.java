@@ -103,7 +103,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITH_ACCIDENTS)
-                .appendWithSingleArg("WHERE c.id = ?", id)
+                .appendWithSingleArg("WHERE c.id = ?\n", id)
                 .append(GROUP_BY);
         return findOne(statementProvider, extractor);
     }
@@ -112,7 +112,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ACCIDENTS)
-                .appendWithSingleArg("WHERE c.car_number LIKE ?", carNumber)
+                .appendWithSingleArg("WHERE c.car_number LIKE ?\n", carNumber)
                 .append(GROUP_BY);
         return findOne(statementProvider, extractor);
     }
@@ -121,7 +121,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ACCIDENTS)
-                .appendWithSingleArg("WHERE c.year LIKE ?", year)
+                .appendWithSingleArg("WHERE c.year LIKE ?\n", year)
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -130,7 +130,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ACCIDENTS)
-                .appendWithMultipleArgs("WHERE c.year BETWEEN ? AND ?", first, second)
+                .appendWithMultipleArgs("WHERE c.year BETWEEN ? AND ?\n", first, second)
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -142,7 +142,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
                 .appendWithMultipleArgs("LEFT JOIN orders o ON o.car_id = c.id \n" +
                         "WHERE o.car_id = ? AND o.id IN \n" +
                         "(SELECT order_id FROM carrentaltime crt WHERE crt.start_rental_date <= ? AND\n" +
-                        "crt.end_rental_date >= ?)", carId, endDate, startDate)
+                        "crt.end_rental_date >= ?\n)", carId, endDate, startDate)
                 .append(GROUP_BY);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
@@ -157,7 +157,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ACCIDENTS)
-                .appendWithSingleArg("WHERE b.name LIKE ?", brandName)
+                .appendWithSingleArg("WHERE b.name LIKE ?\n", brandName)
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -166,7 +166,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ACCIDENTS)
-                .appendWithSingleArg("WHERE b.id = ?", brandId)
+                .appendWithSingleArg("WHERE b.id = ?\n", brandId)
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -175,7 +175,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ACCIDENTS)
-                .appendWithSingleArg("WHERE ct.name LIKE ?", categoryName)
+                .appendWithSingleArg("WHERE ct.name LIKE ?\n", categoryName)
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -184,7 +184,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITH_ACCIDENTS)
-                .append("WHERE c.id IN (SELECT car_id FROM orders LEFT JOIN accident On accident.order_id = orders.id WHERE order_id IS NOT NULL)")
+                .append("WHERE c.id IN (SELECT car_id FROM orders LEFT JOIN accident On accident.order_id = orders.id WHERE order_id IS NOT NULL)\n")
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -193,7 +193,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITH_ACCIDENTS)
-                .append("WHERE c.id NOT IN (SELECT car_id FROM orders LEFT JOIN accident On accident.order_id = orders.id WHERE order_id IS NOT NULL)")
+                .append("WHERE c.id NOT IN (SELECT car_id FROM orders LEFT JOIN accident On accident.order_id = orders.id WHERE order_id IS NOT NULL)\n")
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -202,7 +202,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITH_ACCIDENTS)
-                .append("WHERE c.is_repaired = true")
+                .append("WHERE c.is_repaired = true\n")
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -211,7 +211,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITH_ACCIDENTS)
-                .append("WHERE c.is_repaired = false")
+                .append("WHERE c.is_repaired = false\n")
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }

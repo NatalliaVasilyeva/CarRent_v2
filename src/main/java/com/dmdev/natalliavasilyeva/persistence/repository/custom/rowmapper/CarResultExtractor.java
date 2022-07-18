@@ -104,7 +104,7 @@ public class CarResultExtractor implements ResultSetExtractor<Car> {
                             .id(Long.valueOf((Integer) element.get("accident_id")))
                             .date(date)
                             .description((String) element.get("description"))
-                            .damage(new BigDecimal((String) element.get("damage")))
+                            .damage(new BigDecimal((Double) element.get("damage")))
                             .build()
                     );
                 }

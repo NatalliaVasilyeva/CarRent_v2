@@ -6,7 +6,6 @@ public class CarUserResponseDto {
     private Long id;
     private String brand;
 //    private ModelResponseDTO model;
-
     private String model;
 
     private String transmission;
@@ -37,5 +36,20 @@ public class CarUserResponseDto {
         this.yearOfProduction = yearOfProduction;
         this.image = image;
         this.pricePerDay = pricePerDay;
+    }
+
+    @Override
+    public String toString() {
+        return "CarUserResponseDto{" +
+                "id=" + id +
+                ", brand='" + brand + '\'' +
+                ", model='" + model + '\'' +
+                ", transmission='" + transmission + '\'' +
+                ", engineType='" + engineType + '\'' +
+                ", color='" + color + '\'' +
+                ", yearOfProduction='" + yearOfProduction + '\'' +
+                ", image='" + image + '\'' +
+                ", pricePerDay=" + pricePerDay +
+                '}';
     }
 }

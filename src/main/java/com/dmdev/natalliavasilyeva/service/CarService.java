@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class CarService {
 
     private static final Logger logger = LoggerFactory.getLogger(CarService.class);
+
     RepositoryFactory repositoryFactory = RepositoryFactory.getInstance();
     RepositoryCustomFactory repositoryCustomFactory = RepositoryCustomFactory.getInstance();
 
@@ -35,7 +36,6 @@ public class CarService {
     CarRepository carRepository = repositoryFactory.getCarRepository();
     CarCustomRepository carCustomRepository = repositoryCustomFactory.getCarCustomRepository();
     FilesService carImageService = new FilesService();
-
 
     public Car createCar(Car car) {
         Long brandId = null;

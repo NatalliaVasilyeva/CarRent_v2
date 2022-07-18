@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebFilter(filterName = "JspFilter", urlPatterns = {"/WEB-INF/pages/*"}, dispatcherTypes = DispatcherType.REQUEST)
+@WebFilter(filterName = "JspFilter", urlPatterns = {"/WEB-INF/*"}, dispatcherTypes = DispatcherType.REQUEST)
 public class JspFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) {

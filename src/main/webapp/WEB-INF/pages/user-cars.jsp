@@ -32,7 +32,6 @@
     </thead>
     <tbody>
     <c:forEach items="${cars}" var="car">
-<%--        <c:if test="${car.rentedCar == false}">--%>
             <tr>
                 <th scope="row" hidden=true>${car.id}</th>
                 <td>${car.brand}</td>
@@ -53,7 +52,6 @@
                     </form>
                 </td>
             </tr>
-<%--        </c:if>--%>
     </c:forEach>
     </tbody>
 </table>

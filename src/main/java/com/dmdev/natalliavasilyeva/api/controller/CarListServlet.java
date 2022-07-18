@@ -17,21 +17,20 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-public class CarController {
+@WebServlet("/user-cars")
+public class CarListServlet extends HttpServlet {
+    private final CarService carService = ServiceFactory.getInstance().getCarService();
 
-    @WebServlet("/user-cars")
-    public class CarListServlet extends HttpServlet {
-        private final CarService carService = ServiceFactory.getInstance().getCarService();
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("user");
+        List<CarUserResponseDto> cars = CarMapper.toShotDtos(carService.findAllCustomCarsAvailable());
 
-        @Override
-        protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-            HttpSession session = req.getSession();
-            User user = (User) session.getAttribute("user");
-            List<CarUserResponseDto> cars = CarMapper.toShotDtos(carService.findAllCustomCarsAvailable());
+        cars.stream().forEach(System.out::println);
 
-            req.setAttribute("cars", cars);
+        req.setAttribute("cars", cars);
 
-            req.getRequestDispatcher(JspHelper.getPath("user-cars")).forward(req, resp);
-        }
+        req.getRequestDispatcher(JspHelper.getPath("user-cars")).forward(req, resp);
     }
 }
