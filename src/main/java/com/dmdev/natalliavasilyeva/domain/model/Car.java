@@ -1,6 +1,7 @@
 package com.dmdev.natalliavasilyeva.domain.model;
 
-import javax.servlet.http.Part;
+import jakarta.servlet.http.Part;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
