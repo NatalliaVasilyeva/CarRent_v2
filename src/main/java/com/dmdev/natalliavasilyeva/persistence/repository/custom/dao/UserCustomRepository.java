@@ -53,7 +53,7 @@ public class UserCustomRepository extends AbstractCustomRepository<User> impleme
             "                         LEFT JOIN car c ON o.car_id = c.id) AS order_des\n" +
             "                  ON u.id = order_des.order_user_id\n";
 
-    private final static String GROUP_BY = "" +
+    private static final String GROUP_BY = "" +
             "GROUP BY u.id,ud.id,dl.id";
 
     private static final String FIND_WITHOUT_ORDERS = "" +

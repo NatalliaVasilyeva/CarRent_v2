@@ -82,7 +82,7 @@ public class OrderCustomRepository extends AbstractCustomRepository<Order> imple
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE o.order_status = ?", orderStatus);
+                .appendWithSingleArg("WHERE lower(o.order_status) = ?", orderStatus);
         return findAll(statementProvider, extractor);
     }
 

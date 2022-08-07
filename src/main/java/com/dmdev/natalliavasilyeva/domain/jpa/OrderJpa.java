@@ -4,6 +4,7 @@ package com.dmdev.natalliavasilyeva.domain.jpa;
 import com.dmdev.natalliavasilyeva.domain.model.OrderStatus;
 
 import java.io.Serializable;
+import java.lang.annotation.Documented;
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -38,55 +39,56 @@ public class OrderJpa implements Entity, Serializable {
         this.orderStatus = orderStatus;
         this.sum = sum;
     }
-
+    @Override
     public long getId() {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
     public Instant getDate() {
         return date;
     }
-
+    public void setDate(Instant date) {
+        this.date = date;
+    }
     public long getUserId() {
         return userId;
     }
-
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
     public long getCarId() {
         return carId;
     }
-
+    public void setCarId(long carId) {
+        this.carId = carId;
+    }
     public String getPassport() {
         return passport;
     }
-
     public void setPassport(String passport) {
         this.passport = passport;
     }
-
     public boolean isInsuranceNeeded() {
         return isInsuranceNeeded;
     }
-
     public void setInsuranceNeeded(boolean insuranceNeeded) {
         isInsuranceNeeded = insuranceNeeded;
     }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
-
     public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
-
     public BigDecimal getSum() {
         return sum;
     }
-
     public void setSum(BigDecimal sum) {
         this.sum = sum;
     }
-
     public static final class Builder {
         private long id;
         private Instant date;
@@ -155,6 +157,4 @@ public class OrderJpa implements Entity, Serializable {
             return orderJpa;
         }
     }
-
-
 }

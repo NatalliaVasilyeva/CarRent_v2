@@ -115,7 +115,7 @@ public class OrderRepository extends AbstractRepository<OrderJpa> implements Gen
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE status LIKE  ?", status);
+                .appendWithSingleArg("WHERE lower(status) LIKE  ?", status);
         return findAll(statementProvider, extractor);
     }
 

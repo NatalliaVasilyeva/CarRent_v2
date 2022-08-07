@@ -149,7 +149,7 @@ public class UserRepository extends AbstractRepository<UserJpa> implements Gener
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE role LIKE ?", role);
+                .appendWithSingleArg("WHERE lower(role) LIKE ?", role);
         return findAll(statementProvider, extractor);
     }
 }

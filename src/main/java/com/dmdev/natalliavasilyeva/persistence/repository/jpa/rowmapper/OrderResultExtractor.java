@@ -27,7 +27,7 @@ public class OrderResultExtractor implements ResultSetExtractor<OrderJpa> {
                     .car(rs.getLong("car_id"))
                     .passport(rs.getString("passport"))
                     .insurance(rs.getBoolean("insurance"))
-                    .orderStatus(OrderStatus.valueOf(rs.getString("order_status").toUpperCase()))
+                    .orderStatus(OrderStatus.getEnum(rs.getString("order_status").toUpperCase()))
                     .sum(rs.getBigDecimal("sum"))
                     .build();
         } catch (SQLException ex) {

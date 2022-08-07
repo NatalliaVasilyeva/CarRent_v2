@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class AccidentJpaRepository extends AbstractRepository<AccidentJpa> implements GenericRepository<AccidentJpa, Long> {
+public class AccidentRepository extends AbstractRepository<AccidentJpa> implements GenericRepository<AccidentJpa, Long> {
 
     // TODO: add logs
-    private static final Logger logger = LoggerFactory.getLogger(AccidentJpaRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(AccidentRepository.class);
     ResultSetExtractor<AccidentJpa> extractor;
 
-    public AccidentJpaRepository() {
+    public AccidentRepository() {
         this.extractor = new AccidentResultExtractor();
     }
 

@@ -23,8 +23,8 @@ public class DriverLicenseRepository extends AbstractRepository<DriverLicenseJpa
     }
 
     private static final String FIND_QUERY_PREFIX = "" +
-            "SELECT id, user_details_id, number, issue_date, expired_date\n" +
-            "FROM driverlicense\n";
+            "SELECT dl.id, dl.user_details_id, dl.number, dl.issue_date, dl.expired_date\n" +
+            "FROM driverlicense dl\n";
 
     private static final String CREATE = "" +
             "INSERT INTO driverlicense(user_details_id, number, issue_date, expired_date) values (?, ?, ?, ?)\n";
@@ -35,6 +35,9 @@ public class DriverLicenseRepository extends AbstractRepository<DriverLicenseJpa
     private static final String DELETE = "" +
             "DELETE FROM driverlicense WHERE id = ?\n";
 
+    private static final String EXISTS_BY_NUMBER = "" +
+            "SELECT EXISTS (SELECT * FROM driverlicense WHERE number = ?)";
+
     private static final String RETURNING = "" +
             "RETURNING id, user_details_id, number, issue_date, expired_date";
 
@@ -44,7 +47,7 @@ public class DriverLicenseRepository extends AbstractRepository<DriverLicenseJpa
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE id = ?", id);
+                .appendWithSingleArg("WHERE dl.id = ?", id);
         return findOne(statementProvider, extractor);
     }
 
@@ -97,15 +100,22 @@ public class DriverLicenseRepository extends AbstractRepository<DriverLicenseJpa
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE user_details_id = ?", userDetailsId);
+                .appendWithSingleArg("WHERE dl.user_details_id = ?", userDetailsId);
         return findOne(statementProvider, extractor);
+    }
+
+    public boolean existByNumber(String number) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .appendWithSingleArg(EXISTS_BY_NUMBER, number);
+        return exist(statementProvider);
     }
 
     public Optional<DriverLicenseJpa> findByUserId(Long userId) {
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .append("LEFT JOIN userdetails ud ON driverlicense.user_details_id = ud.user_id")
+                .append("LEFT JOIN userdetails ud ON dl.user_details_id = ud.id\n")
                 .appendWithSingleArg("WHERE ud.user_id = ?", userId);
         return findOne(statementProvider, extractor);
     }
@@ -114,7 +124,7 @@ public class DriverLicenseRepository extends AbstractRepository<DriverLicenseJpa
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE expired_date = ?", Instant.now());
+                .appendWithSingleArg("WHERE dl.expired_date = ?", Instant.now());
         return findAll(statementProvider, extractor);
     }
 }

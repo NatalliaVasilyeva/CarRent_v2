@@ -5,13 +5,13 @@ import com.dmdev.natalliavasilyeva.domain.jpa.ModelJpa;
 import com.dmdev.natalliavasilyeva.domain.model.EngineType;
 import com.dmdev.natalliavasilyeva.domain.model.Model;
 import com.dmdev.natalliavasilyeva.domain.model.Transmission;
-import com.dmdev.natalliavasilyeva.persistence.exception.NotFoundException;
 import com.dmdev.natalliavasilyeva.persistence.repository.RepositoryCustomFactory;
 import com.dmdev.natalliavasilyeva.persistence.repository.RepositoryFactory;
 import com.dmdev.natalliavasilyeva.persistence.repository.custom.dao.ModelCustomRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.BrandRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.CategoryRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.ModelRepository;
+import com.dmdev.natalliavasilyeva.service.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

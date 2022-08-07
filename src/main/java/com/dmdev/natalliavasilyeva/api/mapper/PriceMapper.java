@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
 
 public final class PriceMapper {
 
+    private PriceMapper() {
+    }
+
     public static Price fromDto(PriceDto priceDto) {
         return new Price.Builder()
                 .sum(priceDto.getSum())
@@ -26,7 +29,7 @@ public final class PriceMapper {
     }
 
     public static List<Price> fromJpaList(List<PriceJpa> jpaPrices) {
-        return jpaPrices.size() == 0 ? Collections.emptyList() : jpaPrices.stream().map(PriceMapper::fromJpa).collect(Collectors.toList());
+        return jpaPrices.isEmpty() ? Collections.emptyList() : jpaPrices.stream().map(PriceMapper::fromJpa).collect(Collectors.toList());
     }
 
     public static PriceJpa toJpa(Price price) {

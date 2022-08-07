@@ -20,7 +20,7 @@ public class CarResultExtractor implements ResultSetExtractor<CarJpa> {
             return new CarJpa.Builder()
                     .id(rs.getLong("id"))
                     .model(rs.getLong("model_id"))
-                    .color(Color.valueOf(rs.getString("color").toUpperCase()))
+                    .color(Color.getEnum(rs.getString("color")))
                     .year(rs.getString("year"))
                     .year(rs.getString("car_number"))
                     .vin(rs.getString("car_number"))

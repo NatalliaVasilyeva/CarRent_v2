@@ -27,26 +27,33 @@ public class AccidentJpa implements Entity, Serializable {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
     public long getOrderId() {
         return orderId;
     }
-
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
+    }
     public Instant getDate() {
         return date;
     }
-
+    public void setDate(Instant date) {
+        this.date = date;
+    }
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
-
     public BigDecimal getDamage() {
         return damage;
     }
-
+    public void setDamage(BigDecimal damage) {
+        this.damage = damage;
+    }
     public static final class Builder {
         private long id;
         private long orderId;

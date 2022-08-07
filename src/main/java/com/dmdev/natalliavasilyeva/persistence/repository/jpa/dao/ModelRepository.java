@@ -106,7 +106,7 @@ public class ModelRepository extends AbstractRepository<ModelJpa> implements Gen
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithMultipleArgs("WHERE name = ? AND transmission = ? AND engine_type = ?", name, transmission, engine);
+                .appendWithMultipleArgs("WHERE lower(name) LIKE ? AND lower(transmission) LIKE ? AND lower(engine_type) LIKE ?", name, transmission, engine);
         return findAll(statementProvider, extractor);
     }
 }

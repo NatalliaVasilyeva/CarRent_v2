@@ -3,10 +3,10 @@ package com.dmdev.natalliavasilyeva.service;
 import com.dmdev.natalliavasilyeva.api.mapper.PriceMapper;
 import com.dmdev.natalliavasilyeva.domain.jpa.PriceJpa;
 import com.dmdev.natalliavasilyeva.domain.model.Price;
-import com.dmdev.natalliavasilyeva.persistence.exception.NotFoundException;
-import com.dmdev.natalliavasilyeva.persistence.exception.PriceBadRequestException;
 import com.dmdev.natalliavasilyeva.persistence.repository.RepositoryFactory;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.PriceRepository;
+import com.dmdev.natalliavasilyeva.service.exception.NotFoundException;
+import com.dmdev.natalliavasilyeva.service.exception.PriceBadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

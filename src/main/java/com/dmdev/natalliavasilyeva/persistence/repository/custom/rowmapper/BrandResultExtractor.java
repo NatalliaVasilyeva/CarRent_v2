@@ -51,8 +51,8 @@ public class BrandResultExtractor implements ResultSetExtractor<Brand> {
                 if (element != null) {
                     Long id = Long.valueOf((Integer) element.get("mod_id"));
                     String name = (String) element.get("model_name");
-                    Transmission transmission = Transmission.valueOf(((String) element.get("transmission")).toUpperCase());
-                    EngineType engineType = EngineType.valueOf(((String) element.get("engine")).toUpperCase());
+                    Transmission transmission = Transmission.getEnum(((String) element.get("transmission")).toUpperCase());
+                    EngineType engineType = EngineType.getEnum(((String) element.get("engine")).toUpperCase());
                     Category category = new Category.Builder().name(((String) element.get("category_name")).toUpperCase()).build();
                     models.add(new Model.Builder()
                             .id(id)

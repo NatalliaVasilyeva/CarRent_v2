@@ -4,7 +4,6 @@ package com.dmdev.natalliavasilyeva.api.mapper;
 import com.dmdev.natalliavasilyeva.api.dto.requestdto.CarDto;
 import com.dmdev.natalliavasilyeva.api.dto.requestdto.ModelDto;
 import com.dmdev.natalliavasilyeva.api.dto.responsedto.ModelResponseDTO;
-import com.dmdev.natalliavasilyeva.domain.jpa.BrandJpa;
 import com.dmdev.natalliavasilyeva.domain.jpa.ModelJpa;
 import com.dmdev.natalliavasilyeva.domain.model.Brand;
 import com.dmdev.natalliavasilyeva.domain.model.Category;
@@ -18,6 +17,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class ModelMapper {
+
+    private ModelMapper() {
+    }
 
     public static ModelResponseDTO toDto(Model model) {
         return new ModelResponseDTO(
@@ -37,8 +39,8 @@ public final class ModelMapper {
     public static Model fromDto(ModelDto modelDto) {
         return new Model.Builder()
                 .name(modelDto.getName())
-                .transmission(Transmission.valueOf(modelDto.getTransmission()))
-                .engine(EngineType.valueOf(modelDto.getEngineType()))
+                .transmission(Transmission.getEnum(modelDto.getTransmission()))
+                .engine(EngineType.getEnum(modelDto.getEngineType()))
                 .brand(new Brand.Builder().name(modelDto.getBrand()).build())
                 .category(modelDto.getCategory() == null ? null : new Category.Builder().name(modelDto.getCategory()).build())
                 .build();
@@ -47,8 +49,8 @@ public final class ModelMapper {
     public static Model fromCarDto(CarDto carDto) {
         return new Model.Builder()
                 .name(carDto.getModelName())
-                .transmission(Transmission.valueOf(carDto.getTransmission()))
-                .engine(EngineType.valueOf(carDto.getEngineType()))
+                .transmission(Transmission.getEnum(carDto.getTransmission()))
+                .engine(EngineType.getEnum(carDto.getEngineType()))
                 .brand(new Brand.Builder().name(carDto.getBrandName()).build())
                 .build();
     }
@@ -65,7 +67,7 @@ public final class ModelMapper {
     }
 
     public static List<Model> fromJpaList(List<ModelJpa> jpaModels) {
-        return jpaModels.size() == 0 ? Collections.emptyList() : jpaModels.stream().map(ModelMapper::fromJpa).collect(Collectors.toList());
+        return jpaModels.isEmpty() ? Collections.emptyList() : jpaModels.stream().map(ModelMapper::fromJpa).collect(Collectors.toList());
     }
 
     public static ModelJpa toJpa(Model model) {

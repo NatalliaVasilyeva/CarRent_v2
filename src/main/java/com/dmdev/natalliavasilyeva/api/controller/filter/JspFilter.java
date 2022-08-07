@@ -15,7 +15,7 @@ import java.io.IOException;
 public class JspFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) {
-
+            //by default
     }
 
     @Override
@@ -25,6 +25,6 @@ public class JspFilter implements Filter {
 
     @Override
     public void destroy() {
-
+        //by default
     }
 }

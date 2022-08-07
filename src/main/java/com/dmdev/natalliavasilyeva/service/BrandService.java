@@ -3,13 +3,13 @@ package com.dmdev.natalliavasilyeva.service;
 import com.dmdev.natalliavasilyeva.api.mapper.BrandMapper;
 import com.dmdev.natalliavasilyeva.domain.jpa.BrandJpa;
 import com.dmdev.natalliavasilyeva.domain.model.Brand;
-import com.dmdev.natalliavasilyeva.persistence.exception.BrandBadRequestException;
-import com.dmdev.natalliavasilyeva.persistence.exception.NotFoundException;
 import com.dmdev.natalliavasilyeva.persistence.repository.RepositoryCustomFactory;
 import com.dmdev.natalliavasilyeva.persistence.repository.RepositoryFactory;
 import com.dmdev.natalliavasilyeva.persistence.repository.custom.dao.BrandCustomRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.BrandRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.CategoryRepository;
+import com.dmdev.natalliavasilyeva.service.exception.BrandBadRequestException;
+import com.dmdev.natalliavasilyeva.service.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

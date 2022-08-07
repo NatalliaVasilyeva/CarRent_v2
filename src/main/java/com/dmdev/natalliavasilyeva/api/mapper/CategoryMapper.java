@@ -3,7 +3,6 @@ package com.dmdev.natalliavasilyeva.api.mapper;
 
 import com.dmdev.natalliavasilyeva.api.dto.requestdto.CategoryDto;
 import com.dmdev.natalliavasilyeva.api.dto.responsedto.CategoryResponseDto;
-import com.dmdev.natalliavasilyeva.domain.jpa.BrandJpa;
 import com.dmdev.natalliavasilyeva.domain.jpa.CategoryJpa;
 import com.dmdev.natalliavasilyeva.domain.model.Category;
 import com.dmdev.natalliavasilyeva.domain.model.Price;
@@ -14,6 +13,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class CategoryMapper {
+
+    private CategoryMapper() {
+    }
 
     public static CategoryResponseDto toDto(Category category) {
         return new CategoryResponseDto(
@@ -42,7 +44,7 @@ public final class CategoryMapper {
     }
 
     public static List<Category> fromJpaList(List<CategoryJpa> jpaCategories) {
-        return jpaCategories.size() == 0 ? Collections.emptyList() : jpaCategories.stream().map(CategoryMapper::fromJpa).collect(Collectors.toList());
+        return jpaCategories.isEmpty() ? Collections.emptyList() : jpaCategories.stream().map(CategoryMapper::fromJpa).collect(Collectors.toList());
     }
 
     public static CategoryJpa toJpa(Category category) {

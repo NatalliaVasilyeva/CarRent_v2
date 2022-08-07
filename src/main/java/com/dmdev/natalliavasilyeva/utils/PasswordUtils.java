@@ -8,14 +8,13 @@ import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
+import java.util.Base64;
 
 public final class PasswordUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(PasswordUtils.class);
 
-    private  PasswordUtils() {
+    private PasswordUtils() {
     }
 
     public static String generateHash(String login, String password) {
@@ -24,7 +23,8 @@ public final class PasswordUtils {
         try {
             SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
             byte[] encoded = factory.generateSecret(spec).getEncoded();
-            return new String(encoded, UTF_8);
+//            return new String(encoded, UTF_8);
+            return Base64.getEncoder().encodeToString(encoded);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             logger.error(e.getMessage());
         }

@@ -1,7 +1,10 @@
 package com.dmdev.natalliavasilyeva.utils;
 
-public class VariablesNameHolder {
+public final class VariablesNameHolder {
 
+    private VariablesNameHolder() {
+    }
+    
     public static final String ORDER_ID = "orderId";
     public static final String CAR_ID = "carId";
     public static final String PRICE_ID = "priceId";
@@ -34,6 +37,7 @@ public class VariablesNameHolder {
     public static final String ADDRESS = "address";
     public static final String PHONE = "phone";
     public static final String ROLE = "role";
+    public static final String BIRTHDAY = "birthday";
     public static final String DRIVER_LICENSE_NUMBER = "driverLicenseNumber";
     public static final String DRIVER_LICENSE_ISSUE_DATE = "driverLicenseIssueDate";
     public static final String DRIVER_LICENSE_EXPIRED_DATE = "driverLicenseExpiredDate";

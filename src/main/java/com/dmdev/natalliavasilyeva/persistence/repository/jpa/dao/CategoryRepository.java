@@ -102,7 +102,7 @@ public class CategoryRepository extends AbstractRepository<CategoryJpa> implemen
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE name LIKE ?", name);
+                .appendWithSingleArg("WHERE lower(name) LIKE ?", name);
         return findOne(statementProvider, extractor);
     }
 
@@ -110,7 +110,7 @@ public class CategoryRepository extends AbstractRepository<CategoryJpa> implemen
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE name = ANY (?)", categoriesNames.toArray(new String[0]));
+                .appendWithSingleArg("WHERE lower(name) = ANY (?)", categoriesNames.toArray(new String[0]));
         return findAll(statementProvider, extractor);
     }
 

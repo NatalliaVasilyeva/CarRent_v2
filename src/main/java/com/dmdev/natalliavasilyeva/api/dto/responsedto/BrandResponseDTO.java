@@ -12,4 +12,17 @@ public class BrandResponseDTO {
         this.name = name;
         this.models = models;
     }
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public List<ModelResponseDTO> getModels() {
+        return models;
+    }
+    public void setModels(List<ModelResponseDTO> models) {
+        this.models = models;
+    }
 }

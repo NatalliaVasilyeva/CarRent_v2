@@ -1,7 +1,7 @@
 package com.dmdev.natalliavasilyeva.api.dto.requestdto;
 
 
-import jakarta.servlet.http.Part;
+import java.io.InputStream;
 
 public class CarDto {
 
@@ -14,9 +14,11 @@ public class CarDto {
     private String number;
     private String vin;
     private boolean isRepaired;
-    private Part image;
+    private InputStream image;
 
-    public CarDto(String brandName, String modelName, String transmission, String engineType, String color, String yearOfProduction, String number, String vin, boolean isRepaired, Part image) {
+    private String imageName;
+
+    public CarDto(String brandName, String modelName, String transmission, String engineType, String color, String yearOfProduction, String number, String vin, boolean isRepaired, InputStream image, String imageName) {
         this.brandName = brandName;
         this.modelName = modelName;
         this.transmission = transmission;
@@ -27,6 +29,7 @@ public class CarDto {
         this.vin = vin;
         this.isRepaired = isRepaired;
         this.image = image;
+        this.imageName = imageName;
     }
 
     public String getBrandName() {
@@ -65,7 +68,11 @@ public class CarDto {
         return isRepaired;
     }
 
-    public Part getImage() {
+    public InputStream getImage() {
         return image;
+    }
+
+    public String getImageName() {
+        return imageName;
     }
 }

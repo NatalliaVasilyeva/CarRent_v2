@@ -33,8 +33,8 @@ public class ModelResultExtractor implements ResultSetExtractor<Model> {
                     .brand(mapToBrand(rs))
                     .category(mapToCategory(rs))
                     .name(rs.getString("model_name"))
-                    .transmission(Transmission.valueOf(rs.getString("model_transmission").toUpperCase()))
-                    .engine(EngineType.valueOf(rs.getString("model_engine_type").toUpperCase()))
+                    .transmission(Transmission.getEnum(rs.getString("model_transmission").toUpperCase()))
+                    .engine(EngineType.getEnum(rs.getString("model_engine_type").toUpperCase()))
                     .build();
         } catch (SQLException ex) {
             throw new RepositoryException(String.format("Exception for model custom in extract data method: %s", ex.getCause()), ex);

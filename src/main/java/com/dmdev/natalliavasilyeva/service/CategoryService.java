@@ -4,14 +4,14 @@ import com.dmdev.natalliavasilyeva.api.mapper.CategoryMapper;
 import com.dmdev.natalliavasilyeva.domain.jpa.CategoryJpa;
 import com.dmdev.natalliavasilyeva.domain.jpa.PriceJpa;
 import com.dmdev.natalliavasilyeva.domain.model.Category;
-import com.dmdev.natalliavasilyeva.persistence.exception.BrandBadRequestException;
-import com.dmdev.natalliavasilyeva.persistence.exception.NotFoundException;
-import com.dmdev.natalliavasilyeva.persistence.exception.PriceBadRequestException;
 import com.dmdev.natalliavasilyeva.persistence.repository.RepositoryCustomFactory;
 import com.dmdev.natalliavasilyeva.persistence.repository.RepositoryFactory;
 import com.dmdev.natalliavasilyeva.persistence.repository.custom.dao.CategoryCustomRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.CategoryRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.PriceRepository;
+import com.dmdev.natalliavasilyeva.service.exception.BrandBadRequestException;
+import com.dmdev.natalliavasilyeva.service.exception.NotFoundException;
+import com.dmdev.natalliavasilyeva.service.exception.PriceBadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

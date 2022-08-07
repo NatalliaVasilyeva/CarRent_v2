@@ -102,7 +102,7 @@ public class BrandRepository extends AbstractRepository<BrandJpa> implements Gen
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE name = ?", name);
+                .appendWithSingleArg("WHERE lower(name) LIKE ?", name);
         return findOne(statementProvider, extractor);
     }
 
@@ -110,7 +110,7 @@ public class BrandRepository extends AbstractRepository<BrandJpa> implements Gen
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE name = ANY (?)", brandNames.toArray(new String[0]));
+                .appendWithSingleArg("WHERE lower(name) = ANY (?)", brandNames.toArray(new String[0]));
         return findAll(statementProvider, extractor);
     }
 

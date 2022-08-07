@@ -47,7 +47,8 @@ public class AbstractRepository<T extends Entity> {
     }
 
     public Optional<T> findOne(BaseStatementProvider statementProvider, ResultSetExtractor<T> resultSetExtractor) {
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
+        try (var connection = connectionPool.getConnection();
+             var prepareStatement = statementProvider.createPreparedStatement(connection)) {
             var resultSet = prepareStatement.executeQuery();
             return Optional.of(resultSet.next()).filter(it -> it).map(rs -> resultSetExtractor.extractData(resultSet));
         } catch (ConnectionPoolException | SQLException ex) {
@@ -57,7 +58,8 @@ public class AbstractRepository<T extends Entity> {
 
     public List<T> findAll(BaseStatementProvider statementProvider, ResultSetExtractor<T> resultSetExtractor) {
         List<T> items = new ArrayList<>();
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
+        try (var connection = connectionPool.getConnection();
+             var prepareStatement = statementProvider.createPreparedStatement(connection)) {
             var resultSet = prepareStatement.executeQuery();
             while (resultSet.next()) {
                 items.add(resultSetExtractor.extractData(resultSet));
@@ -69,7 +71,8 @@ public class AbstractRepository<T extends Entity> {
     }
 
     public boolean deleteById(BaseStatementProvider statementProvider) {
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
+        try (var connection = connectionPool.getConnection();
+             var prepareStatement = statementProvider.createPreparedStatement(connection)) {
             var resultSet = prepareStatement.executeUpdate();
             return resultSet > 0;
         } catch (ConnectionPoolException | SQLException ex) {
@@ -78,7 +81,8 @@ public class AbstractRepository<T extends Entity> {
     }
 
     public Optional<T> delete(BaseStatementProvider statementProvider, ResultSetExtractor<T> resultSetExtractor) {
-        try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
+        try (var connection = connectionPool.getConnection();
+             var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connection)) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
             return Optional.of(generatedKeys.next()).filter(it -> it).map(rs -> resultSetExtractor.extractData(generatedKeys));
@@ -88,7 +92,8 @@ public class AbstractRepository<T extends Entity> {
     }
 
     public Optional<T> update(T entity, BaseStatementProvider statementProvider) {
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
+        try (var connection = connectionPool.getConnection();
+             var prepareStatement = statementProvider.createPreparedStatement(connection)) {
             return prepareStatement.executeUpdate() == 1 ? Optional.of(entity) : Optional.empty();
         } catch (ConnectionPoolException | SQLException ex) {
             throw new RepositoryException(String.format("Update entity method throws exception: %s ", ex.getMessage()), ex);
@@ -96,7 +101,8 @@ public class AbstractRepository<T extends Entity> {
     }
 
     public Optional<T> save(BaseStatementProvider statementProvider, ResultSetExtractor<T> resultSetExtractor) {
-        try (var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connectionPool.getConnection())) {
+        try (var connection = connectionPool.getConnection();
+             var prepareStatement = statementProvider.createPreparedStatementWithGeneratedKeys(connection)) {
             prepareStatement.executeUpdate();
             var generatedKeys = prepareStatement.getGeneratedKeys();
             return Optional.of(generatedKeys.next()).filter(it -> it).map(rs -> resultSetExtractor.extractData(generatedKeys));
@@ -106,7 +112,8 @@ public class AbstractRepository<T extends Entity> {
     }
 
     public boolean exist(BaseStatementProvider statementProvider) {
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
+        try (var connection = connectionPool.getConnection();
+             var prepareStatement = statementProvider.createPreparedStatement(connection)) {
             var resultSet = prepareStatement.executeQuery();
             boolean result = false;
             if (resultSet.next()) {

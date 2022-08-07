@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
-public class BaseStatementProvider {
+public class BaseStatementProvider{
 
     final List<Object> args;
 
@@ -54,7 +54,7 @@ public class BaseStatementProvider {
                 } else if (arg instanceof String) {
                     statement.setString(i++, (String) arg);
                 } else if (arg instanceof Transmission || arg instanceof EngineType || arg instanceof Color || arg instanceof OrderStatus || arg instanceof Role) {
-                    statement.setString(i++, (String) ((Enum<?>) arg).name());
+                    statement.setString(i++, ((Enum<?>) arg).name());
                 } else if (arg.getClass().isArray() && arg instanceof String[]) {
                     var stringObjects = statement.getConnection().createArrayOf("VARCHAR", (Object[]) arg);
                     statement.setArray(i++, stringObjects);

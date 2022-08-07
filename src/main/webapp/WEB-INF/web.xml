@@ -5,4 +5,13 @@
          version="4.0">
 
     <display-name>Archetype Created Web Application</display-name>
+
+    <error-page>
+        <exception-type>com.dmdev.natalliavasilyeva.service.exception.CustomException</exception-type>
+        <location>/exceptionHandler</location>
+    </error-page>
+    <error-page>
+        <error-code>400</error-code>
+        <location>/WEB-INF/pages/ErrorPage404.jsp</location>
+    </error-page>
 </web-app>

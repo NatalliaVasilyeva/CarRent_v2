@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 public class UserDto {
 
-    private long userId;
     private String email;
     private String login;
     private String password;
@@ -17,8 +16,7 @@ public class UserDto {
     private LocalDateTime driverLicenseIssueDate;
     private LocalDateTime driverLicenseExpiredDate;
 
-    public UserDto(long userId,
-                   String email,
+    public UserDto(String email,
                    String login,
                    String password,
                    String name,
@@ -29,7 +27,6 @@ public class UserDto {
                    String driverLicenseNumber,
                    LocalDateTime driverLicenseIssueDate,
                    LocalDateTime driverLicenseExpiredDate) {
-        this.userId = userId;
         this.email = email;
         this.login = login;
         this.password = password;
@@ -43,9 +40,6 @@ public class UserDto {
         this.driverLicenseExpiredDate = driverLicenseExpiredDate;
     }
 
-    public long getUserId() {
-        return userId;
-    }
 
     public String getEmail() {
         return email;

@@ -23,8 +23,8 @@ public class ModelResultExtractor implements ResultSetExtractor<ModelJpa> {
                     .brand(rs.getLong("brand_id"))
                     .category(rs.getLong("category_id"))
                     .name(rs.getString("name"))
-                    .transmission(Transmission.valueOf(rs.getString("transmission")))
-                    .engine(EngineType.valueOf(rs.getString("engine_type")))
+                    .transmission(Transmission.getEnum(rs.getString("transmission")))
+                    .engine(EngineType.getEnum(rs.getString("engine_type")))
                     .build();
         } catch (SQLException ex) {
             throw new RepositoryException(String.format("Exception for model jpa in extract data method: %s", ex.getCause()), ex);

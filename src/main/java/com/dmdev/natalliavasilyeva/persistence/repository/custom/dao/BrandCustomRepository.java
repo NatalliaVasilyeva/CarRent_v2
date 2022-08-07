@@ -60,7 +60,7 @@ public class BrandCustomRepository extends AbstractCustomRepository<Brand> imple
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE b.name = ?\n", name)
+                .appendWithSingleArg("WHERE lower(b.name) LIKE ?\n", name)
                 .append(GROUP_BY);
         return findOne(statementProvider, extractor);
     }
@@ -69,7 +69,7 @@ public class BrandCustomRepository extends AbstractCustomRepository<Brand> imple
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE category_name = ?\n", category)
+                .appendWithSingleArg("WHERE lower(category_name) LIKE ?\n", category)
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }

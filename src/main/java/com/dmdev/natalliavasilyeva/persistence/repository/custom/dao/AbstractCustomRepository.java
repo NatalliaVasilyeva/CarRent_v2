@@ -33,7 +33,8 @@ public class AbstractCustomRepository<T extends Identifiable> {
             connectionPool.getConnection().setAutoCommit(true);
             logger.debug("finish Transaction");
         } catch (SQLException | ConnectionPoolException e) {
-            throw new RepositoryException(String.format("Finish transaction method throws exception: %s ", e.getMessage()), e);        }
+            throw new RepositoryException(String.format("Finish transaction method throws exception: %s ", e.getMessage()), e);
+        }
     }
 
     public void rollbackTransaction() throws RepositoryException {
@@ -42,11 +43,13 @@ public class AbstractCustomRepository<T extends Identifiable> {
             connectionPool.getConnection().rollback();
             logger.debug("rollback Transaction");
         } catch (SQLException | ConnectionPoolException e) {
-            throw new RepositoryException(String.format("Rollback transaction method throws exception: %s ", e.getMessage()), e);        }
+            throw new RepositoryException(String.format("Rollback transaction method throws exception: %s ", e.getMessage()), e);
+        }
     }
 
     public Optional<T> findOne(BaseStatementProvider statementProvider, ResultSetExtractor<T> resultSetExtractor) {
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
+        try (var connection = connectionPool.getConnection();
+             var prepareStatement = statementProvider.createPreparedStatement(connection)) {
             var resultSet = prepareStatement.executeQuery();
             return Optional.of(resultSet.next()).filter(it -> it).map(rs -> resultSetExtractor.extractData(resultSet));
         } catch (ConnectionPoolException | SQLException ex) {
@@ -56,7 +59,8 @@ public class AbstractCustomRepository<T extends Identifiable> {
 
     public List<T> findAll(BaseStatementProvider statementProvider, ResultSetExtractor<T> resultSetExtractor) {
         List<T> items = new ArrayList<>();
-        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
+        try (var connection = connectionPool.getConnection();
+             var prepareStatement = statementProvider.createPreparedStatement(connection)) {
             var resultSet = prepareStatement.executeQuery();
             while (resultSet.next()) {
                 items.add(resultSetExtractor.extractData(resultSet));
