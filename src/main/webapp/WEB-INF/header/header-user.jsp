@@ -29,11 +29,11 @@
                         key="header.main_name"/><span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="${pageContext.request.contextPath}/user-orders"><fmt:message
+                <a class="nav-link waves-effect waves-light" href="${pageContext.request.contextPath}/user-orders"><fmt:message
                         key="header.user.orders"/></a>
             </li>
             <li class="nav-item dropdown">
-                <a class="btn btn-outline-success my-2 my-sm-0 dropdown-toggle" id="navbarDropdownMenuLink-3"
+                <a class="nav-link waves-effect waves-light my-2 my-sm-0 dropdown-toggle" href="#" type="button" id="navbarDropdownMenuLink-3"
                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Find cars
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-unique"
@@ -51,10 +51,10 @@
         </ul>
         <ul class="navbar-nav ml-auto nav-flex-icons">
             <li class="nav-item dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                <a class="nav-link waves-effect waves-light dropdown-toggle" href="#" type="button" id="dropdownMenuButton"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="flag-icon flag-icon-us"></span> <fmt:message key="label.lang.en"/>
-                </button>
+                </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-unique"
                      aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item"
@@ -69,10 +69,10 @@
             </li>
 
             <li class="nav-item dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                <butaton class="nav-link waves-effect waves-light dropdown-toggle" href="#" type="button" id="dropdownMenuButton1"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="flag-icon flag-icon-us"></span> <fmt:message key="label.about"/>
-                </button>
+                </butaton>
                 <div class="dropdown-menu dropdown-menu-right dropdown-unique"
                      aria-labelledby="dropdownMenuButton1">
                     <a class="dropdown-item"
@@ -99,17 +99,6 @@
                             key="header.user.profile"/></a>
                     <a class="dropdown-item" href="${pageContext.request.contextPath}/settings"><fmt:message key="header.user.settings"/></a>
                     <a class="dropdown-item" href="${pageContext.request.contextPath}/logout" class="nav-link d-flex align-items-center"><fmt:message key="form.logout"/></a>
-<%--                    <form id="logout">--%>
-<%--                    <a class="dropdown-item logout" class="nav-link d-flex align-items-center" id="logout"--%>
-<%--                       type="submit" value="submit">Log out</a>--%>
-
-<%--                    </form>--%>
-<%--                    <button type="submit" class="form-control btn btn-light logout" value="Submit">--%>
-<%--                        <fmt:message key="form.logout"/>--%>
-<%--                    </button>--%>
-<%--                    <form action="${pageContext.request.contextPath}/logout" method="post">--%>
-<%--                        <button type="submit">Logout</button>--%>
-<%--                    </form>--%>
                 </div>
             </li>
         </ul>
