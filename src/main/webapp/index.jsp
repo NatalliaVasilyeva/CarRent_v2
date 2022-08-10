@@ -9,6 +9,5 @@
 </h1>
 <br/>
 <c:redirect url="/welcome"></c:redirect>
-<%--<jsp:forward page="WEB-INF/pages/welcome.jsp"></jsp:forward>--%>
 </body>
 </html>

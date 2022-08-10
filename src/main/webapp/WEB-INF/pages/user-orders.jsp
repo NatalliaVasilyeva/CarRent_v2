@@ -10,14 +10,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib uri="https://dmdev.com/functions" prefix="f" %>
 
-<%--<c:choose>--%>
-<%--    <c:when test="${not empty sessionScope.locale}">--%>
-<%--        <fmt:setLocale value="${sessionScope.locale}"/>--%>
-<%--    </c:when>--%>
-<%--    <c:otherwise>--%>
-<%--        <fmt:setLocale value="en_US"/>--%>
-<%--    </c:otherwise>--%>
-<%--</c:choose>--%>
 <fmt:setBundle basename="content"/>
 
 <!DOCTYPE html>
@@ -25,8 +17,6 @@
 <head>
     <jsp:include page="/WEB-INF/include/common.html"/>
     <jsp:include page="/WEB-INF/include/i18n.html"/>
-    <%--    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"--%>
-    <%--          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">--%>
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/order/user-order.js"></script>
     <title>User orders</title>
 </head>

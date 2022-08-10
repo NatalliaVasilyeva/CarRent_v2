@@ -28,7 +28,7 @@ public class UserDetailsRepository extends AbstractRepository<UserDetailsJpa> im
             "INSERT INTO userdetails(user_id, name, surname, address, phone, birthday, registration_date) values (?, ?, ?, ?, ?, ?, ?)\n";
 
     private static final String UPDATE = "" +
-            "UPDATE userdetails SET user_id = ?, name = ?, surname = ?, address = ?, phone = ?, birthday = ? WHERE id = ?";
+            "UPDATE userdetails SET user_id = ?, name = ?, surname = ?, address = ?, phone = ?, birthday = ?, registration_date= ? WHERE id = ?";
 
     private static final String DELETE = "" +
             "DELETE FROM userdetails WHERE id = ?\n";

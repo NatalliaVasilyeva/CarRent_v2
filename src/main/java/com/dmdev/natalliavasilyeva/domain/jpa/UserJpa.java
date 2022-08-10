@@ -7,7 +7,6 @@ import java.io.Serializable;
 
 public class UserJpa implements Entity, Serializable {
     private long id;
-
     private String login;
     private String email;
     private String password;
@@ -85,7 +84,7 @@ public class UserJpa implements Entity, Serializable {
         }
 
         public Builder password(String password) {
-            this.password = email;
+            this.password = password;
             return this;
         }
 
@@ -105,5 +104,4 @@ public class UserJpa implements Entity, Serializable {
             return userJpa;
         }
     }
-
 }

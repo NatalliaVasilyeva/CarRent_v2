@@ -23,8 +23,8 @@ import org.slf4j.LoggerFactory;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 public class UserService {
@@ -45,12 +45,6 @@ public class UserService {
         var userJpa = UserMapper.toUserJpa(user);
         userJpa.setPassword(PasswordUtils.generateHash(user.getLogin(), user.getPassword()));
         var savedUserJpa = userRepository.save(userJpa);
-
-//        savedUserJpa.ifPresent(jpa -> {
-//                    String password = PasswordUtils.generateHash(user.getLogin(), user.getPassword());
-//                    userRepository.updatePassword(jpa.getId(), password);
-//                }
-//        );
 
         var userDetailsJpa = UserMapper.toUserDetailsJpa(user);
         savedUserJpa.ifPresent(jpa -> userDetailsJpa.setUserId(jpa.getId()));
@@ -79,23 +73,27 @@ public class UserService {
     }
 
     public User updateUser(Long id, User user) {
-        var existingUserJpa = ensureUserExistsById(id);
-        existingUserJpa.setRole(user.getRole().name());
+        var existingUserJpa = ensureUserExistsByIdWithPassword(id);
+        if (ensureEmailExists(user.getEmail())) {
+            throw new UserBadRequestException("Email already exists. Please choose other one!");
+        }
+        if (!Objects.equals(user.getEmail(), existingUserJpa.getEmail())) {
+            existingUserJpa.setEmail(user.getEmail());
+        }
         var savedUserJpa = userRepository.update(existingUserJpa);
 
         var savedUserDetails = savedUserJpa.map(jpa -> {
-                    var existingUserDetailsJpa = ensureUserDetailsExistsByUserId(savedUserJpa.get().getId());
+                    var existingUserDetailsJpa = ensureUserDetailsExistsByUserId(jpa.getId());
                     existingUserDetailsJpa.setName(user.getName());
                     existingUserDetailsJpa.setSurname(user.getSurname());
                     existingUserDetailsJpa.setAddress(user.getAddress());
                     existingUserDetailsJpa.setPhone(user.getPhone());
-                    existingUserDetailsJpa.setBirthday(user.getBirthday());
                     return userDetailsRepository.update(existingUserDetailsJpa).orElseThrow(() -> new RuntimeException("Problem with user updating."));
                 }
         );
 
         var savedDriverLicense = savedUserDetails.map(jpa -> {
-                    var existingDriverLicenseJpa = ensureDriverLicenseExistsByUserDetailsId(savedUserDetails.get().getUserId());
+                    var existingDriverLicenseJpa = ensureDriverLicenseExistsByUserDetailsId(jpa.getId());
                     existingDriverLicenseJpa.setNumber(user.getDriverLicense().getNumber());
                     existingDriverLicenseJpa.setIssueDate(user.getDriverLicense().getIssueDate());
                     existingDriverLicenseJpa.setExpiredDate(user.getDriverLicense().getExpiredDate());
@@ -288,6 +286,11 @@ public class UserService {
 
     private UserJpa ensureUserExistsById(Long id) {
         return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("User with id %s does not exist.", id)));
+    }
+
+    private UserJpa ensureUserExistsByIdWithPassword(Long id) {
+        return userRepository.findWithPasswordById(id)
                 .orElseThrow(() -> new NotFoundException(String.format("User with id %s does not exist.", id)));
     }
 

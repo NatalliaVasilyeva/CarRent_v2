@@ -9,14 +9,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%--<c:choose>--%>
-<%--    <c:when test="${not empty sessionScope.locale}">--%>
-<%--        <fmt:setLocale value="${sessionScope.locale}"/>--%>
-<%--    </c:when>--%>
-<%--    <c:otherwise>--%>
-<%--        <fmt:setLocale value="en_US"/>--%>
-<%--    </c:otherwise>--%>
-<%--</c:choose>--%>
 <fmt:setBundle basename="content"/>
 
 <!DOCTYPE html>
@@ -65,11 +57,6 @@
                             </div>
                             <div class="card-footer">
                                 <c:if test="${not empty sessionScope.role}">
-<%--                                    <form action="${pageContext.request.contextPath}/car-user?id=${car.id}"--%>
-<%--                                          method="GET">--%>
-<%--                                        <input type="text" name="id" value="${car.id}" hidden="true"><br/>--%>
-<%--                                        <input class="btn btn-warning" type="submit" value="See more information"/>--%>
-<%--                                    </form>--%>
                                     <td>
                                         <button class="btn btn-dark btn-xs seecarbtn"
                                                 data-toggle="modal"

@@ -7,16 +7,16 @@ CREATE SCHEMA IF NOT EXISTS car_rent;
 
 SET search_path TO car_rent, public;
 
-CREATE TABLE IF NOT EXISTS brandJpa
+CREATE TABLE IF NOT EXISTS brand
 (
     id   BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS priceJpa
+CREATE TABLE IF NOT EXISTS price
 (
-    id    BIGSERIAL PRIMARY KEY,
-    priceJpa NUMERIC(10, 2) NOT NULL CHECK (priceJpa > 0)
+    id       BIGSERIAL PRIMARY KEY,
+    price    NUMERIC(10, 2) NOT NULL CHECK (price > 0)
 );
 
 CREATE TABLE IF NOT EXISTS categories
@@ -25,11 +25,11 @@ CREATE TABLE IF NOT EXISTS categories
     name     VARCHAR(255) DEFAULT 'ECONOMY' NOT NULL,
     price_id BIGINT,
     CONSTRAINT category_price_fk
-        FOREIGN KEY (price_id) REFERENCES priceJpa (id)
+        FOREIGN KEY (price_id) REFERENCES price (id)
             ON UPDATE CASCADE ON DELETE SET NULL
 );
 
-CREATE TABLE IF NOT EXISTS modelJpa
+CREATE TABLE IF NOT EXISTS model
 (
     id           BIGSERIAL PRIMARY KEY,
     brand_id     BIGINT,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS modelJpa
     transmission VARCHAR(128),
     engine_type  VARCHAR(128),
     CONSTRAINT model_brand_fk
-        FOREIGN KEY (brand_id) REFERENCES brandJpa (id)
+        FOREIGN KEY (brand_id) REFERENCES brand (id)
             ON UPDATE CASCADE ON DELETE SET NULL,
     CONSTRAINT model_category_fk
         FOREIGN KEY (category_id) REFERENCES categories (id)
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS car
     is_repaired BOOLEAN,
     image       TEXT,
     CONSTRAINT car_model_fk
-        FOREIGN KEY (model_id) REFERENCES modelJpa (id)
+        FOREIGN KEY (model_id) REFERENCES model (id)
             ON UPDATE CASCADE ON DELETE SET NULL
 );
 
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS orders
 
 );
 
-CREATE TABLE IF NOT EXISTS accidentJpa
+CREATE TABLE IF NOT EXISTS accident
 (
     id            BIGSERIAL PRIMARY KEY,
     order_id      BIGINT                      NOT NULL,

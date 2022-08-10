@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 public class UserResultExtractor implements ResultSetExtractor<UserJpa> {
@@ -15,7 +16,12 @@ public class UserResultExtractor implements ResultSetExtractor<UserJpa> {
     @Override
     public UserJpa extractData(ResultSet rs) {
         try {
-            return new UserJpa.Builder()
+            var builder = new UserJpa.Builder();
+            if(doesColumnExist("password", rs)) {
+                builder.password(rs.getString("password"));
+            }
+
+           return builder
                     .id(rs.getLong("id"))
                     .login(rs.getString("login"))
                     .email(rs.getString("email"))
@@ -24,5 +30,16 @@ public class UserResultExtractor implements ResultSetExtractor<UserJpa> {
         } catch (SQLException ex) {
             throw new RepositoryException(String.format("Exception for user jpa in extract data method: %s", ex.getCause()), ex);
         }
+    }
+
+    public static boolean doesColumnExist(String columnName, ResultSet rs) throws SQLException{
+        ResultSetMetaData meta = rs.getMetaData();
+        int numCol = meta.getColumnCount();
+        for (int i = 1; i <= numCol; i++) {
+            if(meta.getColumnName(i).equalsIgnoreCase(columnName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

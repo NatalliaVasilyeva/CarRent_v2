@@ -97,7 +97,7 @@
                 <div class="dropdown-menu dropdown-menu-right dropdown-unique" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="${pageContext.request.contextPath}/user-profile"><fmt:message
                             key="header.user.profile"/></a>
-                    <a class="dropdown-item" href="${pageContext.request.contextPath}/settings"><fmt:message key="header.user.settings"/></a>
+                    <a class="dropdown-item" href="${pageContext.request.contextPath}/user-settings"><fmt:message key="header.user.settings"/></a>
                     <a class="dropdown-item" href="${pageContext.request.contextPath}/logout" class="nav-link d-flex align-items-center"><fmt:message key="form.logout"/></a>
                 </div>
             </li>

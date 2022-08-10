@@ -98,6 +98,9 @@ public final class DataValidator {
     }
 
     public boolean isValidDates(LocalDateTime start, LocalDateTime end) {
+        if(start == null && end == null) {
+            return true;
+        }
         return start.isBefore(end) && start.isAfter(LocalDateTime.now().minusMinutes(60));
     }
 }

@@ -28,6 +28,10 @@ public class UserRepository extends AbstractRepository<UserJpa> implements Gener
             "SELECT id, login, email, role\n" +
             "FROM users\n";
 
+    private static final String FIND_QUERY_WITH_PASSWORD_PREFIX = "" +
+            "SELECT id, login, email, password, role\n" +
+            "FROM users\n";
+
     private static final String CREATE = "" +
             "INSERT INTO users(login, email, password, role) values (?, ?, ?, ?)\n";
 
@@ -54,6 +58,13 @@ public class UserRepository extends AbstractRepository<UserJpa> implements Gener
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
+                .appendWithSingleArg("WHERE id = ?", id);
+        return findOne(statementProvider, extractor);
+    }
+    public Optional<UserJpa> findWithPasswordById(Long id) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .append(FIND_QUERY_WITH_PASSWORD_PREFIX)
                 .appendWithSingleArg("WHERE id = ?", id);
         return findOne(statementProvider, extractor);
     }

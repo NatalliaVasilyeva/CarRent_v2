@@ -2,6 +2,7 @@ package com.dmdev.natalliavasilyeva.api.mapper;
 
 import com.dmdev.natalliavasilyeva.api.dto.requestdto.UserDto;
 import com.dmdev.natalliavasilyeva.api.dto.requestdto.UserLoginDto;
+import com.dmdev.natalliavasilyeva.api.dto.requestdto.UserUpdateDto;
 import com.dmdev.natalliavasilyeva.api.dto.responsedto.UserResponseDto;
 import com.dmdev.natalliavasilyeva.api.dto.responsedto.UserShotResponseDto;
 import com.dmdev.natalliavasilyeva.domain.jpa.DriverLicenseJpa;
@@ -100,6 +101,21 @@ public final class UserMapper {
                 .build();
     }
 
+    public static User fromDto(UserUpdateDto userDto) {
+        return new User.Builder()
+                .email(userDto.getEmail())
+                .name(userDto.getName())
+                .surname(userDto.getSurname())
+                .address(userDto.getAddress())
+                .phone(userDto.getPhone())
+                .driverLicense(new DriverLicense.Builder()
+                        .number(userDto.getLicenseNumber())
+                        .issueDate(DateTimeService.fromLocalDateTimeDateToInstant(userDto.getIssueDate()))
+                        .expiredDate(DateTimeService.fromLocalDateTimeDateToInstant(userDto.getExpiredDate()))
+                        .build())
+                .build();
+    }
+
     public static UserLogin fromDto(UserLoginDto userLoginDto) {
         return new UserLogin.Builder()
                 .login(userLoginDto.getLogin())
@@ -188,7 +204,6 @@ public final class UserMapper {
         Optional.ofNullable(user.getDriverLicense().getId()).ifPresent(builder::id);
         Optional.ofNullable(user.getUserDetailsId()).ifPresent(builder::user);
         builder
-//                .user(user.getUserDetailsId())
                 .number(user.getDriverLicense().getNumber())
                 .issueDate(user.getDriverLicense().getIssueDate())
                 .expiredDate(user.getDriverLicense().getExpiredDate());
