@@ -1,320 +1,306 @@
-//package com.dmdev.natalliavasilyeva.service;
-//
-//import com.dmdev.natalliavasilyeva.api.mapper.CarMapper;
-//import com.dmdev.natalliavasilyeva.domain.jpa.BrandJpa;
-//import com.dmdev.natalliavasilyeva.domain.jpa.CarJpa;
-//import com.dmdev.natalliavasilyeva.domain.jpa.CategoryJpa;
-//import com.dmdev.natalliavasilyeva.domain.jpa.ModelJpa;
-//import com.dmdev.natalliavasilyeva.domain.model.Car;
-//import com.dmdev.natalliavasilyeva.persistence.exception.NotFoundException;
-//import com.dmdev.natalliavasilyeva.persistence.repository.RepositoryCustomFactory;
-//import com.dmdev.natalliavasilyeva.persistence.repository.RepositoryFactory;
-//import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.BrandRepository;
-//import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.ModelRepository;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//
-//import java.time.Instant;
-//import java.util.Comparator;
-//import java.util.List;
-//import java.util.Optional;
-//import java.util.stream.Collectors;
-//
-//public class UserService {
-//
-//    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-//    RepositoryFactory repositoryFactory = RepositoryFactory.getInstance();
-//    RepositoryCustomFactory repositoryCustomFactory = RepositoryCustomFactory.getInstance();
-//
-//    ModelRepository modelRepository = repositoryFactory.getModelRepository();
-//    BrandRepository brandRepository = repositoryFactory.getBrandRepository();
-//
-//
-//    public Car createCar(Car car) {
-//        Long brandId = null;
-//        Long modelId = null;
-//        var transmission = car.getModel().getTransmission();
-//        var engine = car.getModel().getEngineType();
-//
-//        var models = findModelByNameTransmissionEngine(car.getModel().getName(), transmission.name(), engine.name());
-//        if (models.isEmpty()) {
-//            var brandName = car.getModel().getBrand().getName();
-//            var modelName = car.getModel().getName();
-//            var brand = findBrandByName(brandName);
-//            if (brand == null) {
-//                BrandJpa savedBrand = brandRepository.save(new BrandJpa.Builder().name(brandName).build())
-//                        .orElseThrow(() -> new RuntimeException("Problem with brand saving"));
-//                brandId = savedBrand.getId();
-//            } else {
-//                brandId = brand.getId();
-//            }
-//            Optional<CategoryJpa> optional = categoryRepository.findByName("ECONOMY");
-//            if (optional.isEmpty()) {
-//                throw new RuntimeException("Problem with model saving");
-//            }
-//            CategoryJpa categoryJpa = optional.get();
-//
-//            ModelJpa savedModelJpa = modelRepository.save(new ModelJpa.Builder()
-//                    .brand(brandId)
-//                    .category(categoryJpa.getId())
-//                    .name(modelName)
-//                    .transmission(transmission)
-//                    .engine(engine)
-//                    .build()
-//            ).orElseThrow(() -> new RuntimeException("Problem with model saving"));
-//
-//            modelId = savedModelJpa.getId();
-//
-//            CarJpa savedCar = carRepository.save(new CarJpa.Builder()
-//                            .model(modelId)
-//                            .color(car.getColor())
-//                            .year(car.getYearOfProduction())
-//                            .number(car.getNumber())
-//                            .vin(car.getVin())
-//                            .repaired(car.isRepaired())
-//                            .image(car.getImage())
-//                            .build())
-//                    .orElseThrow(() -> new RuntimeException("Problem with car saving"));
-//
-//            carImageService.downloadImage(car.getImage(), car.getImageContent());
-//
-//            return CarMapper.fromJpa(savedCar);
-//        } else {
-//            var brand = findBrandByName(car.getModel().getBrand().getName());
-//            List<ModelJpa> filteredModels = models.stream()
-//                    .filter(modelJpa -> modelJpa.getBrandId() == brand.getId())
-//                    .collect(Collectors.toList());
-//            CarJpa savedCar = carRepository.save(new CarJpa.Builder()
-//                            .model(filteredModels.get(0).getId())
-//                            .color(car.getColor())
-//                            .year(car.getYearOfProduction())
-//                            .number(car.getNumber())
-//                            .vin(car.getVin())
-//                            .repaired(car.isRepaired())
-//                            .image(car.getImage())
-//                            .build())
-//                    .orElseThrow(() -> new RuntimeException("Problem with car saving"));
-//
-//            carImageService.downloadImage(car.getImage(), car.getImageContent());
-//
-//            return CarMapper.fromJpa(savedCar);
-//        }
-//    }
-//
-//    public Car updateCar(Long id, Car car) {
-//        var existingCar = ensureCarExistsById(id);
-//        ensureModelExistsById(car.getModel().getId());
-//
-//        existingCar.setModelId(car.getModel().getId());
-//        existingCar.setColor(car.getColor());
-//        existingCar.setYearOfProduction(car.getYearOfProduction());
-//        existingCar.setNumber(car.getNumber());
-//        existingCar.setVin(car.getVin());
-//        existingCar.setRepaired(car.isRepaired());
-//
-//        if (car.getImage() != null && car.getImageContent() != null) {
-//            existingCar.setImage(car.getImage());
-//            carImageService.downloadImage(car.getImage(), car.getImageContent());
-//        } else if (car.getImage() != null) {
-//            existingCar.setImage(car.getImage());
-//        }
-//
-//        return carRepository.update(existingCar)
-//                .map(CarMapper::fromJpa)
-//                .orElseThrow(() -> new RuntimeException("Problem with car updating"));
-//    }
-//
-//    public Car getCarById(Long id) {
-//        return CarMapper.fromJpa(ensureCarExistsById(id));
-//    }
-//
-//    public Car getCustomCarById(Long id) {
-//        return carCustomRepository.findById(id)
-//                .orElseThrow(() -> new NotFoundException(String.format("Car with id %s does not exist.", id)));
-//    }
-//
-//    public List<Car> getAllCars() {
-//        return carRepository.findAll()
-//                .stream()
-//                .map(CarMapper::fromJpa)
-//                .sorted(Comparator.comparing(Car::getYearOfProduction))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<Car> getAllCustomCars() {
-//        return carCustomRepository.findAll()
-//                .stream()
-//                .sorted(Comparator.comparing(Car::getYearOfProduction))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public boolean deleteCarById(Long id) {
-//        ensureCarExistsById(id);
-//        return carRepository.deleteById(id);
-//    }
-//
-//    public Car deleteCar(Car car) {
-//        ensureCarExistsById(car.getId());
-//        return carRepository.delete(CarMapper.toJpa(car))
-//                .map(CarMapper::fromJpa)
-//                .orElseThrow(() -> new RuntimeException("Problem with car deleting"));
-//    }
-//
-//    public List<Car> findAllCarsUnderRepair() {
-//        return carRepository.findAllUnderRepair()
-//                .stream()
-//                .map(CarMapper::fromJpa)
-//                .sorted(Comparator.comparing(Car::getYearOfProduction))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<Car> findAllCarsByBrandName(String brandName) {
-//        ensureBrandExistsByName(brandName);
-//        return carRepository.findAllByBrandName(brandName)
-//                .stream()
-//                .map(CarMapper::fromJpa)
-//                .sorted(Comparator.comparing(Car::getYearOfProduction))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<Car> findAllCustomCarsByBrandName(String brandName) {
-//        ensureBrandExistsByName(brandName);
-//        return carCustomRepository.findAllByBrandName(brandName)
-//                .stream()
-//                .sorted(Comparator.comparing(Car::getYearOfProduction))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<Car> findAllCarsByBrandId(Long brandId) {
-//        ensureBrandExistsById(brandId);
-//        return carRepository.findAllByBrandId(brandId)
-//                .stream()
-//                .map(CarMapper::fromJpa)
-//                .sorted(Comparator.comparing(Car::getYearOfProduction))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<Car> findAllCustomCarsByBrandId(Long brandId) {
-//        ensureBrandExistsById(brandId);
-//        return carCustomRepository.findAllByBrandId(brandId)
-//                .stream()
-//                .sorted(Comparator.comparing(Car::getYearOfProduction))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<Car> findAllCarsByCategoryName(String categoryName) {
-//        ensureCategoryExistsByName(categoryName);
-//        return carRepository.findAllByCategoryName(categoryName)
-//                .stream()
-//                .map(CarMapper::fromJpa)
-//                .sorted(Comparator.comparing(Car::getYearOfProduction))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<Car> findAllCustomCarsByCategoryName(String categoryName) {
-//        ensureCategoryExistsByName(categoryName);
-//        return carCustomRepository.findAllByCategoryName(categoryName)
-//                .stream()
-//                .sorted(Comparator.comparing(Car::getYearOfProduction))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<Car> findAllCustomCarsByYear(String year) {
-//        return carCustomRepository.findAllByYear(year)
-//                .stream()
-//                .sorted(Comparator.comparing(Car::getYearOfProduction))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<Car> findAllCustomCarsBetweenYears(String firstYear, String secondYear) {
-//        return carCustomRepository.findAllBetweenYears(firstYear, secondYear)
-//                .stream()
-//                .sorted(Comparator.comparing(Car::getYearOfProduction))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<Car> findAllCustomCarsWithAccidents() {
-//        return carCustomRepository.findAllWithAccidents()
-//                .stream()
-//                .sorted(Comparator.comparing(Car::getYearOfProduction))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<Car> findAllCustomCarsWithoutAccidents() {
-//        return carCustomRepository.findAllWithoutAccidents()
-//                .stream()
-//                .sorted(Comparator.comparing(Car::getYearOfProduction))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<Car> findAllCustomCarsUnderRepaired() {
-//        return carCustomRepository.findAllUnderRepair()
-//                .stream()
-//                .sorted(Comparator.comparing(Car::getYearOfProduction))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<Car> findAllCustomCarsAvailable() {
-//        return carCustomRepository.findAllAvailable()
-//                .stream()
-//                .sorted(Comparator.comparing(Car::getYearOfProduction))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public Car findCarByNumber(String carNumber) {
-//        return carRepository.findByCarNumber(carNumber)
-//                .map(CarMapper::fromJpa)
-//                .orElseThrow(() -> new NotFoundException(String.format("Car with number %s does not exist.", carNumber)));
-//    }
-//
-//    public Car findCustomCarByNumber(String carNumber) {
-//        return carCustomRepository.findByCarNumber(carNumber)
-//                .orElseThrow(() -> new NotFoundException(String.format("Car with number %s does not exist.", carNumber)));
-//    }
-//
-//    public boolean isCarAvailable(Long carId, Instant startDate, Instant endDate) {
-//        ensureCarExistsById(carId);
-//        return carRepository.isCarAvailable(carId, startDate, endDate);
-//    }
-//
-//    public boolean isCustomCarAvailable(Long carId, Instant startDate, Instant endDate) {
-//        ensureCarExistsById(carId);
-//        return carCustomRepository.isCarAvailable(carId, startDate, endDate);
-//    }
-//
-//    private CarJpa ensureCarExistsById(Long id) {
-//        return carRepository.findById(id)
-//                .orElseThrow(() -> new NotFoundException(String.format("Car with id %s does not exist.", id)));
-//    }
-//
-//    private void ensureBrandExistsById(Long id) {
-//        if (!brandRepository.existById(id)) {
-//            throw new NotFoundException(String.format("Brand with id %s does not exist.", id));
-//        }
-//    }
-//
-//    private ModelJpa ensureModelExistsById(Long id) {
-//        return modelRepository.findById(id)
-//                .orElseThrow(() -> new NotFoundException(String.format("Model with id %s does not exist.", id)));
-//    }
-//
-//    private void ensureCategoryExistsByName(String name) {
-//        if (!categoryRepository.existByName(name)) {
-//            throw new NotFoundException(String.format("Category with name %s does not exist.", name));
-//        }
-//    }
-//
-//    private void ensureBrandExistsByName(String name) {
-//        if (!brandRepository.existByName(name)) {
-//            throw new NotFoundException(String.format("Brand with name %s does not exist.", name));
-//        }
-//    }
-//
-//    private BrandJpa findBrandByName(String name) {
-//        return brandRepository.findByName(name).orElse(null);
-//    }
-//
-//    private List<ModelJpa> findModelByNameTransmissionEngine(String name, String transmission, String engineType) {
-//        return modelRepository.findByNameTransmissionEngine(name, transmission, engineType);
-//    }
-//}
+package com.dmdev.natalliavasilyeva.service;
+
+import com.dmdev.natalliavasilyeva.api.mapper.UserMapper;
+import com.dmdev.natalliavasilyeva.domain.jpa.DriverLicenseJpa;
+import com.dmdev.natalliavasilyeva.domain.jpa.UserDetailsJpa;
+import com.dmdev.natalliavasilyeva.domain.jpa.UserJpa;
+import com.dmdev.natalliavasilyeva.domain.model.ShotUser;
+import com.dmdev.natalliavasilyeva.domain.model.User;
+import com.dmdev.natalliavasilyeva.domain.model.UserLogin;
+import com.dmdev.natalliavasilyeva.persistence.repository.RepositoryCustomFactory;
+import com.dmdev.natalliavasilyeva.persistence.repository.RepositoryFactory;
+import com.dmdev.natalliavasilyeva.persistence.repository.custom.dao.UserCustomRepository;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.DriverLicenseRepository;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.UserDetailsRepository;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.UserRepository;
+import com.dmdev.natalliavasilyeva.service.exception.NotFoundException;
+import com.dmdev.natalliavasilyeva.service.exception.UserBadRequestException;
+import com.dmdev.natalliavasilyeva.utils.PasswordUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.Instant;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+public class UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    RepositoryFactory repositoryFactory = RepositoryFactory.getInstance();
+    RepositoryCustomFactory repositoryCustomFactory = RepositoryCustomFactory.getInstance();
+    DriverLicenseRepository driverLicenseRepository = repositoryFactory.getDriverLicenseRepository();
+    UserDetailsRepository userDetailsRepository = repositoryFactory.getUserDetailsRepository();
+    UserRepository userRepository = repositoryFactory.getUserRepository();
+    UserCustomRepository userCustomRepository = repositoryCustomFactory.getUserCustomRepository();
+
+    public User createUser(User user) {
+        if (ensureEmailExists(user.getEmail()) || ensureLoginExists(user.getLogin())) {
+            throw new UserBadRequestException("Login or email already exists. Please choose other one!");
+        }
+
+        var userJpa = UserMapper.toUserJpa(user);
+        userJpa.setPassword(PasswordUtils.generateHash(user.getLogin(), user.getPassword()));
+        var savedUserJpa = userRepository.save(userJpa);
+
+        var userDetailsJpa = UserMapper.toUserDetailsJpa(user);
+        savedUserJpa.ifPresent(jpa -> userDetailsJpa.setUserId(jpa.getId()));
+        var savedUserDetailsJpa = userDetailsRepository.save(userDetailsJpa);
+
+        String driverNumber = user.getDriverLicense().getNumber();
+        Instant issueDate = user.getDriverLicense().getIssueDate();
+        Instant expiredDate = user.getDriverLicense().getExpiredDate();
+
+        Optional<DriverLicenseJpa> savedDriverLicenseJpa = Optional.empty();
+        if (!(StringUtils.isBlank(driverNumber) &&
+                (issueDate == null || StringUtils.isBlank(issueDate.toString())) &&
+                (expiredDate == null || StringUtils.isBlank(user.getDriverLicense().getExpiredDate().toString())))) {
+            var driverLicenseJpa = UserMapper.toDriverLicenseJpa(user);
+            savedUserDetailsJpa.ifPresent(jpa -> driverLicenseJpa.setUserDetailsId(jpa.getId()));
+            savedDriverLicenseJpa = driverLicenseRepository.save(driverLicenseJpa);
+        }
+
+        if (savedDriverLicenseJpa.isEmpty()) {
+            return UserMapper.fromJpa(savedUserJpa.get(), savedUserDetailsJpa.get(), new DriverLicenseJpa.Builder().build());
+        } else {
+            return savedDriverLicenseJpa.map(jpa ->
+                            UserMapper.fromJpa(savedUserJpa.get(), savedUserDetailsJpa.get(), jpa))
+                    .orElseThrow(() -> new RuntimeException("Problem with user saving."));
+        }
+    }
+
+    public User updateUser(Long id, User user) {
+        var existingUserJpa = ensureUserExistsByIdWithPassword(id);
+        if (ensureEmailExists(user.getEmail())) {
+            throw new UserBadRequestException("Email already exists. Please choose other one!");
+        }
+        if (!Objects.equals(user.getEmail(), existingUserJpa.getEmail())) {
+            existingUserJpa.setEmail(user.getEmail());
+        }
+        var savedUserJpa = userRepository.update(existingUserJpa);
+
+        var savedUserDetails = savedUserJpa.map(jpa -> {
+                    var existingUserDetailsJpa = ensureUserDetailsExistsByUserId(jpa.getId());
+                    existingUserDetailsJpa.setName(user.getName());
+                    existingUserDetailsJpa.setSurname(user.getSurname());
+                    existingUserDetailsJpa.setAddress(user.getAddress());
+                    existingUserDetailsJpa.setPhone(user.getPhone());
+                    return userDetailsRepository.update(existingUserDetailsJpa).orElseThrow(() -> new RuntimeException("Problem with user updating."));
+                }
+        );
+
+        var savedDriverLicense = savedUserDetails.map(jpa -> {
+                    var existingDriverLicenseJpa = ensureDriverLicenseExistsByUserDetailsId(jpa.getId());
+                    existingDriverLicenseJpa.setNumber(user.getDriverLicense().getNumber());
+                    existingDriverLicenseJpa.setIssueDate(user.getDriverLicense().getIssueDate());
+                    existingDriverLicenseJpa.setExpiredDate(user.getDriverLicense().getExpiredDate());
+                    return driverLicenseRepository.update(existingDriverLicenseJpa).orElseThrow(() -> new RuntimeException("Problem with user updating."));
+                }
+        );
+
+        return savedDriverLicense.map(jpa ->
+                        UserMapper.fromJpa(savedUserJpa.get(), savedUserDetails.get(), jpa))
+                .orElseThrow(() -> new RuntimeException("Problem with user updating."));
+    }
+
+    public ShotUser getShotUserById(Long id) {
+        return UserMapper.fromJpa(ensureUserExistsById(id));
+    }
+
+    public ShotUser login(UserLogin user) {
+        String hash = PasswordUtils.generateHash(user.getLogin(), user.getPassword());
+        UserJpa userJpa = ensureUserExistsByLoginAndPassword(user.getLogin(), hash);
+        return UserMapper.fromJpa(userJpa);
+    }
+
+    public boolean updatePassword(Long id, String password) {
+        var existingUserJpa = ensureUserExistsById(id);
+        String hash = PasswordUtils.generateHash(existingUserJpa.getLogin(), password);
+        existingUserJpa.setPassword(hash);
+        var savedUserJpa = userRepository.update(existingUserJpa);
+        return savedUserJpa.isPresent();
+    }
+
+    public User getUserById(Long id) {
+        UserJpa userJpa = ensureUserExistsById(id);
+        UserDetailsJpa userDetailsJpa = userDetailsRepository
+                .findByUserId(userJpa.getId()).orElseThrow(() -> new NotFoundException(String.format("User details with user id %s does not exist.", userJpa.getId())));
+        DriverLicenseJpa driverLicenseJpa = driverLicenseRepository
+                .findByUserDetailsId(userDetailsJpa.getId()).orElseThrow(() -> new NotFoundException(String.format("Driver license with user user details id %s does not exist.", userDetailsJpa.getId())));
+        return UserMapper.fromJpa(userJpa, userDetailsJpa, driverLicenseJpa);
+    }
+
+    public User getCustomUserById(Long id) {
+        return userCustomRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("User with id %s does not exist.", id)));
+    }
+
+    public List<ShotUser> getAllShotUsers() {
+        return UserMapper.fromJpaList(userRepository.findAll());
+    }
+    public List<User> getAllUsers() {
+        List<UserJpa> userJpas = userRepository.findAll();
+        List<UserDetailsJpa> userDetailsJpas = userDetailsRepository.findAll();
+        List<DriverLicenseJpa> driverLicenseJpas = driverLicenseRepository.findAll();
+        return UserMapper.fromJpaList(userJpas, userDetailsJpas, driverLicenseJpas);
+    }
+
+    public List<User> getAllCustomUsers() {
+        return userCustomRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(User::getSurname))
+                .collect(Collectors.toList());
+    }
+
+    public boolean deleteUserById(Long id) {
+        ensureUserExistsById(id);
+        return userRepository.deleteById(id);
+    }
+
+    public User deleteUser(User user) {
+        ensureUserExistsById(user.getId());
+        boolean result = userRepository.delete(UserMapper.toUserJpa(user))
+                .map(shotUser -> {
+                    UserDetailsJpa userDetailsJpa = userDetailsRepository
+                            .findByUserId(shotUser.getId()).orElseThrow(() -> new NotFoundException(String.format("User detail with user id %s does not exist.", shotUser.getId())));
+                    Optional<UserDetailsJpa> deleted = userDetailsRepository.delete(userDetailsJpa);
+                    UserDetailsJpa jpa = null;
+                    if (deleted.isPresent()) {
+                        jpa = deleted.get();
+                    }
+                    return jpa;
+                })
+                .map(userDetailsJpa -> {
+                    DriverLicenseJpa driverLicenseJpa = driverLicenseRepository
+                            .findByUserDetailsId(userDetailsJpa.getId()).orElseThrow(() -> new NotFoundException(String.format("Driver license with user details id %s does not exist.", userDetailsJpa.getId())));
+                    Optional<DriverLicenseJpa> deleted = driverLicenseRepository.delete(driverLicenseJpa);
+                    DriverLicenseJpa jpa = null;
+                    if (deleted.isPresent()) {
+                        jpa = deleted.get();
+                    }
+                    return jpa;
+                })
+                .isPresent();
+        if (result) {
+            return user;
+        } else {
+            throw new RuntimeException("Problem with user removing.");
+        }
+    }
+
+    public List<ShotUser> findAllUsersByRole(String role) {
+        return userRepository.findAllByRole(role)
+                .stream()
+                .map(UserMapper::fromJpa)
+                .collect(Collectors.toList());
+    }
+
+    public List<User> findAllCustomUsersByRole(String role) {
+        return userCustomRepository.findByRole(role)
+                .stream()
+                .sorted(Comparator.comparing(User::getSurname))
+                .collect(Collectors.toList());
+    }
+
+    public User findCustomUserByLogin(String login) {
+        return userCustomRepository.findByLogin(login)
+                .orElseThrow(() -> new NotFoundException(String.format("User with login %s does not exist.", login)));
+    }
+
+    public User findCustomUserByEmail(String email) {
+        return userCustomRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException(String.format("User with email %s does not exist.", email)));
+    }
+
+    public List<User> findAllCustomUsersByRegistrationDate(Instant registrationDate) {
+        return userCustomRepository.findByRegistrationDate(registrationDate)
+                .stream()
+                .sorted(Comparator.comparing(User::getRegistrationDate))
+                .collect(Collectors.toList());
+    }
+
+    public List<User> findAllCustomUsersByRegistrationDateLessThan(Instant registrationDate) {
+        return userCustomRepository.findByRegistrationDateLess(registrationDate)
+                .stream()
+                .sorted(Comparator.comparing(User::getRegistrationDate))
+                .collect(Collectors.toList());
+    }
+
+    public List<User> findAllCustomUsersByRegistrationDateMoreThan(Instant registrationDate) {
+        return userCustomRepository.findByRegistrationDateMore(registrationDate)
+                .stream()
+                .sorted(Comparator.comparing(User::getRegistrationDate))
+                .collect(Collectors.toList());
+    }
+
+    public List<User> findAllCustomUsersByPhone(String phone) {
+        return userCustomRepository.findByPhone(phone)
+                .stream()
+                .sorted(Comparator.comparing(User::getSurname))
+                .collect(Collectors.toList());
+    }
+
+    public List<User> findAllCustomUsersByBirthday(Instant birthday) {
+        return userCustomRepository.findByBirthday(birthday)
+                .stream()
+                .sorted(Comparator.comparing(User::getSurname))
+                .collect(Collectors.toList());
+    }
+
+    public List<User> findAllCustomUsersWithOrders() {
+        return userCustomRepository.findAllWithOrders()
+                .stream()
+                .sorted(Comparator.comparing(User::getSurname))
+                .collect(Collectors.toList());
+    }
+
+    public List<User> findAllCustomUsersWithoutOrders() {
+        return userCustomRepository.findAllWithoutOrders()
+                .stream()
+                .sorted(Comparator.comparing(User::getSurname))
+                .collect(Collectors.toList());
+    }
+
+    public List<User> findAllCustomUsersWithExpiredDriverLicense() {
+        return userCustomRepository.findAllWithExpiredDriverLicense()
+                .stream()
+                .sorted(Comparator.comparing(User::getSurname))
+                .collect(Collectors.toList());
+    }
+
+    private boolean ensureLoginExists(String login) {
+        return userRepository.existByLogin(login);
+    }
+
+    private boolean ensureEmailExists(String email) {
+        return userRepository.existByEmail(email);
+    }
+
+    private UserJpa ensureUserExistsByLoginAndPassword(String login, String password) {
+        return userRepository.findByLoginAndPassword(login, password)
+                .orElseThrow(() -> new NotFoundException("User with such credentials does not exist."));
+    }
+
+    private UserJpa ensureUserExistsById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("User with id %s does not exist.", id)));
+    }
+
+    private UserJpa ensureUserExistsByIdWithPassword(Long id) {
+        return userRepository.findWithPasswordById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("User with id %s does not exist.", id)));
+    }
+
+    private UserDetailsJpa ensureUserDetailsExistsByUserId(Long id) {
+        return userDetailsRepository.findByUserId(id)
+                .orElseThrow(() -> new NotFoundException(String.format("User details with user id %s does not exist.", id)));
+    }
+
+    private DriverLicenseJpa ensureDriverLicenseExistsByUserDetailsId(Long id) {
+        return driverLicenseRepository.findByUserDetailsId(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Driver license for user with user details id %s does not exist.", id)));
+    }
+}

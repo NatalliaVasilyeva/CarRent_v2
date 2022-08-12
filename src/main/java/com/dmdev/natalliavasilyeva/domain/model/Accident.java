@@ -17,6 +17,8 @@ public class Accident implements Identifiable {
     private String description;
     private BigDecimal damage;
 
+    private Error error;
+
     public Accident() {
     }
 
@@ -29,7 +31,8 @@ public class Accident implements Identifiable {
                      String userFirstName,
                      String userLastName,
                      String description,
-                     BigDecimal damage) {
+                     BigDecimal damage,
+                     Error error) {
         this.id = id;
         this.orderNumber = orderId;
         this.date = date;
@@ -40,6 +43,7 @@ public class Accident implements Identifiable {
         this.userLastName = userLastName;
         this.description = description;
         this.damage = damage;
+        this.error = error;
     }
 
     public Long getId() {
@@ -82,17 +86,19 @@ public class Accident implements Identifiable {
         return damage;
     }
 
+    public Error getError() {
+        return error;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Accident accident = (Accident) o;
-        return Objects.equals(id, accident.id) && Objects.equals(orderNumber, accident.orderNumber) && Objects.equals(date, accident.date) && Objects.equals(brand, accident.brand) && Objects.equals(model, accident.model) && Objects.equals(carNumber, accident.carNumber) && Objects.equals(userFirstName, accident.userFirstName) && Objects.equals(userLastName, accident.userLastName) && Objects.equals(description, accident.description) && Objects.equals(damage, accident.damage);
+        return Objects.equals(id, accident.id) && Objects.equals(orderNumber, accident.orderNumber) && Objects.equals(date, accident.date) && Objects.equals(brand, accident.brand) && Objects.equals(model, accident.model) && Objects.equals(carNumber, accident.carNumber) && Objects.equals(userFirstName, accident.userFirstName) && Objects.equals(userLastName, accident.userLastName) && Objects.equals(description, accident.description) && Objects.equals(damage, accident.damage) && Objects.equals(error, accident.error);
     }
-
     @Override
     public int hashCode() {
-        return Objects.hash(id, orderNumber, date, brand, model, carNumber, userFirstName, userLastName, description, damage);
+        return Objects.hash(id, orderNumber, date, brand, model, carNumber, userFirstName, userLastName, description, damage, error);
     }
 
     @Override
@@ -108,9 +114,9 @@ public class Accident implements Identifiable {
                 ", userLastName='" + userLastName + '\'' +
                 ", description='" + description + '\'' +
                 ", damage=" + damage +
+                ", error=" + error +
                 '}';
     }
-
     public static final class Builder {
 
         private Long id;
@@ -123,6 +129,8 @@ public class Accident implements Identifiable {
         private String userLastName;
         private String description;
         private BigDecimal damage;
+
+        private Error error;
 
         public Builder id(Long id) {
             this.id = id;
@@ -173,6 +181,11 @@ public class Accident implements Identifiable {
             return this;
         }
 
+        public Builder error(Error error) {
+            this.error = error;
+            return this;
+        }
+
         public Accident build() {
             Accident accident = new Accident();
             accident.id = id;
@@ -185,6 +198,7 @@ public class Accident implements Identifiable {
             accident.userLastName = userLastName;
             accident.description = this.description;
             accident.damage = this.damage;
+            accident.error = this.error;
 
             return accident;
         }

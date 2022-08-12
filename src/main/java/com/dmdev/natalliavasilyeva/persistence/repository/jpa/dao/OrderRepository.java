@@ -29,13 +29,13 @@ public class OrderRepository extends AbstractRepository<OrderJpa> implements Gen
             "FROM orders \n";
 
     private static final String CREATE = "" +
-            "INSERT INTO orders(date, user_id, car_id, passport, insurance, order_status, sum) values (?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO orders(date, user_id, car_id, passport, insurance, order_status, sum) values (?, ?, ?, ?, ?, ?, ?)\n";
 
     private static final String UPDATE = "" +
             "UPDATE orders SET date = ?, user_id = ?, car_id = ?, passport = ?, insurance = ?, order_status = ?, sum = ? WHERE id = ?";
 
     private static final String DELETE = "" +
-            "DELETE FROM orders WHERE id = ?";
+            "DELETE FROM orders WHERE id = ?\n";
 
     private static final String RETURNING = "" +
             "RETURNING id, date, user_id, car_id, passport, insurance, order_status, sum";
@@ -115,7 +115,7 @@ public class OrderRepository extends AbstractRepository<OrderJpa> implements Gen
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE status LIKE  ?", status);
+                .appendWithSingleArg("WHERE lower(status) LIKE  ?", status);
         return findAll(statementProvider, extractor);
     }
 

@@ -11,7 +11,6 @@ public class Order implements Identifiable {
     private Instant date;
     private CarRentalTime carRentalTime;
     private Car car;
-
     private User user;
     private String passport;
     private boolean isInsuranceNeeded;
@@ -47,43 +46,63 @@ public class Order implements Identifiable {
     public Long getId() {
         return id;
     }
-
-    public CarRentalTime getCarRentalTime() {
-        return carRentalTime;
+    public void setId(Long id) {
+        this.id = id;
     }
-
-    public Car getCar() {
-        return car;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public String getPassport() {
-        return passport;
-    }
-
-    public boolean isInsuranceNeeded() {
-        return isInsuranceNeeded;
-    }
-
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
-    }
-
-    public BigDecimal getSum() {
-        return sum;
-    }
-
     public Instant getDate() {
         return date;
     }
-
+    public void setDate(Instant date) {
+        this.date = date;
+    }
+    public CarRentalTime getCarRentalTime() {
+        return carRentalTime;
+    }
+    public void setCarRentalTime(CarRentalTime carRentalTime) {
+        this.carRentalTime = carRentalTime;
+    }
+    public Car getCar() {
+        return car;
+    }
+    public void setCar(Car car) {
+        this.car = car;
+    }
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
+    }
+    public String getPassport() {
+        return passport;
+    }
+    public void setPassport(String passport) {
+        this.passport = passport;
+    }
+    public boolean isInsuranceNeeded() {
+        return isInsuranceNeeded;
+    }
+    public void setInsuranceNeeded(boolean insuranceNeeded) {
+        isInsuranceNeeded = insuranceNeeded;
+    }
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+    public void setOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+    public BigDecimal getSum() {
+        return sum;
+    }
+    public void setSum(BigDecimal sum) {
+        this.sum = sum;
+    }
     public boolean isWithAccident() {
         return withAccident;
     }
-
+    public void setWithAccident(boolean withAccident) {
+        this.withAccident = withAccident;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -128,7 +147,7 @@ public class Order implements Identifiable {
         private boolean withAccident;
 
         public Builder() {
-            this.date = Instant.now();
+//            this.date = Instant.now();
         }
 
         public Builder id(Long id) {

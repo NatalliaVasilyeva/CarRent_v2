@@ -28,13 +28,13 @@ public class PriceRepository extends AbstractRepository<PriceJpa> implements Gen
             "FROM price\n";
 
     private static final String CREATE = "" +
-            "INSERT INTO price(price) values (?)";
+            "INSERT INTO price(price) values (?)\n";
 
     private static final String UPDATE = "" +
             "UPDATE price SET price = ? WHERE id = ?";
 
     private static final String DELETE = "" +
-            "DELETE FROM price WHERE id = ?";
+            "DELETE FROM price WHERE id = ?\n";
 
     private static final String EXISTS_BY_PRICE = "" +
             "SELECT EXISTS (SELECT * FROM price WHERE price = ?)";

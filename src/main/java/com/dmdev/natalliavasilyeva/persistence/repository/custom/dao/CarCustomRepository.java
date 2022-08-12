@@ -112,7 +112,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ACCIDENTS)
-                .appendWithSingleArg("WHERE c.car_number LIKE ?\n", carNumber)
+                .appendWithSingleArg("WHERE lower(c.car_number) LIKE ?\n", carNumber)
                 .append(GROUP_BY);
         return findOne(statementProvider, extractor);
     }
@@ -157,7 +157,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ACCIDENTS)
-                .appendWithSingleArg("WHERE b.name LIKE ?\n", brandName)
+                .appendWithSingleArg("WHERE lower(b.name) LIKE ?\n", brandName)
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -175,7 +175,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ACCIDENTS)
-                .appendWithSingleArg("WHERE ct.name LIKE ?\n", categoryName)
+                .appendWithSingleArg("WHERE lower(ct.name) LIKE ?\n", categoryName)
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -184,7 +184,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITH_ACCIDENTS)
-                .append("WHERE c.id IN (SELECT car_id FROM orders LEFT JOIN accident On accident.order_id = orders.id WHERE order_id IS NOT NULL)\n")
+                .append("WHERE c.id IN (SELECT car_id FROM orders LEFT JOIN accident ON accident.order_id = orders.id WHERE order_id IS NOT NULL)\n")
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }
@@ -193,7 +193,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITH_ACCIDENTS)
-                .append("WHERE c.id NOT IN (SELECT car_id FROM orders LEFT JOIN accident On accident.order_id = orders.id WHERE order_id IS NOT NULL)\n")
+                .append("WHERE c.id NOT IN (SELECT car_id FROM orders LEFT JOIN accident ON accident.order_id = orders.id WHERE order_id IS NOT NULL)\n")
                 .append(GROUP_BY);
         return findAll(statementProvider, extractor);
     }

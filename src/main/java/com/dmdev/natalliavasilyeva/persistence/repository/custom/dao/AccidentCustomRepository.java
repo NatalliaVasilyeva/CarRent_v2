@@ -87,7 +87,7 @@ public class AccidentCustomRepository extends AbstractCustomRepository<Accident>
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithMultipleArgs("WHERE ud.name LIKE ? AND ud.surname LIKE ?", username, surname);
+                .appendWithMultipleArgs("WHERE lower(ud.name) LIKE ? AND lower(ud.surname) LIKE ?", username, surname);
         return findAll(statementProvider, extractor);
     }
 
@@ -95,7 +95,7 @@ public class AccidentCustomRepository extends AbstractCustomRepository<Accident>
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE car.car_number = ANY (?)", carNumbers.toArray(new String[0]))
+                .appendWithSingleArg("WHERE lower(car.car_number) = ANY (?)\n", carNumbers.toArray(new String[0]))
                 .append("ORDER BY ac.accident_date DESC");
         return findAll(statementProvider, extractor);
     }
@@ -104,7 +104,7 @@ public class AccidentCustomRepository extends AbstractCustomRepository<Accident>
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE ac.damage >= ?", minDamage)
+                .appendWithSingleArg("WHERE ac.damage >= ?\n", minDamage)
                 .append("ORDER BY ac.damage DESC");
         return findAll(statementProvider, extractor);
     }

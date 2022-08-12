@@ -28,8 +28,12 @@ public class UserRepository extends AbstractRepository<UserJpa> implements Gener
             "SELECT id, login, email, role\n" +
             "FROM users\n";
 
+    private static final String FIND_QUERY_WITH_PASSWORD_PREFIX = "" +
+            "SELECT id, login, email, password, role\n" +
+            "FROM users\n";
+
     private static final String CREATE = "" +
-            "INSERT INTO users(login, email, password, role) values (?, ?, ?, ?)";
+            "INSERT INTO users(login, email, password, role) values (?, ?, ?, ?)\n";
 
     private static final String UPDATE = "" +
             "UPDATE users SET login = ?, email = ?, password = ?, role = ? WHERE id = ?";
@@ -38,7 +42,7 @@ public class UserRepository extends AbstractRepository<UserJpa> implements Gener
             "UPDATE users SET password = ? WHERE id = ?";
 
     private static final String DELETE = "" +
-            "DELETE FROM users WHERE id = ?";
+            "DELETE FROM users WHERE id = ?\n";
 
     private static final String EXISTS_BY_LOGIN = "" +
             "SELECT EXISTS (SELECT * FROM users WHERE login = ?)";
@@ -54,6 +58,13 @@ public class UserRepository extends AbstractRepository<UserJpa> implements Gener
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
+                .appendWithSingleArg("WHERE id = ?", id);
+        return findOne(statementProvider, extractor);
+    }
+    public Optional<UserJpa> findWithPasswordById(Long id) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .append(FIND_QUERY_WITH_PASSWORD_PREFIX)
                 .appendWithSingleArg("WHERE id = ?", id);
         return findOne(statementProvider, extractor);
     }
@@ -149,7 +160,7 @@ public class UserRepository extends AbstractRepository<UserJpa> implements Gener
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE role LIKE ?", role);
+                .appendWithSingleArg("WHERE lower(role) LIKE ?", role);
         return findAll(statementProvider, extractor);
     }
 }

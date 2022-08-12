@@ -40,7 +40,7 @@ public class UserResultExtractor implements ResultSetExtractor<User> {
                     .userId(rs.getLong("user_id"))
                     .login(rs.getString("login"))
                     .email(rs.getString("email"))
-                    .role(Role.valueOf(rs.getString("role").toUpperCase()))
+                    .role(Role.getEnum(rs.getString("role").toUpperCase()))
                     .userDetailsId(rs.getLong("user_details_id"))
                     .name(rs.getString("name"))
                     .surname(rs.getString("surname"))

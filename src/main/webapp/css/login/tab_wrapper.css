@@ -1,0 +1,12 @@
+.tab_wrapper {
+    width:350px;
+    transition: box-shadow 1s;
+}
+
+.tab_wrapper li{
+    list-style: none;
+}
+
+.tab_wrapper > * {
+    padding: 0;
+}

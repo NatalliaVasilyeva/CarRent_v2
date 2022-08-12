@@ -40,54 +40,51 @@ public class UserDetailsJpa implements Entity, Serializable {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+    public long getUserId() {
+        return userId;
+    }
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
-
     public String getSurname() {
         return surname;
     }
-
     public void setSurname(String surname) {
         this.surname = surname;
     }
-
     public String getAddress() {
         return address;
     }
-
     public void setAddress(String address) {
         this.address = address;
     }
-
     public String getPhone() {
         return phone;
     }
-
     public void setPhone(String phone) {
         this.phone = phone;
     }
-
     public Instant getBirthday() {
         return birthday;
     }
-
-    public long getUser() {
-        return userId;
+    public void setBirthday(Instant birthday) {
+        this.birthday = birthday;
     }
-
-    public void setUser(int userId) {
-        this.userId = userId;
-    }
-
     public Instant getRegistrationDate() {
         return registrationDate;
     }
-
+    public void setRegistrationDate(Instant registrationDate) {
+        this.registrationDate = registrationDate;
+    }
     public static final class Builder {
         private long id;
         private long userId;

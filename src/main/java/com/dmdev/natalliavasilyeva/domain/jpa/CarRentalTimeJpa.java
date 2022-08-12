@@ -25,26 +25,27 @@ public class CarRentalTimeJpa implements Entity, Serializable {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
     public long getOrderId() {
         return orderId;
     }
-
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
+    }
     public Instant getStartRentalDate() {
         return startRentalDate;
     }
-
     public void setStartRentalDate(Instant startRentalDate) {
         this.startRentalDate = startRentalDate;
     }
-
     public Instant getEndRentalDate() {
         return endRentalDate;
     }
-
     public void setEndRentalDate(Instant endRentalDate) {
         this.endRentalDate = endRentalDate;
     }
-
     public static final class Builder {
 
         private long id;

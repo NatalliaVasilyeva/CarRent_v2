@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Optional;
 
 
-public class AccidentJpaRepository extends AbstractRepository<AccidentJpa> implements GenericRepository<AccidentJpa, Long> {
+public class AccidentRepository extends AbstractRepository<AccidentJpa> implements GenericRepository<AccidentJpa, Long> {
 
     // TODO: add logs
-    private static final Logger logger = LoggerFactory.getLogger(AccidentJpaRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(AccidentRepository.class);
     ResultSetExtractor<AccidentJpa> extractor;
 
-    public AccidentJpaRepository() {
+    public AccidentRepository() {
         this.extractor = new AccidentResultExtractor();
     }
 
@@ -29,13 +29,13 @@ public class AccidentJpaRepository extends AbstractRepository<AccidentJpa> imple
             "FROM accident\n";
 
     private static final String CREATE = "" +
-            "INSERT INTO accident(order_id, accident_date, description, damage) values (?, ?, ?, ?)";
+            "INSERT INTO accident(order_id, accident_date, description, damage) values (?, ?, ?, ?)\n";
 
     private static final String UPDATE = "" +
             "UPDATE accident SET order_id = ?, accident_date = ?, description = ?, damage = ? WHERE id = ?";
 
     private static final String DELETE = "" +
-            "DELETE FROM accident WHERE id = ?";
+            "DELETE FROM accident WHERE id = ?\n";
 
     private static final String RETURNING = "" +
             "RETURNING id, order_id, accident_date, description, damage";

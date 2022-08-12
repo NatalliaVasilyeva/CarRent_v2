@@ -1,0 +1,12 @@
+.tab_content {
+    background-color: white;
+    position: relative;
+    width: 100%;
+    box-shadow: 0px 12px 34px -8px rgba(0, 0, 0, 0.28);
+}
+
+.tab_content>li {
+    width: 100%;
+    position: absolute;
+    display: none;
+}

@@ -3,6 +3,7 @@ package com.dmdev.natalliavasilyeva.utils.validator;
 import com.dmdev.natalliavasilyeva.utils.RegularExpressionHolder;
 import com.dmdev.natalliavasilyeva.utils.VariablesNameHolder;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +11,13 @@ import java.util.function.Supplier;
 
 
 public final class DataValidator {
+
+    private static final DataValidator INSTANCE = new DataValidator();
+    public static DataValidator getInstance() {
+        return INSTANCE;
+    }
+    private DataValidator() {
+    }
 
     private static final Map<String, Supplier<String>> variableRegexMap = new HashMap<>();
 
@@ -21,8 +29,9 @@ public final class DataValidator {
         variableRegexMap.put(VariablesNameHolder.ACCIDENT_DATE, () -> RegularExpressionHolder.DATE_TIME_PATTERN_REGEX);
         variableRegexMap.put(VariablesNameHolder.START_RENTAL_DATE, () -> RegularExpressionHolder.DATE_TIME_PATTERN_REGEX);
         variableRegexMap.put(VariablesNameHolder.END_RENTAL_DATE, () -> RegularExpressionHolder.DATE_TIME_PATTERN_REGEX);
-        variableRegexMap.put(VariablesNameHolder.DRIVER_LICENSE_ISSUE_DATE, () -> RegularExpressionHolder.DATE_TIME_PATTERN_REGEX);
-        variableRegexMap.put(VariablesNameHolder.DRIVER_LICENSE_EXPIRED_DATE, () -> RegularExpressionHolder.DATE_TIME_PATTERN_REGEX);
+        variableRegexMap.put(VariablesNameHolder.DRIVER_LICENSE_ISSUE_DATE, () -> RegularExpressionHolder.DATE_PATTERN_REGEX);
+        variableRegexMap.put(VariablesNameHolder.DRIVER_LICENSE_EXPIRED_DATE, () -> RegularExpressionHolder.DATE_PATTERN_REGEX);
+        variableRegexMap.put(VariablesNameHolder.BIRTHDAY, () -> RegularExpressionHolder.DATE_PATTERN_REGEX);
         variableRegexMap.put(VariablesNameHolder.BRAND_NAME, () -> RegularExpressionHolder.BRAND_NAME_REGEX);
         variableRegexMap.put(VariablesNameHolder.MODEL_NAME, () -> RegularExpressionHolder.NAME_STRING_REGEX);
         variableRegexMap.put(VariablesNameHolder.CATEGORY_NAME, () -> RegularExpressionHolder.NAME_STRING_REGEX);
@@ -48,25 +57,29 @@ public final class DataValidator {
         variableRegexMap.put(VariablesNameHolder.PASSWORD, () -> RegularExpressionHolder.USER_PASSWORD_REGEX);
         variableRegexMap.put(VariablesNameHolder.ADDRESS, () -> RegularExpressionHolder.ADDRESS_REGEX);
         variableRegexMap.put(VariablesNameHolder.PHONE, () -> RegularExpressionHolder.PHONE_REGEX);
+        variableRegexMap.put(VariablesNameHolder.ROLE, () -> RegularExpressionHolder.USER_ROLE_REGEX);
         variableRegexMap.put("", () -> RegularExpressionHolder.EMPTY_STRING_REGEX);
     }
 
     private Set<String> canBeNullVariable = Set.of(VariablesNameHolder.PRICE_ID, VariablesNameHolder.DESCRIPTION, VariablesNameHolder.DAMAGE,
             VariablesNameHolder.TRANSMISSION, VariablesNameHolder.ENGINE_TYPE, VariablesNameHolder.COLOR, VariablesNameHolder.YEAR, VariablesNameHolder.CAR_NUMBER,
-            VariablesNameHolder.VIN, VariablesNameHolder.IS_REPAIRED, VariablesNameHolder.IMAGE, VariablesNameHolder.ORDER_STATUS, VariablesNameHolder.ROLE);
+            VariablesNameHolder.VIN, VariablesNameHolder.IS_REPAIRED, VariablesNameHolder.IMAGE, VariablesNameHolder.ORDER_STATUS, VariablesNameHolder.ROLE, VariablesNameHolder.DRIVER_LICENSE_NUMBER,
+            VariablesNameHolder.DRIVER_LICENSE_ISSUE_DATE, VariablesNameHolder.DRIVER_LICENSE_EXPIRED_DATE);
 
     public boolean isValidData(Map<String, String> inData) {
-        boolean result = true;
         for (Map.Entry<String, String> entry : inData.entrySet()) {
             var key = entry.getKey();
             var value = entry.getValue();
-            result = isValidData(key, value);
+            var result = isValidData(key, value);
+            if (!result) {
+                return false;
+            }
         }
-        return result;
+        return true;
     }
 
     public boolean isValidData(String key, String value) {
-        if (value == null || value.isEmpty() || value.isBlank()) {
+        if (value == null || value.isEmpty() || value.isBlank() || value.equals("")) {
             return canBeNullVariable.contains(key);
         }
         var pattern = definePattern(key);
@@ -82,5 +95,12 @@ public final class DataValidator {
             throw new IllegalArgumentException(String.format("%s is not supported", type));
         }
         return variableRegexMap.get(type).get();
+    }
+
+    public boolean isValidDates(LocalDateTime start, LocalDateTime end) {
+        if(start == null && end == null) {
+            return true;
+        }
+        return start.isBefore(end) && start.isAfter(LocalDateTime.now().minusMinutes(60));
     }
 }

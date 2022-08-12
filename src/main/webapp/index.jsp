@@ -8,8 +8,6 @@
 <body>
 </h1>
 <br/>
-<a href="${pageContext.request.contextPath}/user-cars">List of cars for user</a>
-<%--<jsp:include page="/user_cars"></jsp:include>--%>
-<%--<jsp:forward page="/user_cars"/>--%>
+<c:redirect url="/welcome"></c:redirect>
 </body>
 </html>

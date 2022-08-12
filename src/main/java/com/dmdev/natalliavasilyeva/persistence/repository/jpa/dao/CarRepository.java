@@ -32,13 +32,13 @@ public class CarRepository extends AbstractRepository<CarJpa> implements Generic
             "FROM car c\n";
 
     private static final String CREATE = "" +
-            "INSERT INTO car(model_id, color, year, car_number, vin, is_repaired, image) values (?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO car(model_id, color, year, car_number, vin, is_repaired, image) values (?, ?, ?, ?, ?, ?, ?)\n";
 
     private static final String UPDATE = "" +
             "UPDATE car SET model_id = ?, color = ?, year = ?, car_number = ?, vin = ?, is_repaired = ?, image = ? WHERE id = ?";
 
     private static final String DELETE = "" +
-            "DELETE FROM car WHERE id = ?";
+            "DELETE FROM car WHERE id = ?\n";
 
     private static final String RETURNING = "" +
             "RETURNING id, model_id, color, year, car_number, vin, is_repaired, image";
@@ -118,7 +118,7 @@ public class CarRepository extends AbstractRepository<CarJpa> implements Generic
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE c.car_number LIKE ?", car_number);
+                .appendWithSingleArg("WHERE lower(c.car_number) LIKE ?", car_number);
         return findOne(statementProvider, extractor);
     }
 
@@ -128,7 +128,7 @@ public class CarRepository extends AbstractRepository<CarJpa> implements Generic
                 .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("LEFT JOIN model m ON c.model_id = m.id \n" +
                         "LEFT JOIN brand  b ON m.brand_id = b.id \n" +
-                        "WHERE b.name LIKE ?", brandName);
+                        "WHERE lower(b.name) LIKE ?", brandName);
         return findAll(statementProvider, extractor);
     }
 
@@ -148,7 +148,7 @@ public class CarRepository extends AbstractRepository<CarJpa> implements Generic
                 .append(FIND_QUERY_PREFIX)
                 .appendWithSingleArg("LEFT JOIN model m ON c.model_id = m.id \n" +
                         "LEFT JOIN categories ct ON m.category_id = ct.id \n" +
-                        "WHERE ct.name LIKE ?", categoryName);
+                        "WHERE lower(ct.name) LIKE ?", categoryName);
         return findAll(statementProvider, extractor);
     }
 
@@ -160,6 +160,23 @@ public class CarRepository extends AbstractRepository<CarJpa> implements Generic
                         "WHERE o.car_id = ? AND o.id IN \n" +
                         "(SELECT order_id FROM carrentaltime crt WHERE crt.start_rental_date <= ? AND\n" +
                         "crt.end_rental_date >= ?)", carId, endDate, startDate);
+        try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
+            var resultSet = prepareStatement.executeQuery();
+            return !resultSet.isBeforeFirst();
+        } catch (ConnectionPoolException | SQLException ex) {
+            logger.error("IsCarAvailable car jpa method throws exception", ex);
+            throw new RepositoryException();
+        }
+    }
+
+    public boolean isCarAvailableByOrderId(Long orderId, Long carId, Instant startDate, Instant endDate) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .append(FIND_QUERY_PREFIX)
+                .appendWithMultipleArgs("LEFT JOIN orders o ON o.car_id = c.id \n" +
+                        "WHERE o.car_id = ? AND o.id IN \n" +
+                        "(SELECT order_id FROM carrentaltime crt WHERE crt.start_rental_date <= ? AND\n" +
+                        "crt.end_rental_date >= ? AND crt.order_id != ?)", carId, endDate, startDate, orderId);
         try (var prepareStatement = statementProvider.createPreparedStatement(connectionPool.getConnection())) {
             var resultSet = prepareStatement.executeQuery();
             return !resultSet.isBeforeFirst();

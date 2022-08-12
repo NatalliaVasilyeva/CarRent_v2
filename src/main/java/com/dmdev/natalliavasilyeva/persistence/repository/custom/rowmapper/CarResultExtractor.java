@@ -39,7 +39,7 @@ public class CarResultExtractor implements ResultSetExtractor<Car> {
             return new Car.Builder()
                     .id(rs.getLong("car_id"))
                     .model(mapToModel(rs))
-                    .color(Color.valueOf(rs.getString("color").toUpperCase()))
+                    .color(Color.getEnum(rs.getString("color").toUpperCase()))
                     .year(rs.getString("year"))
                     .number(rs.getString("car_number"))
                     .vin(rs.getString("vin"))
@@ -56,8 +56,8 @@ public class CarResultExtractor implements ResultSetExtractor<Car> {
 
         return new Model.Builder()
                 .name(rs.getString("model_name"))
-                .transmission(Transmission.valueOf(rs.getString("transmission").toUpperCase()))
-                .engine(EngineType.valueOf(rs.getString("engine_type").toUpperCase()))
+                .transmission(Transmission.getEnum(rs.getString("transmission").toUpperCase()))
+                .engine(EngineType.getEnum(rs.getString("engine_type").toUpperCase()))
                 .brand(mapToBrand(rs))
                 .category(mapToCategory(rs))
                 .build();
@@ -104,7 +104,7 @@ public class CarResultExtractor implements ResultSetExtractor<Car> {
                             .id(Long.valueOf((Integer) element.get("accident_id")))
                             .date(date)
                             .description((String) element.get("description"))
-                            .damage(new BigDecimal((Double) element.get("damage")))
+                            .damage(BigDecimal.valueOf((Double) element.get("damage")))
                             .build()
                     );
                 }

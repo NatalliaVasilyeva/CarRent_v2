@@ -5,7 +5,6 @@ import com.dmdev.natalliavasilyeva.api.dto.requestdto.BrandDto;
 import com.dmdev.natalliavasilyeva.api.dto.requestdto.CarDto;
 import com.dmdev.natalliavasilyeva.api.dto.responsedto.BrandResponseDTO;
 import com.dmdev.natalliavasilyeva.domain.jpa.BrandJpa;
-import com.dmdev.natalliavasilyeva.domain.jpa.PriceJpa;
 import com.dmdev.natalliavasilyeva.domain.model.Brand;
 
 import java.util.Collections;
@@ -15,6 +14,9 @@ import java.util.stream.Collectors;
 
 public final class BrandMapper {
 
+    private BrandMapper() {
+    }
+
     public static BrandResponseDTO toDto(Brand brand) {
         return new BrandResponseDTO(
                 brand.getName(),
@@ -23,7 +25,7 @@ public final class BrandMapper {
     }
 
     public static List<BrandResponseDTO> toDtos(List<Brand> brands) {
-        return brands.size() == 0? Collections.emptyList() : brands.stream().map(BrandMapper::toDto).collect(Collectors.toList());
+        return brands.isEmpty() ? Collections.emptyList() : brands.stream().map(BrandMapper::toDto).collect(Collectors.toList());
     }
 
     public static Brand fromDto(BrandDto brandDto) {
@@ -46,7 +48,7 @@ public final class BrandMapper {
     }
 
     public static List<Brand> fromJpaList(List<BrandJpa> jpaBrands) {
-        return jpaBrands.size() == 0? Collections.emptyList() : jpaBrands.stream().map(BrandMapper::fromJpa).collect(Collectors.toList());
+        return jpaBrands.isEmpty() ? Collections.emptyList() : jpaBrands.stream().map(BrandMapper::fromJpa).collect(Collectors.toList());
     }
 
     public static BrandJpa toJpa(Brand brand) {

@@ -51,7 +51,7 @@ public class CategoryCustomRepository extends AbstractCustomRepository<Category>
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE c.name = ?", name);
+                .appendWithSingleArg("WHERE lower(c.name) = ?", name);
         return findOne(statementProvider, extractor);
     }
 

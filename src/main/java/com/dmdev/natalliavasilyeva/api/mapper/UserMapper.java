@@ -2,22 +2,20 @@ package com.dmdev.natalliavasilyeva.api.mapper;
 
 import com.dmdev.natalliavasilyeva.api.dto.requestdto.UserDto;
 import com.dmdev.natalliavasilyeva.api.dto.requestdto.UserLoginDto;
-import com.dmdev.natalliavasilyeva.api.dto.responsedto.DriverLicenseDto;
+import com.dmdev.natalliavasilyeva.api.dto.requestdto.UserUpdateDto;
 import com.dmdev.natalliavasilyeva.api.dto.responsedto.UserResponseDto;
 import com.dmdev.natalliavasilyeva.api.dto.responsedto.UserShotResponseDto;
-import com.dmdev.natalliavasilyeva.domain.jpa.CarJpa;
 import com.dmdev.natalliavasilyeva.domain.jpa.DriverLicenseJpa;
 import com.dmdev.natalliavasilyeva.domain.jpa.UserDetailsJpa;
 import com.dmdev.natalliavasilyeva.domain.jpa.UserJpa;
-import com.dmdev.natalliavasilyeva.domain.model.Car;
 import com.dmdev.natalliavasilyeva.domain.model.DriverLicense;
 import com.dmdev.natalliavasilyeva.domain.model.Role;
 import com.dmdev.natalliavasilyeva.domain.model.ShotUser;
 import com.dmdev.natalliavasilyeva.domain.model.User;
 import com.dmdev.natalliavasilyeva.domain.model.UserLogin;
 import com.dmdev.natalliavasilyeva.utils.Converter;
+import com.dmdev.natalliavasilyeva.utils.DateTimeService;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -29,29 +27,45 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
-public class UserMapper {
+public final class UserMapper {
+
+    private UserMapper() {
+    }
 
     public static UserShotResponseDto toShotDto(User user) {
         return new UserShotResponseDto(
                 user.getId(),
+                user.getLogin(),
                 user.getEmail(),
                 user.getName(),
                 user.getSurname(),
                 user.getAddress(),
                 user.getPhone(),
+                user.getRole(),
                 LocalDate.ofInstant(user.getBirthday(), ZoneOffset.UTC),
                 DriverLicenseMapper.toDto(user.getDriverLicense())
+        );
+    }
+
+    public static UserShotResponseDto toShotDtoFromShotUser(ShotUser user) {
+        return new UserShotResponseDto(
+                user.getId(),
+                user.getLogin(),
+                user.getEmail(),
+                user.getRole()
         );
     }
 
     public static UserResponseDto toDto(User user) {
         return new UserResponseDto(
                 user.getId(),
+                user.getLogin(),
                 user.getEmail(),
                 user.getName(),
                 user.getSurname(),
                 user.getAddress(),
                 user.getPhone(),
+                user.getRole(),
                 LocalDate.ofInstant(user.getBirthday(), ZoneOffset.UTC),
                 DriverLicenseMapper.toDto(user.getDriverLicense()),
                 OrderMapper.toDtos(user.getOrders())
@@ -77,12 +91,27 @@ public class UserMapper {
                 .surname(userDto.getSurname())
                 .address(userDto.getAddress())
                 .phone(userDto.getPhone())
-                .birthday(userDto.getBirthday().toInstant(ZoneOffset.UTC))
+                .birthday(DateTimeService.fromLocalDateTimeDateToInstant(userDto.getBirthday()))
                 .registrationDate(Instant.now())
                 .driverLicense(new DriverLicense.Builder()
                         .number(userDto.getDriverLicenseNumber())
-                        .issueDate(userDto.getDriverLicenseIssueDate().toInstant(ZoneOffset.UTC))
-                        .expiredDate(userDto.getDriverLicenseExpiredDate().toInstant(ZoneOffset.UTC))
+                        .issueDate(DateTimeService.fromLocalDateTimeDateToInstant(userDto.getDriverLicenseIssueDate()))
+                        .expiredDate(DateTimeService.fromLocalDateTimeDateToInstant(userDto.getDriverLicenseExpiredDate()))
+                        .build())
+                .build();
+    }
+
+    public static User fromDto(UserUpdateDto userDto) {
+        return new User.Builder()
+                .email(userDto.getEmail())
+                .name(userDto.getName())
+                .surname(userDto.getSurname())
+                .address(userDto.getAddress())
+                .phone(userDto.getPhone())
+                .driverLicense(new DriverLicense.Builder()
+                        .number(userDto.getLicenseNumber())
+                        .issueDate(DateTimeService.fromLocalDateTimeDateToInstant(userDto.getIssueDate()))
+                        .expiredDate(DateTimeService.fromLocalDateTimeDateToInstant(userDto.getExpiredDate()))
                         .build())
                 .build();
     }
@@ -95,11 +124,16 @@ public class UserMapper {
     }
 
     public static User fromJpa(UserJpa userJpa, UserDetailsJpa userDetailsJpa, DriverLicenseJpa driverLicenseJpa) {
+        var builder = new DriverLicense.Builder();
+        Optional.ofNullable(driverLicenseJpa.getNumber()).ifPresent(builder::number);
+        Optional.ofNullable(driverLicenseJpa.getIssueDate()).ifPresent(builder::issueDate);
+        Optional.ofNullable(driverLicenseJpa.getExpiredDate()).ifPresent(builder::expiredDate);
+        DriverLicense driverLicense = builder.build();
         return new User.Builder()
                 .userId(userJpa.getId())
                 .login(userJpa.getLogin())
                 .email(userJpa.getEmail())
-                .role(Role.valueOf(userJpa.getRole()))
+                .role(Role.getEnum(userJpa.getRole()))
                 .userDetailsId(userDetailsJpa.getId())
                 .name(userDetailsJpa.getName())
                 .surname(userDetailsJpa.getSurname())
@@ -107,11 +141,7 @@ public class UserMapper {
                 .phone(userDetailsJpa.getPhone())
                 .birthday(userDetailsJpa.getBirthday())
                 .registrationDate(userDetailsJpa.getRegistrationDate())
-                .driverLicense(new DriverLicense.Builder()
-                        .number(driverLicenseJpa.getNumber())
-                        .issueDate(driverLicenseJpa.getIssueDate())
-                        .expiredDate(driverLicenseJpa.getExpiredDate())
-                        .build())
+                .driverLicense(driverLicense)
                 .build();
     }
 
@@ -121,16 +151,16 @@ public class UserMapper {
                 .userId(userJpa.getId())
                 .login(userJpa.getLogin())
                 .email(userJpa.getEmail())
-                .role(Role.valueOf(userJpa.getRole()))
+                .role(Role.getEnum(userJpa.getRole()))
                 .build();
     }
 
     public static List<ShotUser> fromJpaList(List<UserJpa> userJpas) {
-        return userJpas.size() == 0 ? Collections.emptyList() : userJpas.stream().map(UserMapper::fromJpa).collect(Collectors.toList());
+        return userJpas.isEmpty() ? Collections.emptyList() : userJpas.stream().map(UserMapper::fromJpa).collect(Collectors.toList());
     }
 
     public static List<User> fromJpaList(List<UserJpa> userJpas, List<UserDetailsJpa> userDetailsJpas, List<DriverLicenseJpa> driverLicenseJpas) {
-        if (userJpas.size() == 0) {
+        if (userJpas.isEmpty()) {
             return Collections.emptyList();
         } else {
             List<User> users = mergeUserAndUserDetailsJpaLists(userJpas, userDetailsJpas);
@@ -142,11 +172,14 @@ public class UserMapper {
     public static UserDetailsJpa toUserDetailsJpa(User user) {
         var builder = new UserDetailsJpa.Builder();
         Optional.ofNullable(user.getUserDetailsId()).ifPresent(builder::id);
-        Optional.ofNullable(user.getRegistrationDate())
-                .map(date -> builder.registrationDate(date))
-                .orElse(builder.registrationDate(Instant.now()));
+        Optional.ofNullable(user.getId()).ifPresent(builder::user);
+        if (user.getRegistrationDate() != null) {
+            builder.registrationDate(user.getRegistrationDate());
+        } else {
+            builder.registrationDate(Instant.now());
+        }
         builder
-                .user(user.getId())
+//                .user(user.getId())
                 .name(user.getName())
                 .surname(user.getSurname())
                 .address(user.getAddress())
@@ -161,7 +194,7 @@ public class UserMapper {
         builder
                 .login(user.getLogin())
                 .email(user.getEmail())
-                .password(user.getPassword())
+//                .password(user.getPassword())
                 .role(user.getRole() == null ? Role.CLIENT.name() : user.getRole().name());
         return builder.build();
     }
@@ -169,8 +202,8 @@ public class UserMapper {
     public static DriverLicenseJpa toDriverLicenseJpa(User user) {
         var builder = new DriverLicenseJpa.Builder();
         Optional.ofNullable(user.getDriverLicense().getId()).ifPresent(builder::id);
+        Optional.ofNullable(user.getUserDetailsId()).ifPresent(builder::user);
         builder
-                .user(user.getUserDetailsId())
                 .number(user.getDriverLicense().getNumber())
                 .issueDate(user.getDriverLicense().getIssueDate())
                 .expiredDate(user.getDriverLicense().getExpiredDate());
@@ -189,8 +222,8 @@ public class UserMapper {
                             builder.userId(userJpaEntry.getValue().getId());
                             builder.login(userJpaEntry.getValue().getLogin());
                             builder.email(userJpaEntry.getValue().getEmail());
-                            builder.role(Role.valueOf(userJpaEntry.getValue().getRole()));
-                            userDetailsJpas.stream().filter(u -> u.getUser() == userJpaEntry.getKey())
+                            builder.role(Role.getEnum(userJpaEntry.getValue().getRole()));
+                            userDetailsJpas.stream().filter(u -> u.getUserId() == userJpaEntry.getKey())
                                     .forEach(ud -> {
                                         builder.userDetailsId(ud.getId());
                                         builder.name(ud.getName());

@@ -1,18 +1,14 @@
 import com.dmdev.natalliavasilyeva.connection.ConnectionPool;
 import com.dmdev.natalliavasilyeva.connection.exception.ConnectionPoolException;
-import com.dmdev.natalliavasilyeva.domain.jpa.AccidentJpa;
-import com.dmdev.natalliavasilyeva.domain.jpa.ModelJpa;
 import com.dmdev.natalliavasilyeva.domain.model.Brand;
 import com.dmdev.natalliavasilyeva.domain.model.Category;
 import com.dmdev.natalliavasilyeva.domain.model.EngineType;
 import com.dmdev.natalliavasilyeva.domain.model.Model;
 import com.dmdev.natalliavasilyeva.domain.model.Transmission;
-import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.AccidentJpaRepository;
-import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.ModelRepository;
 import com.dmdev.natalliavasilyeva.service.ModelService;
+import com.dmdev.natalliavasilyeva.utils.PasswordUtils;
 
 import java.sql.SQLException;
-import java.util.Optional;
 
 
 public class Main {
@@ -20,7 +16,7 @@ public class Main {
     public static void main(String[] args) throws SQLException, ConnectionPoolException {
         ConnectionPool connectionPool = ConnectionPool.getInstance();
 //        OrderCustomRepository orderRepository = new OrderCustomRepository(connectionPool);
-        ModelService modelService = new ModelService();
+
 //
 ////        System.out.println(userRepository.findByLoginAndPassword("RabbitAdm", "abcd"));
 //
@@ -47,15 +43,7 @@ public class Main {
 //                .damage(BigDecimal.valueOf(15))
 //                .build();
 
-        Model model = new Model.Builder()
-                .brand(new Brand.Builder().id(1l).build())
-                .category(new Category.Builder().id(1l).build())
-                .name("test_model_2")
-                .transmission(Transmission.AUTOMATIC)
-                .engine(EngineType.DIESEL)
-                .build();
-
-        Model saved = modelService.createModel(model);
-        System.out.println(saved);
+        var passwordUtils = PasswordUtils.generateHash("RabbitCli", "dcba");
+        System.out.println(passwordUtils);
     }
 }

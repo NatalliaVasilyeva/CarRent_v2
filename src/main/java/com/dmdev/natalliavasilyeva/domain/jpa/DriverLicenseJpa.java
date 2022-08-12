@@ -27,34 +27,33 @@ public class DriverLicenseJpa implements Entity, Serializable {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
     public long getUserDetailsId() {
         return userDetailsId;
     }
-
+    public void setUserDetailsId(long userDetailsId) {
+        this.userDetailsId = userDetailsId;
+    }
     public String getNumber() {
         return number;
     }
-
     public void setNumber(String number) {
         this.number = number;
     }
-
     public Instant getIssueDate() {
         return issueDate;
     }
-
     public void setIssueDate(Instant issueDate) {
         this.issueDate = issueDate;
     }
-
     public Instant getExpiredDate() {
         return expiredDate;
     }
-
     public void setExpiredDate(Instant expiredDate) {
         this.expiredDate = expiredDate;
     }
-
     public static final class Builder {
         private long id;
         private long userDetailsId;
@@ -97,6 +96,5 @@ public class DriverLicenseJpa implements Entity, Serializable {
 
             return driverLicenseJpa;
         }
-
     }
 }

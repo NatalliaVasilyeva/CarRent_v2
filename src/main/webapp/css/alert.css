@@ -1,0 +1,8 @@
+/*--------------------------------------
+               ALERT
+----------------------------------------*/
+
+.alert{
+    border-radius:0;   /*removes round corners for allert message. */
+    margin:0;          /*removes bottom margin for error message*/
+}

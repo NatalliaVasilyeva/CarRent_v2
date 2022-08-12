@@ -11,7 +11,7 @@ import com.dmdev.natalliavasilyeva.persistence.repository.custom.dao.UserCustomR
 
 public class RepositoryCustomFactory {
 
-    private final static RepositoryCustomFactory INSTANCE = new RepositoryCustomFactory();
+    private static final RepositoryCustomFactory INSTANCE = new RepositoryCustomFactory();
 
     private RepositoryCustomFactory() {
     }

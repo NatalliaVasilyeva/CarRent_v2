@@ -76,7 +76,7 @@ public class ModelCustomRepository extends AbstractCustomRepository<Model> imple
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE brand.brand_name LIKE ?", brandName);
+                .appendWithSingleArg("WHERE lower(brand.brand_name) LIKE ?", brandName);
         return findAll(statementProvider, extractor);
     }
 
@@ -84,7 +84,7 @@ public class ModelCustomRepository extends AbstractCustomRepository<Model> imple
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE m.transmission LIKE ?", transmission);
+                .appendWithSingleArg("WHERE lower(m.transmission) LIKE ?", transmission);
         return findAll(statementProvider, extractor);
     }
 
@@ -92,7 +92,7 @@ public class ModelCustomRepository extends AbstractCustomRepository<Model> imple
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE m.engine_type LIKE ?", engineType);
+                .appendWithSingleArg("WHERE lower(m.engine_type) LIKE ?", engineType);
         return findAll(statementProvider, extractor);
     }
 
@@ -100,7 +100,7 @@ public class ModelCustomRepository extends AbstractCustomRepository<Model> imple
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE category_name LIKE ?", category);
+                .appendWithSingleArg("WHERE lower(category_name) LIKE ?", category);
         return findAll(statementProvider, extractor);
     }
 }

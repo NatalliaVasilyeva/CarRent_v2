@@ -5,7 +5,6 @@ import com.dmdev.natalliavasilyeva.api.dto.responsedto.CarAdminResponseDto;
 import com.dmdev.natalliavasilyeva.api.dto.responsedto.CarUserResponseDto;
 import com.dmdev.natalliavasilyeva.api.dto.responsedto.ModelResponseDTO;
 import com.dmdev.natalliavasilyeva.domain.jpa.CarJpa;
-import com.dmdev.natalliavasilyeva.domain.jpa.ModelJpa;
 import com.dmdev.natalliavasilyeva.domain.model.Brand;
 import com.dmdev.natalliavasilyeva.domain.model.Car;
 import com.dmdev.natalliavasilyeva.domain.model.Category;
@@ -13,31 +12,24 @@ import com.dmdev.natalliavasilyeva.domain.model.Color;
 import com.dmdev.natalliavasilyeva.domain.model.EngineType;
 import com.dmdev.natalliavasilyeva.domain.model.Model;
 import com.dmdev.natalliavasilyeva.domain.model.Transmission;
+import com.dmdev.natalliavasilyeva.service.FilesService;
+import com.dmdev.natalliavasilyeva.service.ServiceFactory;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CarMapper {
+public final class CarMapper {
 
-    private static final String IMAGE_FOLDER = "/cars";
+    private CarMapper() {
+    }
 
-//    public static CarUserResponseDto toShotDto(Car car) {
-//        return new CarUserResponseDto(
-//
-//                car.getModel().getBrand().getName(),
-//                ModelMapper.toDto(car.getModel()),
-//                car.getColor().name(),
-//                car.getYearOfProduction(),
-//                car.getImage(),
-//                car.getModel().getCategory().getPrice().getSum()
-//        );
-//    }
+    private static final FilesService filesService = ServiceFactory.getInstance().getFilesService();
 
     public static CarUserResponseDto toShotDto(Car car) {
         ModelResponseDTO modelResponseDTO = ModelMapper.toDto(car.getModel());
-        return new CarUserResponseDto(
+        CarUserResponseDto carUserResponseDto = new CarUserResponseDto(
                 car.getId(),
                 modelResponseDTO.getBrandName(),
                 car.getModel().getName(),
@@ -48,23 +40,24 @@ public class CarMapper {
                 car.getImage(),
                 car.getModel().getCategory().getPrice().getSum()
         );
+
+        carUserResponseDto.setImageContent(car.getImage() == null? null : filesService.upload(car.getImage()));
+        return carUserResponseDto;
     }
 
-//    public static CarAdminResponseDto toDto(Car car) {
-//        return new CarAdminResponseDto(
-//                car.getModel().getBrand().getName(),
-//                ModelMapper.toDto(car.getModel()),
-//                car.getColor().name(),
-//                car.getYearOfProduction(),
-//                car.getImage(),
-//                car.getModel().getCategory().getPrice().getSum(),
-//                car.getNumber(),
-//                car.getVin(),
-//                car.isRepaired(),
-//                AccidentMapper.toDtos(car.getAccidents()),
-//                null
-//        );
-//    }
+    public static CarUserResponseDto toShotDtoForUserList(Car car) {
+        ModelResponseDTO modelResponseDTO = ModelMapper.toDto(car.getModel());
+        var carUserResponseDto = new CarUserResponseDto(
+                car.getId(),
+                modelResponseDTO.getBrandName(),
+                car.getModel().getName(),
+                car.getImage(),
+                modelResponseDTO.getPrice()
+        );
+
+        carUserResponseDto.setImageContent(car.getImage() == null? null : filesService.upload(car.getImage()));
+        return carUserResponseDto;
+    }
 
     public static CarAdminResponseDto toDto(Car car) {
         ModelResponseDTO modelResponseDTO = ModelMapper.toDto(car.getModel());
@@ -90,6 +83,10 @@ public class CarMapper {
         return cars.stream().map(CarMapper::toShotDto).collect(Collectors.toList());
     }
 
+    public static List<CarUserResponseDto> toShotDtosForUserList(List<Car> cars) {
+        return cars.stream().map(CarMapper::toShotDtoForUserList).collect(Collectors.toList());
+    }
+
     public static List<CarAdminResponseDto> toDtos(List<Car> cars) {
         return cars.stream().map(CarMapper::toDto).collect(Collectors.toList());
     }
@@ -99,17 +96,17 @@ public class CarMapper {
         return new Car.Builder()
                 .model(new Model.Builder()
                         .name(carCreateDto.getModelName())
-                        .transmission(Transmission.valueOf(carCreateDto.getTransmission()))
-                        .engine(EngineType.valueOf(carCreateDto.getEngineType()))
+                        .transmission(Transmission.getEnum(carCreateDto.getTransmission()))
+                        .engine(EngineType.getEnum(carCreateDto.getEngineType()))
                         .brand(new Brand.Builder().name(carCreateDto.getBrandName()).build())
                         .category(new Category.Builder().build())
                         .build())
-                .color(Color.valueOf(carCreateDto.getColor()))
+                .color(Color.getEnum(carCreateDto.getColor()))
                 .year(carCreateDto.getYearOfProduction())
                 .number(carCreateDto.getNumber())
                 .vin(carCreateDto.getVin())
                 .repaired(carCreateDto.isRepaired())
-                .image(IMAGE_FOLDER + carCreateDto.getImage().getSubmittedFileName())
+                .image(carCreateDto.getBrandName() + "/" + carCreateDto.getImageName())
                 .content(carCreateDto.getImage())
                 .build();
     }
@@ -129,7 +126,7 @@ public class CarMapper {
     }
 
     public static List<Car> fromJpaList(List<CarJpa> jpaCars) {
-        return jpaCars.size() == 0 ? Collections.emptyList() : jpaCars.stream().map(CarMapper::fromJpa).collect(Collectors.toList());
+        return jpaCars.isEmpty() ? Collections.emptyList() : jpaCars.stream().map(CarMapper::fromJpa).collect(Collectors.toList());
     }
 
     public static CarJpa toJpa(Car car) {

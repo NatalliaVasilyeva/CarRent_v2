@@ -28,13 +28,13 @@ public class CarRentalTimeRepository extends AbstractRepository<CarRentalTimeJpa
             "FROM carrentaltime crt\n";
 
     private static final String CREATE = "" +
-            "INSERT INTO carrentaltime(order_id, start_rental_date, end_rental_date) values (?, ?, ?)";
+            "INSERT INTO carrentaltime(order_id, start_rental_date, end_rental_date) values (?, ?, ?)\n";
 
     private static final String UPDATE = "" +
             "UPDATE carrentaltime SET order_id = ?, start_rental_date = ?, end_rental_date = ? WHERE id = ?";
 
     private static final String DELETE = "" +
-            "DELETE FROM carrentaltime WHERE id = ?";
+            "DELETE FROM carrentaltime WHERE id = ?\n";
 
     private static final String RETURNING = "" +
             "RETURNING id, order_id, start_rental_date, end_rental_date";

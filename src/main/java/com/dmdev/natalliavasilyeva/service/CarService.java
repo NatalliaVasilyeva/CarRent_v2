@@ -6,7 +6,7 @@ import com.dmdev.natalliavasilyeva.domain.jpa.CarJpa;
 import com.dmdev.natalliavasilyeva.domain.jpa.CategoryJpa;
 import com.dmdev.natalliavasilyeva.domain.jpa.ModelJpa;
 import com.dmdev.natalliavasilyeva.domain.model.Car;
-import com.dmdev.natalliavasilyeva.persistence.exception.NotFoundException;
+import com.dmdev.natalliavasilyeva.domain.model.ErrorCode;
 import com.dmdev.natalliavasilyeva.persistence.repository.RepositoryCustomFactory;
 import com.dmdev.natalliavasilyeva.persistence.repository.RepositoryFactory;
 import com.dmdev.natalliavasilyeva.persistence.repository.custom.dao.CarCustomRepository;
@@ -14,6 +14,7 @@ import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.BrandRepositor
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.CarRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.CategoryRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.ModelRepository;
+import com.dmdev.natalliavasilyeva.service.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

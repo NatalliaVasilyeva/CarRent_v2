@@ -1,6 +1,10 @@
 package com.dmdev.natalliavasilyeva.api.controller.util;
 
-public class JspHelper {
+public final class JspHelper {
+
+    private JspHelper() {
+    }
+
     private static final String JSP_FORMAT = "/WEB-INF/pages/%s.jsp";
 
     public static String getPath(String jspName) {

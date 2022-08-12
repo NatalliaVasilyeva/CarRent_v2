@@ -1,12 +1,12 @@
 package com.dmdev.natalliavasilyeva.domain.model;
 
-import jakarta.servlet.http.Part;
-
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class Car implements Identifiable {
+public class Car implements Identifiable, Serializable {
     private Long id;
     private Model model;
     private Color color;
@@ -15,8 +15,7 @@ public class Car implements Identifiable {
     private String vin;
     private boolean isRepaired;
     private String image;
-
-    private Part imageContent;
+    private InputStream imageContent;
     private List<Accident> accidents;
 
 
@@ -77,7 +76,7 @@ public class Car implements Identifiable {
         return image;
     }
 
-    public Part getImageContent() {
+    public InputStream getImageContent() {
         return imageContent;
     }
     public List<Accident> getAccidents() {
@@ -123,7 +122,7 @@ public class Car implements Identifiable {
         private boolean isRepaired;
         private String image;
 
-        private Part imageContent;
+        private InputStream imageContent;
 
         private List<Accident> accidents;
 
@@ -172,7 +171,7 @@ public class Car implements Identifiable {
             return this;
         }
 
-        public Builder content(Part imageContent) {
+        public Builder content(InputStream imageContent) {
             this.imageContent = imageContent;
             return this;
         }

@@ -1,0 +1,24 @@
+/*--------------------------------------
+               FORM CONTENT
+----------------------------------------*/
+.input-area {
+    width: 350px;/*input block width*/
+    text-align: center;/*center input fields horizontally*/
+    padding-top: 24px;/*empty space on top of the form*/
+    border-radius: 5px 5px 0 0;
+}
+
+.input-area > * {
+    border: none;      /*removes ugly default borders*/
+    outline: none;     /*ugly highlight on focus*/
+    padding: 12px;     /*input field height*/
+    margin: 12px;      /*distance between input elements*/
+    width: 300px;      /*input field width*/
+}
+
+.input-area [type="submit"] {
+    margin: 24px 0 0 0; /*space before last input field*/
+    width: 100%;        /*max width*/
+    cursor: pointer;    /*hand on overlay*/
+    padding: 24px;      /*button size*/
+}
