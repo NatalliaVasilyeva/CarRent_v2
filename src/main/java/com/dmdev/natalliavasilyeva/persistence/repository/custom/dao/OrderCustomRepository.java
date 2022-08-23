@@ -78,6 +78,14 @@ public class OrderCustomRepository extends AbstractCustomRepository<Order> imple
         return findAll(statementProvider, extractor);
     }
 
+    public List<Order> findAllByCarNumber(String carNumber) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .append(FIND_QUERY_PREFIX)
+                .appendWithSingleArg("WHERE c.car_number = ?", carNumber);
+        return findAll(statementProvider, extractor);
+    }
+
     public List<Order> findAllByStatus(String orderStatus) {
         var statementProvider = new BaseStatementProvider();
         statementProvider

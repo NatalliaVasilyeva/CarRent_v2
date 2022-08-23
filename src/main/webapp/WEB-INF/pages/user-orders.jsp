@@ -9,7 +9,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib uri="https://dmdev.com/functions" prefix="f" %>
-
+<fmt:setLocale value="${sessionScope.locale}"/>
 <fmt:setBundle basename="content"/>
 
 <!DOCTYPE html>
@@ -22,7 +22,6 @@
 </head>
 <body>
 <jsp:include page="/WEB-INF/header/header.jsp"/>
-<h2 align="center">Welcome ${sessionScope.user.firstName}!</h2>
 
 <c:if test="${not empty param.incorrect}">
     <div class="alert alert-danger">
@@ -33,7 +32,7 @@
 <%@include file="/WEB-INF/fragment/success_message.jsp" %>
 
 <c:if test="${empty orders}">
-    <h1 align="center">There are not available orders!</h1>
+    <h1 align="center"><fmt:message key="form.not_orders"/></h1>
 </c:if>
 <c:if test="${not empty orders}">
     <div class="container-fluid">
@@ -193,7 +192,8 @@
                                                             </button>
                                                         </td>
                                                         <td>
-                                                            <button class="btn btn-dark btn-xs cancelledbtn">
+                                                            <button type="submit"
+                                                                    class="btn btn-dark btn-xs cancelledbtn">
                                                                 <i class="fa fa-trash" aria-hidden="true"></i>
                                                             </button>
                                                         </td>
@@ -229,8 +229,8 @@
                     <jsp:include page="/WEB-INF/form/edit-order-user.jsp"/>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" form="edit-form" value="Submit">Submit</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" form="edit-form" value="Submit"><fmt:message key="form.submit_button"/></button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><fmt:message key="form.close_button"/></button>
                 </div>
             </div>
         </div>

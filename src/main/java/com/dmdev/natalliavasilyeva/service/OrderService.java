@@ -145,8 +145,10 @@ public class OrderService {
             if (isInsuranceNeededToUpdate) {
                 BigDecimal insuranceSum = calculateInsuranceSum(numberOfDays, price);
                 existingOrder.setSum(calculateOrderSumWithInsurance(numberOfDays, price, insuranceSum));
+                existingOrder.setInsuranceNeeded(true);
             } else {
                 existingOrder.setSum(calculateOrderSumWithoutInsurance(numberOfDays, price));
+                existingOrder.setInsuranceNeeded(false);
             }
             existingCarRentalTime.setStartRentalDate(order.getCarRentalTime().getStartRentalDate());
             existingCarRentalTime.setEndRentalDate(order.getCarRentalTime().getEndRentalDate());
@@ -255,6 +257,13 @@ public class OrderService {
 
     public List<Order> findAllCustomOrdersByCarId(Long carId) {
         return orderCustomRepository.findAllByCar(carId)
+                .stream()
+                .sorted(Comparator.comparing(Order::getDate))
+                .collect(Collectors.toList());
+    }
+
+    public List<Order> findAllCustomOrdersByCarNumber(String carNumber) {
+        return orderCustomRepository.findAllByCarNumber(carNumber)
                 .stream()
                 .sorted(Comparator.comparing(Order::getDate))
                 .collect(Collectors.toList());

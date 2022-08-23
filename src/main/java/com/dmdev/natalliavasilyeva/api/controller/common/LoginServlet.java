@@ -38,10 +38,6 @@ public class LoginServlet extends HttpServlet {
                 var shotUser = userService.login(UserMapper.fromDto(userLoginDto));
                 var user = UserMapper.toShotDtoFromShotUser(shotUser);
 
-                Language language = req.getParameter("language") == null ? Language.EN_US : Language.getEnum(req.getParameter("language"));
-                req.getSession().setAttribute("locale", language.getLocale());
-
-                session.setAttribute("locale", language.getLocale());
                 session.setAttribute("userId", user.getId());
                 session.setAttribute("login", user.getLogin());
                 session.setAttribute("role", user.getRole());

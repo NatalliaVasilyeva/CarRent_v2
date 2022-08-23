@@ -3,37 +3,19 @@ package com.dmdev.natalliavasilyeva.api.dto.requestdto;
 
 import java.io.InputStream;
 
-public class CarDto {
+public class CarDto extends CarShotDto {
 
-    private String brandName;
     private String modelName;
     private String  transmission;
     private String engineType;
-    private String color;
-    private String yearOfProduction;
-    private String number;
     private String vin;
-    private boolean isRepaired;
-    private InputStream image;
 
-    private String imageName;
-
-    public CarDto(String brandName, String modelName, String transmission, String engineType, String color, String yearOfProduction, String number, String vin, boolean isRepaired, InputStream image, String imageName) {
-        this.brandName = brandName;
+    public CarDto(String brandName, String modelName, String transmission, String engineType, String category, String color, String yearOfProduction, String number, String vin, boolean isRepaired, InputStream image, String imageName) {
+       super(brandName, category, color,yearOfProduction, number, isRepaired,image, imageName);
         this.modelName = modelName;
         this.transmission = transmission;
         this.engineType = engineType;
-        this.color = color;
-        this.yearOfProduction = yearOfProduction;
-        this.number = number;
         this.vin = vin;
-        this.isRepaired = isRepaired;
-        this.image = image;
-        this.imageName = imageName;
-    }
-
-    public String getBrandName() {
-        return brandName;
     }
 
     public String getModelName() {
@@ -48,31 +30,8 @@ public class CarDto {
         return engineType;
     }
 
-    public String getColor() {
-        return color;
-    }
-
-    public String getYearOfProduction() {
-        return yearOfProduction;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
     public String getVin() {
         return vin;
     }
 
-    public boolean isRepaired() {
-        return isRepaired;
-    }
-
-    public InputStream getImage() {
-        return image;
-    }
-
-    public String getImageName() {
-        return imageName;
-    }
 }

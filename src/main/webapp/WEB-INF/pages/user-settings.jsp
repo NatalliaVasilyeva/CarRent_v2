@@ -9,7 +9,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib uri="https://dmdev.com/functions" prefix="f" %>
-
+<fmt:setLocale value="${sessionScope.locale}"/>
 <fmt:setBundle basename="content"/>
 <!DOCTYPE html>
 <html>
@@ -28,105 +28,164 @@
 </c:if>
 <%@include file="/WEB-INF/fragment/error_message.jsp" %>
 <%@include file="/WEB-INF/fragment/success_message.jsp" %>
-<div class="container-xl px-4 mt-4">
+<div class="container-xl px-4 mt-4 pb-5 mb-20">
     <div class="row">
         <div class="col-xl-12">
-            <div class="container">
+            <div class="container justify-content-center">
 
-                <div class="row">
-                    <h1 align="center"><fmt:message key="header.user.settings"/></h1>
+                <div class="row justify-content-center">
+                    <h1><fmt:message key="header.user.settings"/></h1>
                 </div>
 
-                <div class="row top-buffer" id="change-language-div">
-                    <button type="button" class="btn btn-light btn-block" onclick="changeLanguage()">
-                        <fmt:message key="user.settings.change-language-button"/>
-                    </button>
-                </div>
+                <button type="button" class="btn btn-primary btn-lg justify-content-center" data-toggle="modal"
+                        data-target="#change-language">
+                    <fmt:message key="user.settings.change-language-button"/>
+                </button>
 
+                <button type="button" class="btn btn-primary btn-lg justify-content-center" data-toggle="modal"
+                        data-target="#change-password">
+                    <fmt:message key="user.settings.change-password-button"/>
+                </button>
 
-                <div class="row top-buffer" id="save-new-language-div" style="display: none">
-                    <label for="locale-select"><fmt:message key="header.language"/></label>
-                    <div class="col-6">
-                        <select class="form-control" onchange="changeLocale(this)" id="locale-select">
-                            <option value="en_US">English</option>
-                            <option value="ru_RU">Русский</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="col-12">
-                            <button type="button" class="form-control btn btn-light" onclick="cancelChangeLanguage()">
-                                <fmt:message key="form.cancel_button"/>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="row top-buffer" id="change-password-div">
-                    <button type="button" class="btn btn-light btn-block" onclick="changePassword()">
-                        <fmt:message key="user.settings.change-password-button"/>
-                    </button>
-                </div>
-                <div class="row top-buffer" id="save-new-password-div" style="display: none">
-                    <form method="POST" action="${pageContext.request.contextPath}/change-password">
-                        <div class="form-group row">
-                            <label for="settings-old-password-input" class="col-2">
-                                <fmt:message key="user.settings.old-password"/>
-                            </label>
-                            <div class="col-8">
-                                <input type="password" class="form-control"
-                                       pattern="(?=^.{6,40}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
-                                       maxlength="40"
-                                       title="Password(6-40 symbols) should contain UpperCase, LowerCase, Number/SpecialChar"
-                                       autocomplete="off"
-                                       id="settings-old-password-input" name="old_password" required/>
-                            </div>
-                            <div class="col-2" id="old-password-error-div">
-                                <small class="text-danger" id="settings-old-password-error-small"></small>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="settings-new-password-input" class="col-2">
-                                <fmt:message key="user.settings.new-password"/>
-                            </label>
-                            <div class="col-8">
-                                <input type="password" class="form-control"
-                                       pattern="(?=^.{6,40}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
-                                       maxlength="40"
-                                       title="Password(6-40 symbols) should contain UpperCase, LowerCase, Number/SpecialChar"
-                                       autocomplete="off"
-                                       id="settings-new-password-input" name="new_password" required/>
-                            </div>
-                            <div class="col-2" id="new-password-error-div">
-                                <small class="text-danger" id="settings-new-password-error-small"></small>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="settings-confirm-new-password-input" class="col-2">
-                                <fmt:message key="user.settings.confirm-new-password"/>
-                            </label>
-                            <div class="col-8">
-                                <input type="password" class="form-control"
-                                       pattern="(?=^.{6,40}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
-                                       maxlength="40"
-                                       title="Password(6-40 symbols) should contain UpperCase, LowerCase, Number/SpecialChar"
-                                       autocomplete="off"
-                                       id="settings-confirm-new-password-input" name="confirm_new_password" required/>
-                            </div>
-                            <div class="col-2" id="confirm-new-password-error-div">
-                                <small class="text-danger" id="settings-confirm-new-password-error-small"></small>
-                            </div>
-                        </div>
-                        <div class="form-group row" id="settings-buttons-div">
-                            <label class="col-md-3 control-label"></label>
-                            <div class="col-md-8">
-                                <input type="submit" class="btn btn-primary" value="Save Changes">
-                                <span></span>
-                                <input type="reset" class="btn btn-default" value="Cancel">
-                            </div>
-                        </div>
+                <c:if test="${sessionScope.role == 'CLIENT'}">
+                    <form action="${pageContext.request.contextPath}/user-download" method="get">
+                        <button type="submit" class="btn btn-primary btn-lg justify-content-center"><fmt:message
+                                key="user.settings.download-report"/></button>
                     </form>
+                </c:if>
+
+                <c:if test="${sessionScope.role == 'ADMIN'}">
+                    <form action="${pageContext.request.contextPath}/report" method="get">
+                        <button type="submit" class="btn btn-primary btn-lg justify-content-center"><fmt:message
+                                key="user.settings.download-report"/></button>
+                    </form>
+                </c:if>
+
+
+                <div class="modal fade" id="change-language" tabindex="-1" role="dialog"
+                     aria-labelledby="changeLanguage" aria-hidden="true">
+                    <div class="modal-dialog modal-sm" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="change-language-modal-label"><fmt:message
+                                        key="form.choose_language"/></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="attachment-change-language-body-content">
+                                <form id="change-language-form" class="form-horizontal" method="GET"
+                                      action="${pageContext.request.contextPath}/change-language">
+                                    <div class="card text-white bg-secondary mb-0">
+                                        <div class="card-header">
+                                            <h2 class="m-0 text-center"><fmt:message
+                                                    key="user.settings.change-language-button"/></h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="input-group mb-3">
+                                                <select class="language-select" id="inputLanguageSelect"
+                                                        name="language">
+                                                    <option language><fmt:message key="form.choose_language"/>...
+                                                    </option>
+                                                    <option value="en_US"><fmt:message key="label.lang.en"/></option>
+                                                    <option value="ru_RU"><fmt:message key="label.lang.ru"/></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary" form="change-language-form"
+                                        value="Submit">
+                                    <fmt:message key="user.settings.submit-button"/>
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><fmt:message
+                                        key="user.settings.cancel-button"/></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="modal fade" id="change-password" tabindex="-1" role="dialog"
+                     aria-labelledby="changeLanguage" aria-hidden="true">
+                    <div class="modal-dialog modal-sm" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="change-password-modal-label"><fmt:message
+                                        key="form.choose_language"/></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="attachment-change-password-body-content">
+                                <form id="change-password-form" class="form-horizontal" method="POST"
+                                      action="${pageContext.request.contextPath}/change-password">
+                                    <div class="card text-white bg-secondary mb-0">
+                                        <div class="card-header">
+                                            <h2 class="m-0 text-center"><fmt:message
+                                                    key="user.settings.change-password-button"/></h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <fmt:message key="user.settings.old-password" var="password"/>
+                                                <label class="col-form-label"
+                                                       for="settings-old-password-input">${password} </label>
+                                                <input type="password" class="form-control" placeholder="${password}"
+                                                       pattern="(?=^.{6,40}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+                                                       maxlength="40"
+                                                       title=
+                                                       <fmt:message key="form.password_pattern"/>
+                                                               autocomplete="off"
+                                                       id="settings-old-password-input" name="old_password" required/>
+                                                <small class="text-danger"
+                                                       id="settings-old-password-error-small"></small>
+                                            </div>
+                                            <div class="form-group">
+                                                <fmt:message key="user.settings.new-password" var="password"/>
+                                                <label class="col-form-label"
+                                                       for="settings-new-password-input">${password} </label>
+                                                <input type="password" class="form-control" placeholder="${password}"
+                                                       pattern="(?=^.{6,40}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+                                                       maxlength="40"
+                                                       title=
+                                                       <fmt:message key="form.password_pattern"/>
+                                                               autocomplete="off"
+                                                       id="settings-new-password-input" name="new_password" required/>
+                                                <small class="text-danger"
+                                                       id="settings-new-password-error-small"></small>
+                                            </div>
+                                            <div class="form-group">
+                                                <fmt:message key="form.repeat_password" var="confirm_password"/>
+                                                <label class="col-form-label"
+                                                       for="settings-confirm-password-input">${confirm_password} </label>
+                                                <input type="password" class="form-control"
+                                                       placeholder="${confirm_password}"
+                                                       pattern="(?=^.{6,40}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+                                                       maxlength="40"
+                                                       title=
+                                                       <fmt:message key="form.password_pattern"/>
+                                                               autocomplete="off"
+                                                       id="settings-confirm-password-input" name="confirm_password"
+                                                       required/>
+                                                <small class="text-danger"
+                                                       id="sign-up-confirm-password-error-small"></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary" form="change-password-form"
+                                        value="Submit">
+                                    <fmt:message key="user.settings.submit-button"/>
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><fmt:message
+                                        key="user.settings.cancel-button"/></button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

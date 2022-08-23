@@ -37,7 +37,7 @@ public class OrderUpdateServlet extends HttpServlet {
                 VariablesNameHolder.START_RENTAL_DATE, startDate,
                 VariablesNameHolder.END_RENTAL_DATE, endDate,
                 VariablesNameHolder.IS_INSURANCE_NEEDED, insurance.toUpperCase())) && dataValidator.isValidDates(localStartDate, localEndDate)) {
-            var orderDto = new OrderUserUpdateDto(localStartDate, localEndDate, Boolean.getBoolean(insurance));
+            var orderDto = new OrderUserUpdateDto(localStartDate, localEndDate, Boolean.valueOf(insurance));
             Order savedOrder = null;
             try {
                 savedOrder = orderService.updateOrderByUser(Long.valueOf(id), OrderMapper.fromDto(orderDto));

@@ -21,14 +21,15 @@ public final class RegularExpressionHolder {
     public static final String DESCRIPTION_REGEX = "[a-zA-Z0-9а-яА-ЯёЁ\\s/,_:;.'\"\\-]+";
     public static final String EMPTY_STRING_REGEX = "";
     public static final String NAME_STRING_REGEX = "[a-zA-Zа-яА-ЯёЁ\\s]+";
-    public static final String BRAND_NAME_REGEX = "[a-zA-Z0-9а-яА-ЯёЁ\\s\\-]+";
+    public static final String BRAND_NAME_REGEX = "[a-zA-Z0-9а-яА-ЯёЁ\\s\\-\\_]+";
+    public static final String MODEL_NAME_REGEX = "[a-zA-Z0-9а-яА-ЯёЁ\\s\\-\\_]+";
     public static final String MODEL_TRANSMISSION_REGEX = "(MANUAL|AUTOMATIC|ROBOT)";
     public static final String MODEL_ENGINE_REGEX = "(FUEL|ELECTRIC|GAS|DIESEL)";
     public static final String MODEL_COLOR_REGEX = "(RED|BLUE|WHITE|BLACK|GREEN|YELLOW)";
     public static final String MODEL_YEAR_REGEX = "^(\\d{4})$";
     public static final String CAR_VIN_REGEX = "[\\w*]{20}";
     public static final String CAR_NUMBER_REGEX = "[\\d]{4}[A-Z]{2}-[\\d]{1}";
-    public static final String BOOLEAN_REGEX = "(TRUE|FALSE)";
+    public static final String BOOLEAN_REGEX = "(TRUE|FALSE|true|false)";
     public static final String IMG_REG_EX = "[\\w]+\\.((jpg)|(png))";
     public static final String ORDER_STATUS_REGEX = "(CONFIRMATION_WAIT|DECLINED|PAYED|NOT_PAYED|CANCELLED)";
 }

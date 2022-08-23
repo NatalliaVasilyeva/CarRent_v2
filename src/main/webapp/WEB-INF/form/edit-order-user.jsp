@@ -11,10 +11,12 @@
 
 <fmt:setBundle basename="content"/>
 
-<form id="edit-form" class="form-horizontal" method="POST" action="${pageContext.request.contextPath}/user-update-order">
+<form id="edit-form" class="form-horizontal" method="POST"
+      action="${pageContext.request.contextPath}/user-update-order">
     <div class="card text-white bg-dark mb-0">
         <div class="card-header">
-            <h2 class="m-0">Edit order</h2>
+            <h2 class="m-0"><fmt:message
+                    key="modal.edit.order.title"/></h2>
         </div>
         <div class="card-body">
             <!-- id -->
@@ -25,38 +27,44 @@
             <!-- /id -->
             <!-- date -->
             <div class="form-group">
-                <label class="col-form-label" for="edit-date">Date </label>
+                <label class="col-form-label" for="edit-date"><fmt:message
+                        key="form.order.table.header.date"/> </label>
                 <input type="date" name="date" class="form-control" id="edit-date" required readonly>
             </div>
             <!-- /date -->
             <!-- status -->
             <div class="form-group">
-                <label class="col-form-label" for="edit-status">Status </label>
+                <label class="col-form-label" for="edit-status"><fmt:message
+                        key="form.order.table.header.status"/> </label>
                 <input type="text" name="status" class="form-control" id="edit-status" required readonly>
             </div>
             <!-- /status -->
             <!-- description -->
             <div class="form-group">
-                <label class="col-form-label" for="edit-description">Description </label>
+                <label class="col-form-label" for="edit-description"><fmt:message
+                        key="form.order.table.header.description"/> </label>
                 <input type="text" name="description" class="form-control" id="edit-description" required readonly>
             </div>
             <!-- /description -->
             <!-- start date -->
             <div class="form-group">
-                <label class="col-form-label" for="edit-start-date">Start rent date </label>
+                <label class="col-form-label" for="edit-start-date"><fmt:message
+                        key="form.order.table.header.startDate"/> </label>
                 <input type="datetime-local" name="start-date" class="form-control" id="edit-start-date" required>
             </div>
             <!-- /start date -->
             <!-- end date -->
             <div class="form-group">
-                <label class="col-form-label" for="edit-end-date">Start rent date </label>
+                <label class="col-form-label" for="edit-end-date"><fmt:message
+                        key="form.order.table.header.endDate"/> </label>
                 <input type="datetime-local" name="end-date" class="form-control" id="edit-end-date" required>
             </div>
             <!-- /end date -->
             <!-- ensurance -->
             <div class="form-group">
-                <label class="col-form-label" for="edit-ensurance">Insurance</label>
-                <select name="ensurance" class="form-control" id="edit-ensurance"required autofocus>
+                <label class="col-form-label" for="edit-ensurance"><fmt:message
+                        key="form.insurance"/></label>
+                <select name="ensurance" class="form-control" id="edit-ensurance" required autofocus>
                     <option value="true">true</option>
                     <option value="false">false</option>
                 </select>
@@ -64,13 +72,15 @@
             <!-- /ensurance -->
             <!-- accidents -->
             <div class="form-group">
-                <label class="col-form-label" for="edit-accident">Accidents exist </label>
+                <label class="col-form-label" for="edit-accident"><fmt:message
+                        key="form.order.table.header.accidence"/> </label>
                 <input type="text" name="accident" class="form-control" id="edit-accident" required readonly>
             </div>
             <!-- /accidents -->
             <!-- sum -->
             <div class="form-group">
-                <label class="col-form-label" for="edit-sum">Sum </label>
+                <label class="col-form-label" for="edit-sum"><fmt:message
+                        key="form.order.table.header.sum"/> </label>
                 <input type="text" name="sum" class="form-control" id="edit-sum" required readonly>
             </div>
             <!-- /sum -->

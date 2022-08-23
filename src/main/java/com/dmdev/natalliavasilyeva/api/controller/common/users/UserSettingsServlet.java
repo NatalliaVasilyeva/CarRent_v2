@@ -1,4 +1,4 @@
-package com.dmdev.natalliavasilyeva.api.controller.user.users;
+package com.dmdev.natalliavasilyeva.api.controller.common.users;
 
 import com.dmdev.natalliavasilyeva.api.controller.util.JspHelper;
 import jakarta.servlet.ServletException;

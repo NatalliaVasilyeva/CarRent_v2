@@ -19,7 +19,8 @@ public final class CategoryMapper {
 
     public static CategoryResponseDto toDto(Category category) {
         return new CategoryResponseDto(
-                category.getName(),
+                category.getId(),
+                category.getName().toUpperCase(),
                 category.getPrice().getSum()
         );
     }
@@ -29,9 +30,12 @@ public final class CategoryMapper {
     }
 
     public static Category fromDto(CategoryDto categoryDto) {
+        var builder = new Price.Builder();
+        Optional.of(categoryDto.getPriceId()).ifPresent(builder::id);
+        Optional.ofNullable(categoryDto.getPriceSum()).ifPresent(builder::sum);
         return new Category.Builder()
                 .name(categoryDto.getName())
-                .price(new Price.Builder().id(categoryDto.getPriceId()).sum(categoryDto.getPriceSum()).build())
+                .price(builder.build())
                 .build();
     }
 
@@ -39,7 +43,7 @@ public final class CategoryMapper {
         return new Category.Builder()
                 .id(jpaCategory.getId())
                 .name(jpaCategory.getName())
-                .price(new Price.Builder().id(jpaCategory.getId()).build())
+                .price(new Price.Builder().id(jpaCategory.getPriceId()).build())
                 .build();
     }
 
@@ -50,9 +54,8 @@ public final class CategoryMapper {
     public static CategoryJpa toJpa(Category category) {
         var builder = new CategoryJpa.Builder();
         Optional.ofNullable(category.getId()).ifPresent(builder::id);
-        builder
-                .name(category.getName())
-                .price(category.getId())
+        Optional.ofNullable(category.getPrice().getId()).ifPresent(builder::price);
+        builder.name(category.getName())
                 .build();
         return builder.build();
     }

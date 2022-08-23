@@ -14,24 +14,27 @@
 <form id="create-order-form" class="form-horizontal" method="POST" action="${pageContext.request.contextPath}/user-create-order">
     <div class="card text-white bg-dark mb-0">
         <div class="card-header">
-            <h2 class="m-0">Create order</h2>
+            <h2 class="m-0"><fmt:message
+                    key="header.user.create-order"/></h2>
         </div>
         <div class="card-body">
             <!-- id -->
             <div class="form-group" hidden>
-                <label class="col-form-label" for="create-order-car-id">Passport </label>
+                <label class="col-form-label" for="create-order-car-id">Id </label>
                 <input type="text" name="carId" class="form-control" id="create-order-car-id" required>
             </div>
             <!-- /id -->
             <!-- /passport -->
             <div class="form-group">
-                <label class="col-form-label" for="create-order-passport">Passport </label>
+                <label class="col-form-label" for="create-order-passport"><fmt:message
+                        key="form.passport"/> </label>
                 <input type="text" name="passport" class="form-control" id="create-order-passport" required>
             </div>
             <!-- /passport -->
             <!-- /insurance -->
             <div class="form-group">
-                <label class="col-form-label" for="create-order-insurance">Insurance </label>
+                <label class="col-form-label" for="create-order-insurance"><fmt:message
+                        key="form.insurance"/> </label>
                 <select name="isInsuranceNeeded" class="form-control" id="create-order-insurance" required autofocus>
                     <option value="true">true</option>
                     <option value="false">false</option>
@@ -40,14 +43,16 @@
             <!-- /insurance -->
             <!-- start date -->
             <div class="form-group">
-                <label class="col-form-label" for="create-order-start-date">Start rent date </label>
+                <label class="col-form-label" for="create-order-start-date"><fmt:message
+                        key="form.order.table.header.startDate"/> </label>
                 <input type="datetime-local" name="startRentalDate" class="form-control" id="create-order-start-date"
                        required>
             </div>
             <!-- /start date -->
             <!-- end date -->
             <div class="form-group">
-                <label class="col-form-label" for="create-order-end-date">Start rent date </label>
+                <label class="col-form-label" for="create-order-end-date"><fmt:message
+                        key="form.order.table.header.endDate"/> </label>
                 <input type="datetime-local" name="endRentalDate" class="form-control" id="create-order-end-date"
                        required>
             </div>

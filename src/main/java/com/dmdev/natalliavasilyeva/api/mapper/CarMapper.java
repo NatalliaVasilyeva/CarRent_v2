@@ -1,6 +1,7 @@
 package com.dmdev.natalliavasilyeva.api.mapper;
 
 import com.dmdev.natalliavasilyeva.api.dto.requestdto.CarDto;
+import com.dmdev.natalliavasilyeva.api.dto.requestdto.CarShotDto;
 import com.dmdev.natalliavasilyeva.api.dto.responsedto.CarAdminResponseDto;
 import com.dmdev.natalliavasilyeva.api.dto.responsedto.CarUserResponseDto;
 import com.dmdev.natalliavasilyeva.api.dto.responsedto.ModelResponseDTO;
@@ -61,7 +62,7 @@ public final class CarMapper {
 
     public static CarAdminResponseDto toDto(Car car) {
         ModelResponseDTO modelResponseDTO = ModelMapper.toDto(car.getModel());
-        return new CarAdminResponseDto(
+        CarAdminResponseDto carAdminResponseDto =  new CarAdminResponseDto(
                 car.getId(),
                 modelResponseDTO.getBrandName(),
                 car.getModel().getName(),
@@ -74,9 +75,12 @@ public final class CarMapper {
                 car.getNumber(),
                 car.getVin(),
                 car.isRepaired(),
+                modelResponseDTO.getCategory(),
                 AccidentMapper.toDtos(car.getAccidents()),
                 null
         );
+        carAdminResponseDto.setImageContent(car.getImage() == null? null : filesService.upload(car.getImage()));
+        return carAdminResponseDto;
     }
 
     public static List<CarUserResponseDto> toShotDtos(List<Car> cars) {
@@ -99,7 +103,7 @@ public final class CarMapper {
                         .transmission(Transmission.getEnum(carCreateDto.getTransmission()))
                         .engine(EngineType.getEnum(carCreateDto.getEngineType()))
                         .brand(new Brand.Builder().name(carCreateDto.getBrandName()).build())
-                        .category(new Category.Builder().build())
+                        .category(new Category.Builder().name(carCreateDto.getCategory()).build())
                         .build())
                 .color(Color.getEnum(carCreateDto.getColor()))
                 .year(carCreateDto.getYearOfProduction())
@@ -108,6 +112,21 @@ public final class CarMapper {
                 .repaired(carCreateDto.isRepaired())
                 .image(carCreateDto.getBrandName() + "/" + carCreateDto.getImageName())
                 .content(carCreateDto.getImage())
+                .build();
+    }
+
+    public static Car fromShotDto(CarShotDto carShotDto) {
+        var builder = new Car.Builder();
+        return new Car.Builder()
+                .model(new Model.Builder()
+                        .category(new Category.Builder().name(carShotDto.getCategory()).build())
+                        .build())
+                .color(Color.getEnum(carShotDto.getColor()))
+                .year(carShotDto.getYearOfProduction())
+                .number(carShotDto.getNumber())
+                .repaired(carShotDto.isRepaired())
+                .image(carShotDto.getBrandName() + "/" + carShotDto.getImageName())
+                .content(carShotDto.getImage())
                 .build();
     }
 

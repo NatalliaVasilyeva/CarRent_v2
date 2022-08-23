@@ -17,7 +17,8 @@
 <fmt:setBundle basename="content"/>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/header/header-user.js"></script>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Car rent</a>
+    <a class="navbar-brand" href="#"><fmt:message
+            key="form.car_rent"/></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-3"
             aria-controls="navbarSupportedContent-3" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -34,7 +35,8 @@
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link waves-effect waves-light my-2 my-sm-0 dropdown-toggle" href="#" type="button" id="navbarDropdownMenuLink-3"
-                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Find cars
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><fmt:message
+                        key="form.find_car_button"/>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-unique"
                      aria-labelledby="navbarDropdownMenuLink-3">
@@ -53,7 +55,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-link waves-effect waves-light dropdown-toggle" href="#" type="button" id="dropdownMenuButton"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="flag-icon flag-icon-us"></span> <fmt:message key="label.lang.en"/>
+                    <span class="flag-icon flag-icon-us"></span> <fmt:message key="label.lang.label"/>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-unique"
                      aria-labelledby="dropdownMenuButton">

@@ -36,7 +36,7 @@ public class BrandRepository extends AbstractRepository<BrandJpa> implements Gen
             "DELETE FROM brand WHERE id = ?\n";
 
     private static final String EXISTS_BY_NAME = "" +
-            "SELECT EXISTS (SELECT * FROM brand WHERE name = ?)";
+            "SELECT EXISTS (SELECT LOWER(name) FROM brand WHERE name = ?)";
 
     private static final String EXISTS_BY_ID = "" +
             "SELECT EXISTS (SELECT * FROM brand WHERE id = ?)";

@@ -15,6 +15,7 @@ import com.dmdev.natalliavasilyeva.persistence.repository.RepositoryFactory;
 import com.dmdev.natalliavasilyeva.persistence.repository.custom.dao.AccidentCustomRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.AccidentRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.BrandRepository;
+import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.CarRentalTimeRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.CarRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.ModelRepository;
 import com.dmdev.natalliavasilyeva.persistence.repository.jpa.dao.OrderRepository;
@@ -54,6 +55,7 @@ public class AccidentService {
             ensureOrderExistsById(accident.getOrderNumber());
             var savedAccident = accidentRepository.save(AccidentMapper.toAccidentJpa(accident))
                     .orElseThrow(() -> new ServiceException("Problem with accident saving", ErrorCode.INTERNAL_SERVER_ERROR));
+
             return createAccidentFromJpas(savedAccident);
     }
 

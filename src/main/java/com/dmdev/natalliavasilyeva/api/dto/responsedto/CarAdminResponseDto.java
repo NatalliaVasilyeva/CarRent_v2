@@ -9,18 +9,21 @@ public class CarAdminResponseDto extends CarUserResponseDto {
 
     private String number;
     private String vin;
-    private boolean isRepaired;
+    private boolean repaired;
+
+    private String category;
     private List<AccidentResponseDto> accidents;
 
     private List<OrderResponseDto> orders;
 
-    public CarAdminResponseDto(Long id, String brand, String model, String transmission, String engineType, String color, String yearOfProduction, String image, BigDecimal pricePerDay, String number, String vin, boolean isRepaired, List<AccidentResponseDto> accidents, List<OrderResponseDto> orders) {
+    public CarAdminResponseDto(Long id, String brand, String model, String transmission, String engineType, String color, String yearOfProduction, String image, BigDecimal pricePerDay, String number, String vin, boolean isRepaired, String category, List<AccidentResponseDto> accidents, List<OrderResponseDto> orders) {
 
         super(id, brand, model, transmission, engineType, color, yearOfProduction, image, pricePerDay);
         this.number = number;
         this.vin = vin;
-        this.isRepaired = isRepaired;
+        this.repaired = isRepaired;
         this.accidents = accidents;
+        this.category = category;
         this.orders = orders;
     }
 
@@ -37,10 +40,10 @@ public class CarAdminResponseDto extends CarUserResponseDto {
         this.vin = vin;
     }
     public boolean isRepaired() {
-        return isRepaired;
+        return repaired;
     }
     public void setRepaired(boolean repaired) {
-        isRepaired = repaired;
+        this.repaired = repaired;
     }
     public List<AccidentResponseDto> getAccidents() {
         return accidents;
@@ -55,17 +58,24 @@ public class CarAdminResponseDto extends CarUserResponseDto {
         this.orders = orders;
     }
 
+    public String getCategory() {
+        return category;
+    }
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         CarAdminResponseDto that = (CarAdminResponseDto) o;
-        return isRepaired == that.isRepaired && Objects.equals(number, that.number) && Objects.equals(vin, that.vin) && Objects.equals(accidents, that.accidents) && Objects.equals(orders, that.orders);
+        return repaired == that.repaired && Objects.equals(number, that.number) && Objects.equals(vin, that.vin) && Objects.equals(category, that.category) && Objects.equals(accidents, that.accidents) && Objects.equals(orders, that.orders);
     }
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), number, vin, isRepaired, accidents, orders);
+        return Objects.hash(super.hashCode(), number, vin, repaired, category, accidents, orders);
     }
 
     @Override
@@ -73,7 +83,8 @@ public class CarAdminResponseDto extends CarUserResponseDto {
         return "CarAdminResponseDto{" +
                 "number='" + number + '\'' +
                 ", vin='" + vin + '\'' +
-                ", isRepaired=" + isRepaired +
+                ", repaired=" + repaired +
+                ", category='" + category + '\'' +
                 ", accidents=" + accidents +
                 ", orders=" + orders +
                 '}';

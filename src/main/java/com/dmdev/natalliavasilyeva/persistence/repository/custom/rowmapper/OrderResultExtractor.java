@@ -28,7 +28,7 @@ public class OrderResultExtractor implements ResultSetExtractor<Order> {
                     .id(rs.getLong("order_id"))
                     .date(date == null ? null : date.toInstant())
                     .insurance(rs.getBoolean("insurance"))
-                    .orderStatus(OrderStatus.getEnum(rs.getString("order_status").toUpperCase()))
+                    .orderStatus(OrderStatus.getEnum(rs.getString("order_status")))
                     .sum(rs.getBigDecimal("sum"))
                     .carRentalTime(mapToCarRentalTime(rs))
                     .car(mapToCar(rs))

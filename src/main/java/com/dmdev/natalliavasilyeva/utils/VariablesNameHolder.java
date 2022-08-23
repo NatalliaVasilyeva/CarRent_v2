@@ -6,7 +6,10 @@ public final class VariablesNameHolder {
     }
     
     public static final String ORDER_ID = "orderId";
+    public static final String BRAND_ID = "brandId";
+    public static final String MODEL_ID = "modelId";
     public static final String CAR_ID = "carId";
+    public static final String CATEGORY_ID = "categoryId";
     public static final String PRICE_ID = "priceId";
     public static final String USER_ID = "userId";
     public static final String ACCIDENT_DATE = "accidentDate";
@@ -15,6 +18,7 @@ public final class VariablesNameHolder {
     public static final String DESCRIPTION = "description";
     public static final String DAMAGE = "damage";
     public static final String SUM = "sum";
+    public static final String PRICE = "price";
     public static final String BRAND_NAME = "brandName";
     public static final String MODEL_NAME = "modelName";
     public static final String CATEGORY_NAME = "categoryName";

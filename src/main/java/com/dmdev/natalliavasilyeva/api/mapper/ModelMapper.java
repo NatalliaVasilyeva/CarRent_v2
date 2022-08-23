@@ -11,6 +11,7 @@ import com.dmdev.natalliavasilyeva.domain.model.EngineType;
 import com.dmdev.natalliavasilyeva.domain.model.Model;
 import com.dmdev.natalliavasilyeva.domain.model.Transmission;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -23,12 +24,13 @@ public final class ModelMapper {
 
     public static ModelResponseDTO toDto(Model model) {
         return new ModelResponseDTO(
+                model.getId(),
                 model.getName(),
-                model.getBrand().getName(),
+                model.getBrand() == null ? "" : model.getBrand().getName(),
                 model.getTransmission().name(),
                 model.getEngineType().name(),
                 model.getCategory().getName(),
-                model.getCategory().getPrice().getSum()
+                model.getCategory().getPrice() == null ? BigDecimal.ZERO : model.getCategory().getPrice().getSum()
         );
     }
 
@@ -74,9 +76,8 @@ public final class ModelMapper {
         var builder = new ModelJpa.Builder();
         Optional.ofNullable(model.getId()).ifPresent(builder::id);
         Optional.ofNullable(model.getCategory().getId()).ifPresent(builder::category);
-        builder
-                .brand(model.getBrand().getId())
-                .name(model.getName())
+        Optional.ofNullable(model.getBrand().getId()).ifPresent(builder::brand);
+        builder.name(model.getName())
                 .transmission(model.getTransmission())
                 .engine(model.getEngineType());
         return builder.build();

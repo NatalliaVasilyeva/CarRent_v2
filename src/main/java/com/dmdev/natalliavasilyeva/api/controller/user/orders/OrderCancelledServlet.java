@@ -31,7 +31,7 @@ public class OrderCancelledServlet extends HttpServlet {
                 resp.sendRedirect("/rentcar/user-orders" + "?error_message=" + ex.getMessage());
             }
             if (updatedOrder != null) {
-                resp.sendRedirect("/rentcar/user-orders");
+                resp.sendRedirect("/rentcar/user-orders?success_message=Order has been cancelled successfully");
             }
         } else {
             String errorMassage = "Check provided data. Order id is incorrect.";

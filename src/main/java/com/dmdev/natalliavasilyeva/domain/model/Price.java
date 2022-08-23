@@ -50,12 +50,16 @@ public class Price implements Identifiable {
         private BigDecimal sum;
 
         public Builder id(Long id) {
-            this.id = id;
+            if (id != null) {
+                this.id = id;
+            }
             return this;
         }
 
         public Builder sum(BigDecimal sum) {
-            this.sum = sum;
+            if (sum != null) {
+                this.sum = sum;
+            }
             return this;
         }
 

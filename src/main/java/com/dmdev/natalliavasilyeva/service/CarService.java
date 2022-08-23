@@ -39,12 +39,16 @@ public class CarService {
     FilesService carImageService = new FilesService();
 
     public Car createCar(Car car) {
-        Long brandId = null;
-        Long modelId = null;
+        Long brandId;
+        Long modelId;
         var transmission = car.getModel().getTransmission();
         var engine = car.getModel().getEngineType();
 
         var models = findModelByNameTransmissionEngine(car.getModel().getName(), transmission.name(), engine.name());
+
+        Optional<CategoryJpa> optionalCategory = car.getModel().getCategory().getName() == null ? categoryRepository.findByName("ECONOMY") :
+                categoryRepository.findByName(car.getModel().getCategory().getName());
+
         if (models.isEmpty()) {
             var brandName = car.getModel().getBrand().getName();
             var modelName = car.getModel().getName();
@@ -56,15 +60,10 @@ public class CarService {
             } else {
                 brandId = brand.getId();
             }
-            Optional<CategoryJpa> optional = categoryRepository.findByName("ECONOMY");
-            if (optional.isEmpty()) {
-                throw new RuntimeException("Problem with model saving");
-            }
-            CategoryJpa categoryJpa = optional.get();
 
             ModelJpa savedModelJpa = modelRepository.save(new ModelJpa.Builder()
                     .brand(brandId)
-                    .category(categoryJpa.getId())
+                    .category(optionalCategory.get().getId())
                     .name(modelName)
                     .transmission(transmission)
                     .engine(engine)
@@ -89,9 +88,17 @@ public class CarService {
             return CarMapper.fromJpa(savedCar);
         } else {
             var brand = findBrandByName(car.getModel().getBrand().getName());
+
+            if (optionalCategory.isEmpty()) {
+                optionalCategory = categoryRepository.findByName("ECONOMY");
+            }
+            CategoryJpa categoryJpa = optionalCategory.get();
+
             List<ModelJpa> filteredModels = models.stream()
                     .filter(modelJpa -> modelJpa.getBrandId() == brand.getId())
+                    .filter(modelJpa -> modelJpa.getCategoryId() == categoryJpa.getId())
                     .collect(Collectors.toList());
+
             CarJpa savedCar = carRepository.save(new CarJpa.Builder()
                             .model(filteredModels.get(0).getId())
                             .color(car.getColor())
@@ -111,13 +118,10 @@ public class CarService {
 
     public Car updateCar(Long id, Car car) {
         var existingCar = ensureCarExistsById(id);
-        ensureModelExistsById(car.getModel().getId());
 
-        existingCar.setModelId(car.getModel().getId());
         existingCar.setColor(car.getColor());
         existingCar.setYearOfProduction(car.getYearOfProduction());
         existingCar.setNumber(car.getNumber());
-        existingCar.setVin(car.getVin());
         existingCar.setRepaired(car.isRepaired());
 
         if (car.getImage() != null && car.getImageContent() != null) {

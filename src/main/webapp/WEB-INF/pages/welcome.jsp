@@ -24,11 +24,6 @@
 <body>
 <jsp:include page="/WEB-INF/header/header.jsp"/>
 <div class="container">
-    <div align="center">
-        <h1 id="h1-welcome">
-            <fmt:message key="guest.welcome.h-message"/>
-        </h1>
-    </div>
     <c:if test="${not empty incorrect}">
         <div class="alert alert-danger">
             <p>${incorrect}</p>
@@ -36,9 +31,9 @@
     </c:if>
     <%@include file="/WEB-INF/fragment/error_message.jsp" %>
     <%@include file="/WEB-INF/fragment/success_message.jsp" %>
-    <c:if test="${not empty cars}">
+    <c:if test="${not empty userCars}">
         <div class="row">
-            <c:forEach items="${cars}" var="car">
+            <c:forEach items="${userCars}" var="car">
                 <div class="col-sm-6 col-md-4">
                     <div class="col mb-4">
                         <div class="card h-100">
@@ -66,10 +61,76 @@
                                     </td>
                                 </c:if>
                                 <c:if test="${empty sessionScope.role}">
-                                    <small class="text-muted">You don't have permission to see more info. Please,
-                                        sign-in or
-                                        sign-up</small>
+                                    <small class="text-muted"><fmt:message
+                                            key="form.permissions"/></small>
                                 </c:if>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </c:forEach>
+        </div>
+    </c:if>
+
+    <c:if test="${not empty adminCars}">
+        <div class="row">
+            <c:forEach items="${adminCars}" var="car">
+                <div class="col-sm-6 col-md-4">
+                    <div class="col mb-4">
+                        <div class="card h-100">
+                            <img width="250" height="250" class="card-img-top"
+                                 src="data:image/jpg;base64,${car.imageContent}" alt="Card image cap">
+                            <div class="card-body">
+                                <p hidden class="carId">${car.id}</p>
+                                <p hidden class="brand">${car.brand}</p>
+                                <p hidden class="model">${car.model}</p>
+                                <p hidden class="color">${car.color}</p>
+                                <p hidden class="card-text yearOfProduction">${car.yearOfProduction}</p>
+                                <p hidden class="card-text carNumber">${car.number}</p>
+                                <p hidden class="card-text vin">${car.vin}</p>
+                                <p hidden class="card-text isRepaired">${car.repaired}</p>
+                                <p hidden class="card-text category">${car.category}</p>
+
+
+                                <h5 class="card-title text-center"><fmt:message
+                                        key="form.order.table.header.description"/>: ${car.brand} ${car.model} </h5>
+                                <hr>
+                                <p class="card-text color"><fmt:message key="form.color"/>: ${car.color}</p>
+                                <hr>
+                                <p class="card-text transmission"><fmt:message
+                                        key="form.model_transmission"/>: ${car.transmission}</p>
+                                <hr>
+                                <p class="card-text engineType"><fmt:message
+                                        key="form.model_engine"/>: ${car.engineType}</p>
+                                <hr>
+                                <p class="card-text yearOfProduction"><fmt:message
+                                        key="form.car_year"/>: ${car.yearOfProduction}</p>
+                                <hr>
+                                <p class="card-text carNumber"><fmt:message key="form.car_number"/>: ${car.number}</p>
+                                <hr>
+                                <p class="card-text vin"><fmt:message key="form.car_vin"/>: ${car.vin}</p>
+                                <hr>
+                                <p class="card-text isRepaired"><fmt:message
+                                        key="form.car_repaired"/>: ${car.repaired}</p>
+                                <hr>
+                                <p class="card-text pricePerDay"><fmt:message
+                                        key="form.category_price"/>: ${car.pricePerDay}$</p>
+                            </div>
+                            <div class="card-footer">
+                                <td>
+                                    <button class="btn btn-dark btn-xs editcarbtn"
+                                            data-toggle="modal"
+                                            data-target="#edit-car-modal">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-dark btn-xs deletebtn"
+                                            data-toggle="modal"
+                                            data-target="#delete-car-modal">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </td>
                             </div>
                         </div>
                     </div>
@@ -98,15 +159,17 @@
                         data-toggle="modal"
                         data-target="#create-order-modal">
                     <i class="fa fa-pencil" aria-hidden="true"></i>
-                    Make order
+                    <fmt:message
+                            key="form.submit_button"/>
                 </button>
-<%--                <button type="button" class="btn btn-primary showorderform" form="see-car-form" value="Button">Make order</button>--%>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><fmt:message
+                        key="form.close_button"/></button>
             </div>
         </div>
     </div>
 </div>
 <!-- /Attachment Modal -->
+
 
 <!-- Attachment Modal -->
 <div class="modal fade" id="create-order-modal" tabindex="-1" role="dialog" aria-labelledby="see-car-modal-label"
@@ -123,13 +186,69 @@
                 <jsp:include page="/WEB-INF/form/create-order-user.jsp"/>
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" form="create-order-form" value="Submit">Create order</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="create-order-form" value="Submit"><fmt:message
+                        key="header.user.create-order"/>
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><fmt:message
+                        key="form.close_button"/></button>
             </div>
         </div>
     </div>
 </div>
 <!-- /Attachment Modal -->
+
+<!-- Attachment Modal -->
+<div class="modal fade" id="edit-car-modal" tabindex="-1" role="dialog" aria-labelledby="edit-car-modal-label"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="edit-car-modal-label">Edit car</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="attachment-edit-car-body-content">
+                <jsp:include page="/WEB-INF/form/edit-car-admin.jsp"/>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" form="edit-car-form" value="Submit"><fmt:message
+                        key="form.edit_car"/>
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><fmt:message
+                        key="form.close_button"/></button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Attachment Modal -->
+
+<!-- Attachment Modal -->
+<div class="modal fade" id="delete-car-modal" tabindex="-1" role="dialog" aria-labelledby="delete-car-modal-label"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="delete-car-modal-label">Delete car</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="attachment-delete-car-body-content">
+                <jsp:include page="/WEB-INF/form/delete-car-admin.jsp"/>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" form="delete-car-form" value="Submit"><fmt:message
+                        key="form.delete_car"/>
+                </button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><fmt:message
+                        key="form.close_button"/></button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Attachment Modal -->
+
 
 <jsp:include page="/WEB-INF/footer/footer.jsp"/>
 </body>

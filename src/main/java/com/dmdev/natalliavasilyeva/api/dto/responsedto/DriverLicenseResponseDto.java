@@ -9,6 +9,8 @@ public class DriverLicenseResponseDto {
     private LocalDateTime driverLicenseIssueDate;
     private LocalDateTime driverLicenseExpiredDate;
 
+    public DriverLicenseResponseDto() {
+    }
     public DriverLicenseResponseDto(Long id, String driverLicenseNumber, LocalDateTime driverLicenseIssueDate, LocalDateTime driverLicenseExpiredDate) {
         this.id = id;
         this.driverLicenseNumber = driverLicenseNumber;

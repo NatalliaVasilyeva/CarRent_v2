@@ -33,6 +33,16 @@ public class OrderListServlet extends HttpServlet {
 
         req.setAttribute("orders", orders);
 
+        if (req.getParameter("incorrect") != null) {
+            req.setAttribute("incorrect", req.getParameter("incorrect"));
+        }
+        if (req.getParameter("success_message") != null) {
+            req.setAttribute("success_message", req.getParameter("success_message"));
+        }
+        if (req.getParameter("error_message") != null) {
+            req.setAttribute("error_message", req.getParameter("error_message"));
+        }
+
         req.getRequestDispatcher(JspHelper.getPath("user-orders")).forward(req, resp);
     }
 }

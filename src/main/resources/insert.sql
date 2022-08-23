@@ -1,7 +1,7 @@
 --users table
 INSERT INTO users(login, email, password, role)
 VALUES ('RabbitAdm', 'rabbit_adm@tut.by', 'abcd', 'admin'),
-       ('RabbitCli', 'rabbit_cli@tut.by', 'dcba', 'client');
+       ('RabbitCli', 'rabbit_cli@tut.by', 'dquttDbAH5ibDAm/iELeuQ', 'client'); -- password - dcba'--
 
 --userJpa details
 INSERT INTO userdetails(user_id, name, surname, address, phone, birthday, registration_date)
@@ -30,13 +30,13 @@ VALUES ('50'),
 
 --categories
 INSERT INTO categories(name, price_id)
-VALUES ('ECONOMY', (SELECT p.id FROM price p WHERE p.priceJpa = '50')),
-       ('LUXURY', (SELECT p.id FROM price p WHERE p.priceJpa = '150')),
-       ('BUSINESS', (SELECT p.id FROM price p WHERE p.priceJpa = '100')),
-       ('SPORT', (SELECT p.id FROM price p WHERE p.priceJpa = '100'));
+VALUES ('ECONOMY', (SELECT p.id FROM price p WHERE p.price = '50')),
+       ('LUXURY', (SELECT p.id FROM price p WHERE p.price = '150')),
+       ('BUSINESS', (SELECT p.id FROM price p WHERE p.price = '100')),
+       ('SPORT', (SELECT p.id FROM price p WHERE p.price = '100'));
 
 
---brandJpa
+--brand
 INSERT INTO brand(name)
 VALUES ('audi'),
        ('bmw'),
@@ -154,7 +154,7 @@ VALUES ((SELECT m.id FROM model m WHERE m.name = '100'), 'white', '2020', '7865A
         'false');
 
 
---orderJpa
+--order
 INSERT INTO orders(date, user_id, car_id, passport, insurance, order_status, sum)
 VALUES (TO_TIMESTAMP('2022-07-01 10:30:00', 'YYYY-MM-DD HH24:MI:SS'),
         (SELECT u.id FROM users u WHERE u.login LIKE 'RabbitCli'),
@@ -180,7 +180,7 @@ VALUES ((SELECT o.id FROM orders o WHERE o.order_status = 'PAYED'),
         TO_TIMESTAMP('2022-07-08 23:59:00', 'YYYY-MM-DD HH24:MI:SS'));
 
 
---accidentJpa
+--accident
 INSERT INTO accidentJpa(order_id, accident_date, description, damage)
 VALUES ((SELECT o.id FROM orders o WHERE o.order_status = 'PAYED'),
         TO_TIMESTAMP('2022-07-02 16:34:00', 'YYYY-MM-DD HH24:MI:SS'),

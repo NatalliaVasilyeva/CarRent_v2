@@ -32,15 +32,19 @@ public class ModelService {
 
 
     public Model createModel(Model model) {
-        ensureBrandExistsById(model.getBrand().getId());
-        ensureCategoryExistsById(model.getCategory().getId());
+        ensureBrandExistsByName(model.getBrand().getName());
+        ensureCategoryExistsByName(model.getCategory().getName());
         List<ModelJpa> jpas = modelRepository.findByNameTransmissionEngine(model.getName(), model.getTransmission().name(), model.getEngineType().name());
         List<ModelJpa> filteredJpas = jpas.stream()
                 .filter(modelJpa -> modelJpa.getCategoryId() == model.getCategory().getId() && modelJpa.getBrandId() == model.getBrand().getId())
                 .collect(Collectors.toList());
 
         if (filteredJpas.isEmpty()) {
+            var brand = brandRepository.findByName(model.getBrand().getName());
+            var category = categoryRepository.findByName(model.getCategory().getName());
             var jpa = ModelMapper.toJpa(model);
+            brand.ifPresent(b-> jpa.setBrandId(b.getId()));
+            category.ifPresent(c-> jpa.setCategoryId(c.getId()));
             return modelRepository.save(jpa)
                     .map(ModelMapper::fromJpa)
                     .orElseThrow(RuntimeException::new);
@@ -51,11 +55,15 @@ public class ModelService {
 
     public Model updateModel(Long id, Model model) {
         var existingModel = ensureModelExistsById(id);
-        ensureBrandExistsById(model.getBrand().getId());
-        ensureCategoryExistsById(model.getCategory().getId());
+        ensureBrandExistsByName(model.getBrand().getName());
+        ensureCategoryExistsByName(model.getCategory().getName());
 
-        existingModel.setBrandId(model.getBrand().getId());
-        existingModel.setCategoryId(model.getCategory().getId());
+        var brand = brandRepository.findByName(model.getBrand().getName());
+        var category = categoryRepository.findByName(model.getCategory().getName());
+
+        brand.ifPresent(b -> existingModel.setBrandId(b.getId()) );
+        category.ifPresent(c -> existingModel.setCategoryId(c.getId()) );
+
         existingModel.setName(model.getName());
         existingModel.setTransmission(model.getTransmission());
         existingModel.setEngineType(model.getEngineType());

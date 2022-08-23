@@ -102,4 +102,12 @@ public class PriceRepository extends AbstractRepository<PriceJpa> implements Gen
                 .appendWithSingleArg(EXISTS_BY_PRICE, price);
         return exist(statementProvider);
     }
+
+    public Optional<PriceJpa> findByPriceSum(BigDecimal price) {
+        var statementProvider = new BaseStatementProvider();
+        statementProvider
+                .append(FIND_QUERY_PREFIX)
+                .appendWithSingleArg("WHERE price = ?", price);
+        return findOne(statementProvider, extractor);
+    }
 }

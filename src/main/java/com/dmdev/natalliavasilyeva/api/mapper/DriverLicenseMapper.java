@@ -3,18 +3,10 @@ package com.dmdev.natalliavasilyeva.api.mapper;
 
 import com.dmdev.natalliavasilyeva.api.dto.requestdto.DriverLicenseDto;
 import com.dmdev.natalliavasilyeva.api.dto.responsedto.DriverLicenseResponseDto;
-import com.dmdev.natalliavasilyeva.domain.jpa.CarJpa;
 import com.dmdev.natalliavasilyeva.domain.jpa.DriverLicenseJpa;
-import com.dmdev.natalliavasilyeva.domain.model.Brand;
-import com.dmdev.natalliavasilyeva.domain.model.Car;
-import com.dmdev.natalliavasilyeva.domain.model.Category;
-import com.dmdev.natalliavasilyeva.domain.model.Color;
 import com.dmdev.natalliavasilyeva.domain.model.DriverLicense;
-import com.dmdev.natalliavasilyeva.domain.model.EngineType;
-import com.dmdev.natalliavasilyeva.domain.model.Model;
-import com.dmdev.natalliavasilyeva.domain.model.Transmission;
+import com.dmdev.natalliavasilyeva.utils.DateTimeService;
 
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
@@ -27,11 +19,14 @@ public final class DriverLicenseMapper {
     }
 
     public static DriverLicenseResponseDto toDto(DriverLicense driverLicense) {
+        if (driverLicense == null) {
+            return new DriverLicenseResponseDto();
+        }
         return new DriverLicenseResponseDto(
                 driverLicense.getId(),
                 driverLicense.getNumber(),
-                LocalDateTime.ofInstant(driverLicense.getIssueDate(), ZoneOffset.UTC),
-                LocalDateTime.ofInstant(driverLicense.getExpiredDate(), ZoneOffset.UTC)
+                DateTimeService.toLocalDateTimeDateFromInstant(driverLicense.getIssueDate()),
+                DateTimeService.toLocalDateTimeDateFromInstant(driverLicense.getExpiredDate())
         );
     }
 

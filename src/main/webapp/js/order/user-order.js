@@ -6,8 +6,10 @@ $(function () {
         $.post("user-cancel-order",
             {
                 orderId: orderId,
-            },
-        )
+            }
+            // function(){
+            //     location.reload();
+            )
     })
 });
 

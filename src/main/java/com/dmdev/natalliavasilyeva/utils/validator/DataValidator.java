@@ -23,7 +23,10 @@ public final class DataValidator {
 
     static {
         variableRegexMap.put(VariablesNameHolder.ORDER_ID, () -> RegularExpressionHolder.ID_REGEX);
+        variableRegexMap.put(VariablesNameHolder.BRAND_ID, () -> RegularExpressionHolder.ID_REGEX);
+        variableRegexMap.put(VariablesNameHolder.MODEL_ID, () -> RegularExpressionHolder.ID_REGEX);
         variableRegexMap.put(VariablesNameHolder.CAR_ID, () -> RegularExpressionHolder.ID_REGEX);
+        variableRegexMap.put(VariablesNameHolder.CATEGORY_ID, () -> RegularExpressionHolder.ID_REGEX);
         variableRegexMap.put(VariablesNameHolder.USER_ID, () -> RegularExpressionHolder.ID_REGEX);
         variableRegexMap.put(VariablesNameHolder.PRICE_ID, () -> RegularExpressionHolder.ID_REGEX);
         variableRegexMap.put(VariablesNameHolder.ACCIDENT_DATE, () -> RegularExpressionHolder.DATE_TIME_PATTERN_REGEX);
@@ -33,13 +36,14 @@ public final class DataValidator {
         variableRegexMap.put(VariablesNameHolder.DRIVER_LICENSE_EXPIRED_DATE, () -> RegularExpressionHolder.DATE_PATTERN_REGEX);
         variableRegexMap.put(VariablesNameHolder.BIRTHDAY, () -> RegularExpressionHolder.DATE_PATTERN_REGEX);
         variableRegexMap.put(VariablesNameHolder.BRAND_NAME, () -> RegularExpressionHolder.BRAND_NAME_REGEX);
-        variableRegexMap.put(VariablesNameHolder.MODEL_NAME, () -> RegularExpressionHolder.NAME_STRING_REGEX);
+        variableRegexMap.put(VariablesNameHolder.MODEL_NAME, () -> RegularExpressionHolder.MODEL_NAME_REGEX);
         variableRegexMap.put(VariablesNameHolder.CATEGORY_NAME, () -> RegularExpressionHolder.NAME_STRING_REGEX);
         variableRegexMap.put(VariablesNameHolder.USER_NAME, () -> RegularExpressionHolder.NAME_STRING_REGEX);
         variableRegexMap.put(VariablesNameHolder.SURNAME, () -> RegularExpressionHolder.NAME_STRING_REGEX);
         variableRegexMap.put(VariablesNameHolder.DESCRIPTION, () -> RegularExpressionHolder.DESCRIPTION_REGEX);
         variableRegexMap.put(VariablesNameHolder.DAMAGE, () -> RegularExpressionHolder.BIG_DECIMAL_REGEX);
         variableRegexMap.put(VariablesNameHolder.SUM, () -> RegularExpressionHolder.BIG_DECIMAL_REGEX);
+        variableRegexMap.put(VariablesNameHolder.PRICE, () -> RegularExpressionHolder.BIG_DECIMAL_REGEX);
         variableRegexMap.put(VariablesNameHolder.TRANSMISSION, () -> RegularExpressionHolder.MODEL_TRANSMISSION_REGEX);
         variableRegexMap.put(VariablesNameHolder.ENGINE_TYPE, () -> RegularExpressionHolder.MODEL_ENGINE_REGEX);
         variableRegexMap.put(VariablesNameHolder.COLOR, () -> RegularExpressionHolder.MODEL_COLOR_REGEX);

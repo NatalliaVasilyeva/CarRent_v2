@@ -29,7 +29,7 @@ public class BrandService {
 
 
     public Brand createBrand(Brand brand) {
-        isUniqueBrandName(brand.getName());
+        isUniqueBrandName(brand.getName().toLowerCase());
         var jpa = BrandMapper.toJpa(brand);
         return brandRepository.save(jpa)
                 .map(BrandMapper::fromJpa)

@@ -19,7 +19,8 @@
 
 <%--<nav class="navbar navbar-light" style="background-color: #e3f2fd;">--%>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand waves-effect waves-light" class="fa fa-leaf" href="#">Car rent</a>
+    <a class="navbar-brand waves-effect waves-light" class="fa fa-leaf" href="#"><fmt:message
+            key="form.car_rent"/></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-4"
             aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -48,7 +49,7 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link waves-effect waves-light dropdown-toggle" href="#" type="button" id="dropdownMenuButton"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="flag-icon flag-icon-us"></span> <fmt:message key="label.lang.en"/>
+                        <span class="flag-icon flag-icon-us"></span> <fmt:message key="label.lang.label"/>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right dropdown-unique"
                          aria-labelledby="dropdownMenuButton">

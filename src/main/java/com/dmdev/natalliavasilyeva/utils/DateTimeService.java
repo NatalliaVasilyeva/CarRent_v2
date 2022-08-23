@@ -2,6 +2,7 @@ package com.dmdev.natalliavasilyeva.utils;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -20,11 +21,11 @@ public final class DateTimeService {
         return Timestamp.valueOf(LocalDateTime.parse(date)).toInstant();
     }
 
-    public static LocalDateTime fromStringLocalDateTime(String date) {
+    public static LocalDate fromStringLocalDate(String date) {
         if (date == null) {
             return null;
         }
-        return LocalDateTime.parse(date, FORMATTER_SHORT);
+        return LocalDate.parse(date, FORMATTER_SHORT);
     }
 
     public static String formatDate(LocalDateTime date) {
@@ -36,5 +37,12 @@ public final class DateTimeService {
             return null;
         }
         return date.toInstant(ZoneOffset.UTC);
+    }
+
+    public static LocalDateTime toLocalDateTimeDateFromInstant(Instant date) {
+        if (date == null) {
+            return null;
+        }
+        return LocalDateTime.ofInstant(date, ZoneOffset.UTC);
     }
 }

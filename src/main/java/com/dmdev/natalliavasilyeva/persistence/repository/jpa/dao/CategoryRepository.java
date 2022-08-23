@@ -36,7 +36,7 @@ public class CategoryRepository extends AbstractRepository<CategoryJpa> implemen
             "DELETE FROM categories WHERE id = ?\n";
 
     private static final String EXISTS_BY_NAME = "" +
-            "SELECT EXISTS (SELECT * FROM categories WHERE name = ?)";
+            "SELECT EXISTS (SELECT * FROM categories WHERE name = lower(?))";
 
     private static final String EXISTS_BY_ID = "" +
             "SELECT EXISTS (SELECT * FROM categories WHERE id = ?)";
@@ -102,7 +102,7 @@ public class CategoryRepository extends AbstractRepository<CategoryJpa> implemen
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_QUERY_PREFIX)
-                .appendWithSingleArg("WHERE lower(name) LIKE ?", name);
+                .appendWithSingleArg("WHERE lower(name) LIKE lower(?)", name);
         return findOne(statementProvider, extractor);
     }
 

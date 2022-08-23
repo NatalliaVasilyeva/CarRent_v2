@@ -45,7 +45,7 @@ public class OrderCreateServlet extends HttpServlet {
                 VariablesNameHolder.START_RENTAL_DATE, startRentalDate,
                 VariablesNameHolder.END_RENTAL_DATE, endRentalDate
         )) && dataValidator.isValidDates(localStartDate, localEndDate)) {
-            var orderDto = new OrderDto(Long.parseLong(carId), localStartDate, localEndDate, Long.parseLong(userId), passport, Boolean.getBoolean(insurance));
+            var orderDto = new OrderDto(Long.parseLong(carId), localStartDate, localEndDate, Long.parseLong(userId), passport, Boolean.parseBoolean(insurance));
             Order createdOrder = null;
             try {
                 createdOrder = orderService.createOrder(OrderMapper.fromDto(orderDto));

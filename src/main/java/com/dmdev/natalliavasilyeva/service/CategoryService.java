@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CategoryService {
@@ -33,8 +34,18 @@ public class CategoryService {
 
     public Category createCategory(Category category) {
         isUniqueCategoryName(category.getName());
-        ensurePriceExistsById(category.getPrice().getId());
-        var jpa = CategoryMapper.toJpa(category);
+        var isExistsPrice = isPriceExistsBySum(category.getPrice().getSum());
+        CategoryJpa jpa;
+        Optional<PriceJpa> price;
+        jpa = CategoryMapper.toJpa(category);
+        if (isExistsPrice) {
+            price = priceRepository.findByPriceSum(category.getPrice().getSum());
+            price.ifPresent(p -> jpa.setPriceId(p.getId()));
+        } else {
+            price = priceRepository.save(new PriceJpa.Builder().sum(category.getPrice().getSum()).build());
+            price.ifPresent(p -> jpa.setPriceId(p.getId()));
+        }
+
         return categoryRepository.save(jpa)
                 .map(CategoryMapper::fromJpa)
                 .orElseThrow(RuntimeException::new);
@@ -42,11 +53,21 @@ public class CategoryService {
 
     public Category updateCategory(Long id, Category category) {
         var existingCategory = ensureCategoryExistsById(id);
-        if (!existingCategory.getName().equals(category.getName())) {
+        if (!existingCategory.getName().toUpperCase().equals(category.getName())) {
             isUniqueCategoryName(category.getName());
+            existingCategory.setName(category.getName());
         }
-        existingCategory.setName(category.getName());
-        existingCategory.setPriceId(category.getPrice().getId());
+        if (category.getPrice().getSum() != null) {
+            var existsPrice = priceRepository.findByPriceSum(category.getPrice().getSum());
+
+            if (existsPrice.isPresent()) {
+                existingCategory.setPriceId(existsPrice.get().getId());
+            } else {
+                var savedPrice = priceRepository.save(
+                        new PriceJpa.Builder().sum(category.getPrice().getSum()).build());
+                savedPrice.ifPresent(price -> existingCategory.setPriceId(price.getId()));
+            }
+        }
         return categoryRepository.update(existingCategory)
                 .map(CategoryMapper::fromJpa)
                 .orElseThrow(() -> new RuntimeException("Problem with category updating"));
@@ -62,7 +83,7 @@ public class CategoryService {
     public List<Category> getAllCustomCategories() {
         return categoryCustomRepository.findAll()
                 .stream()
-                .sorted(Comparator.comparing(Category::getName))
+                .sorted(Comparator.comparing(o -> o.getPrice().getSum()))
                 .collect(Collectors.toList());
     }
 
@@ -123,6 +144,10 @@ public class CategoryService {
         if (!priceRepository.existByPriceSum(sum)) {
             throw new PriceBadRequestException(String.format("Price with sum %d doesn't exist.", sum));
         }
+    }
+
+    private boolean isPriceExistsBySum(BigDecimal sum) {
+        return priceRepository.existByPriceSum(sum);
     }
 
     private void ensureCategoryExistsByName(String name) {

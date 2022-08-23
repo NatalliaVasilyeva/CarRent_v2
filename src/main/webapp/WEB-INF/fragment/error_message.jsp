@@ -11,3 +11,8 @@
         <p>${error_message}</p>
     </div>
 </c:if>
+<c:if test="${not empty param.error_message}">
+    <div class="alert alert-danger">
+        <p>${param.error_message}</p>
+    </div>
+</c:if>

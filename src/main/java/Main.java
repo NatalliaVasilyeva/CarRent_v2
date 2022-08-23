@@ -15,6 +15,8 @@ public class Main {
 
     public static void main(String[] args) throws SQLException, ConnectionPoolException {
         ConnectionPool connectionPool = ConnectionPool.getInstance();
+        PasswordUtils.generateHash("RabbitAdm", "abcdabcd");
+        System.out.println(PasswordUtils.generateHash("RabbitAdm", "aA80171674880"));
 //        OrderCustomRepository orderRepository = new OrderCustomRepository(connectionPool);
 
 //
@@ -42,8 +44,5 @@ public class Main {
 //                .description("saved description")
 //                .damage(BigDecimal.valueOf(15))
 //                .build();
-
-        var passwordUtils = PasswordUtils.generateHash("RabbitCli", "dcba");
-        System.out.println(passwordUtils);
     }
 }

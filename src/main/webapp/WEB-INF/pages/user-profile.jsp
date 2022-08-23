@@ -9,7 +9,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib uri="https://dmdev.com/functions" prefix="f" %>
-
+<fmt:setLocale value="${sessionScope.locale}"/>
 <fmt:setBundle basename="content"/>
 <!DOCTYPE html>
 <html>

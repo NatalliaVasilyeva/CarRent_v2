@@ -112,7 +112,7 @@ public class CarCustomRepository extends AbstractCustomRepository<Car> implement
         var statementProvider = new BaseStatementProvider();
         statementProvider
                 .append(FIND_WITHOUT_ACCIDENTS)
-                .appendWithSingleArg("WHERE lower(c.car_number) LIKE ?\n", carNumber)
+                .appendWithSingleArg("WHERE lower(c.car_number) LIKE lower(?)\n", carNumber)
                 .append(GROUP_BY);
         return findOne(statementProvider, extractor);
     }

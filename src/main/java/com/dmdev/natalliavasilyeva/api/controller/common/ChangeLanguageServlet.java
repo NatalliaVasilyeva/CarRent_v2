@@ -21,9 +21,9 @@ public class ChangeLanguageServlet extends HttpServlet {
 
         req.getSession().setAttribute("locale", language.getLocale());
 
-        User user = (User) req.getSession().getAttribute("user");
+        var userId = (Long) req.getSession().getAttribute("userId");
 
-        if (user != null && referer != null) {
+        if (userId != null && referer != null) {
             resp.sendRedirect(referer);
         } else {
             resp.sendRedirect("/rentcar/welcome");

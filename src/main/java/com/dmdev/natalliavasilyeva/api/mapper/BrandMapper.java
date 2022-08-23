@@ -19,8 +19,9 @@ public final class BrandMapper {
 
     public static BrandResponseDTO toDto(Brand brand) {
         return new BrandResponseDTO(
+                brand.getId(),
                 brand.getName(),
-                ModelMapper.toDtos(brand.getModels())
+                brand.getModels() == null? Collections.emptyList() : ModelMapper.toDtos(brand.getModels())
         );
     }
 

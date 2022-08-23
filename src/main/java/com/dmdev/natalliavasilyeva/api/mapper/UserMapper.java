@@ -43,7 +43,7 @@ public final class UserMapper {
                 user.getPhone(),
                 user.getRole(),
                 LocalDate.ofInstant(user.getBirthday(), ZoneOffset.UTC),
-                DriverLicenseMapper.toDto(user.getDriverLicense())
+                user.getDriverLicense() == null? DriverLicenseMapper.toDto(null) : DriverLicenseMapper.toDto(user.getDriverLicense())
         );
     }
 

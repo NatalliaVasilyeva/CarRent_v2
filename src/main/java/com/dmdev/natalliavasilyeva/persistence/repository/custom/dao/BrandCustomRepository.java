@@ -28,13 +28,14 @@ public class BrandCustomRepository extends AbstractCustomRepository<Brand> imple
             "FROM brand b\n" +
             "       LEFT JOIN (\n" +
             "               SELECT m.id             as mod_id,\n" +
+            "                      m.brand_id       as brand_id,\n" +
             "                      m.name           as model_name,\n" +
             "                      m.transmission   as transmission,\n" +
             "                      m.engine_type    as engine,\n" +
             "                      c.name           as category_name\n" +
             "               FROM model m\n" +
             "                       LEFT JOIN  categories c ON m.category_id = c.id\n" +
-            "               ) AS mod ON b.id = mod.mod_id\n";
+            "               ) AS mod ON b.id = mod.brand_id\n";
 
     private static final String GROUP_BY = "" +
             "GROUP BY b.id";

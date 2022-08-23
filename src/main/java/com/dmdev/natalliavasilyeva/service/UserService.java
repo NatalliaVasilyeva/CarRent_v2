@@ -116,9 +116,12 @@ public class UserService {
         return UserMapper.fromJpa(userJpa);
     }
 
-    public boolean updatePassword(Long id, String password) {
+    public boolean updatePassword(Long id, String oldPassword, String newPassword) {
         var existingUserJpa = ensureUserExistsById(id);
-        String hash = PasswordUtils.generateHash(existingUserJpa.getLogin(), password);
+        var existingUserJpaByLoginAndPassword = ensureUserExistsByLoginAndPassword(existingUserJpa.getLogin(),
+                PasswordUtils.generateHash(existingUserJpa.getLogin(), oldPassword));
+
+        String hash = PasswordUtils.generateHash(existingUserJpaByLoginAndPassword.getLogin(), newPassword);
         existingUserJpa.setPassword(hash);
         var savedUserJpa = userRepository.update(existingUserJpa);
         return savedUserJpa.isPresent();
